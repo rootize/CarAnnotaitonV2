@@ -10,4 +10,7 @@
     <string name="login_string">Login using Facebook account</string>
     <string name="welcome_words_string">Thanks for Using APPNAME</string>
     <string name="take_photo_onStart">Start!</string>
+    <string name="take_new_string">Take a Photo!</string>
+    <string name="send_server_string">Send to Server!</string>
+     <string name="album_name">CameraSample</string>
 </resources>

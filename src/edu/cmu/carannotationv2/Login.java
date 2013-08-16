@@ -1,30 +1,38 @@
 package edu.cmu.carannotationv2;
 
 import android.os.Bundle;
-import android.provider.MediaStore;
+
 
 import android.app.Activity;
 import android.content.Intent;
+
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class Login extends Activity {
-    private static final int CAMERA_REQUEST=1888;
 	
+
 	private Button tkphotoButton;
-//	private RadioButton loginButton;
-//	private RadioButton visitorButton;
+	// private RadioButton loginButton;
+	// private RadioButton visitorButton;
 	private EditText usrnameEditText;
 	private EditText passwordEditText;
 	private RadioGroup loginchoiceRadioGroup;
-//	private RadioButton selectedRadioButton;
+
+	
+	private Toast showToast;
+	// private RadioButton selectedRadioButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +41,14 @@ public class Login extends Activity {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		this.tkphotoButton = (Button) findViewById(R.id.take_photo_initial);
-//		this.loginButton = (RadioButton) findViewById(R.id.login);
-//		this.visitorButton = (RadioButton) findViewById(R.id.anno);
+		// this.loginButton = (RadioButton) findViewById(R.id.login);
+		// this.visitorButton = (RadioButton) findViewById(R.id.anno);
 		this.usrnameEditText = (EditText) findViewById(R.id.facebook_account);
 		this.passwordEditText = (EditText) findViewById(R.id.facebook_password);
 
 		this.loginchoiceRadioGroup = (RadioGroup) findViewById(R.id.loginorvisitor);
 		// this.selectedRadioButton=(RadioButton)findViewById(R.id.anno);
-		//this.selectedRadioButton = null;
+		// this.selectedRadioButton = null;
 		// usrnameEditText.setFocusable(false);//if this edittext is gray?
 		usrnameEditText.setEnabled(false);
 		passwordEditText.setEnabled(false);
@@ -75,16 +83,25 @@ public class Login extends Activity {
 						.getCheckedRadioButtonId();
 				// selectedRadioButton=(RadioButton)findViewById(selectedId);
 				if (selectedId == R.id.login) {
-					// do password thing!
-
+					// 1 do password thing!
+                     //1.1 password declined!
+					// 1.2 Password accepted!
+				showToast=	Toast.makeText(getApplicationContext(),
+							"Log in Successfully!", Toast.LENGTH_SHORT);
+                 showToast.setGravity(Gravity.CENTER, 0, 0);
+                 LinearLayout toastView=(LinearLayout)showToast.getView();
+                 ImageView imgToast=new ImageView(getApplicationContext());
+                 imgToast.setImageResource(R.drawable.success);
+                 toastView.addView(imgToast,0);
+                 showToast.show();
 					// Also show the process dialog
+                
 				} else {
 					// without login
 				}
-				Intent cameraIntent = new Intent(
-						android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFileContentProvider.CONTENT_URI);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+				Intent toMain = new Intent(Login.this, Main_screen.class);
+				startActivity(toMain);
 			}
 		});
 	}
@@ -96,17 +113,6 @@ public class Login extends Activity {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		//super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode==CAMERA_REQUEST&&resultCode==RESULT_OK) {
-			
-		}
-	}
-   
-	
+
+
 }
