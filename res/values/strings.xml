@@ -13,4 +13,8 @@
     <string name="take_new_string">Take a Photo!</string>
     <string name="send_server_string">Send to Server!</string>
      <string name="album_name">CameraSample</string>
+     <string name="desc">Cropped image show</string>
+     <string name="clear_rect"></string>
+     <string name="make_text_string">Select Car Make</string>
+     <string name="model_text_string">Select Car Model</string>
 </resources>

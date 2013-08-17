@@ -1,48 +1,60 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main_screen" 
-    >
-    <!-- android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" -->
-    
+    android:orientation="horizontal" >
 
-<Button
-    android:id="@+id/button_take_new"
-    style="?android:attr/buttonStyleSmall"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true"
-    android:layout_centerInParent="false"
-    android:text="@string/take_new_string" />
-<Button 
-    android:id="@+id/button_send_sever"
-    style="?android:attr/buttonStyleSmall"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignLeft="@id/button_take_new"
-    android:layout_above="@id/button_take_new"
-    android:layout_centerInParent="false"
-    android:text="@string/send_server_string"
-    />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-<!-- <ImageView -->
-<edu.cmu.carannotationv2.DrawImageView
-    android:id="@+id/iview1"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentTop="true"
-    android:layout_centerInParent="false"
-    android:layout_toLeftOf="@id/button_take_new"
-    android:adjustViewBounds="true"
-    android:contentDescription="@+string/desc" />
+        <Button
+            android:id="@+id/button_take_new"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/take_new_string" />
 
-<!--  android:layout_width="fill_parent" -->
+        <Button
+            android:id="@+id/button_send_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/send_server_string" />
+        <TextView 
+            android:id="@+id/make_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/make_text_string"
+            />
+        <Spinner 
+            android:id="@+id/carmakespinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView 
+            android:id="@+id/model_text"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:text="@string/model_text_string"
+            />
+        <Spinner android:id= "@+id/carmodelspinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/btn_clearRect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_rect" />
+    </LinearLayout>
 
-
-</RelativeLayout>
+   <!--  <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" /> -->
+  <edu.cmu.carannotationv2.DrawImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" /> 
+</LinearLayout>
