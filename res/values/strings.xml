@@ -14,7 +14,9 @@
     <string name="send_server_string">Send to Server!</string>
      <string name="album_name">CameraSample</string>
      <string name="desc">Cropped image show</string>
-     <string name="clear_rect"></string>
-     <string name="make_text_string">Select Car Make</string>
-     <string name="model_text_string">Select Car Model</string>
+     <string name="clear_rect">Confirm Rectangle</string>
+     <string name="make_text_string">Select Make:</string>
+     <string name="model_text_string">Select Model:</string>
+     <string name="sign_up_string">Sign Up Now!</string>
+     <string name="forget_string">Forget Password/Account?</string>
 </resources>

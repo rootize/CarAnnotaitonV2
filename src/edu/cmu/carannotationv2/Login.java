@@ -2,7 +2,6 @@ package edu.cmu.carannotationv2;
 
 import android.os.Bundle;
 
-
 import android.app.Activity;
 import android.content.Intent;
 
@@ -20,26 +19,44 @@ import android.widget.Toast;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+
 public class Login extends Activity {
-	
 
 	private Button tkphotoButton;
+	private Button signup_btn;
+	private Button getaccount_btn;
+	private String usrname;
+	private String usrpass;
 	// private RadioButton loginButton;
 	// private RadioButton visitorButton;
 	private EditText usrnameEditText;
 	private EditText passwordEditText;
 	private RadioGroup loginchoiceRadioGroup;
 
-	
-	private Toast showToast;
+	private ParseUser puser;
+
+	// private Toast showToast;
 	// private RadioButton selectedRadioButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+		// ***************initialize parse****************//
+		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
+				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
+		// *************************************************//
 		this.tkphotoButton = (Button) findViewById(R.id.take_photo_initial);
 		// this.loginButton = (RadioButton) findViewById(R.id.login);
 		// this.visitorButton = (RadioButton) findViewById(R.id.anno);
@@ -53,6 +70,7 @@ public class Login extends Activity {
 		usrnameEditText.setEnabled(false);
 		passwordEditText.setEnabled(false);
 		addLisntersOnButton();
+
 	}
 
 	private void addLisntersOnButton() {
@@ -67,9 +85,14 @@ public class Login extends Activity {
 						if (R.id.login == checkedId) {
 							usrnameEditText.setEnabled(true);
 							passwordEditText.setEnabled(true);
+							signup_btn.setEnabled(true);
+							getaccount_btn.setEnabled(true);
+
 						} else {
 							usrnameEditText.setEnabled(false);
 							passwordEditText.setEnabled(false);
+							signup_btn.setEnabled(false);
+							getaccount_btn.setEnabled(false);
 						}
 					}
 				});
@@ -84,18 +107,48 @@ public class Login extends Activity {
 				// selectedRadioButton=(RadioButton)findViewById(selectedId);
 				if (selectedId == R.id.login) {
 					// 1 do password thing!
-                     //1.1 password declined!
+					// 1.1 password declined!
 					// 1.2 Password accepted!
-				showToast=	Toast.makeText(getApplicationContext(),
-							"Log in Successfully!", Toast.LENGTH_SHORT);
-                 showToast.setGravity(Gravity.CENTER, 0, 0);
-                 LinearLayout toastView=(LinearLayout)showToast.getView();
-                 ImageView imgToast=new ImageView(getApplicationContext());
-                 imgToast.setImageResource(R.drawable.success);
-                 toastView.addView(imgToast,0);
-                 showToast.show();
+					ParseUser.logInInBackground(usrnameEditText.getText()
+							.toString(), passwordEditText.getText().toString(),
+							new LogInCallback() {
+
+								@Override
+								public void done(ParseUser arg0,
+										ParseException arg1) {
+									// TODO Auto-generated method stub
+
+									if (arg0 != null) {
+										// login successfully!
+//										Intent toMain = new Intent(Login.this, Main_screen.class);
+//										startActivity(toMain);
+									} else {
+										if (arg1.getCode() == ParseException.CONNECTION_FAILED) {
+
+											// wifi not working!
+											String showMessage = "Wifi not working now, system will update your information later!";
+											showToast(showMessage,
+													R.drawable.error);
+
+										} else {
+											if (!queryCredentials(usrnameEditText
+													.getText().toString())) {
+												// usr doesn't exist!
+												// clear all edit text
+												String showMessage = "Invalid password/usrname!";
+												showToast(showMessage,
+														R.drawable.error);
+											}
+
+										}
+
+									}
+								}
+
+							});
+
 					// Also show the process dialog
-                
+
 				} else {
 					// without login
 				}
@@ -113,6 +166,27 @@ public class Login extends Activity {
 		return true;
 	}
 
+	private boolean queryCredentials(String username) {
+		ParseQuery<ParseUser> queryuserlist = ParseUser.getQuery();
+		queryuserlist.whereEqualTo("username", username);
+		try {
+			// attempt to find a user with the specified credentials.
+			return (queryuserlist.count() != 0) ? true : false;
+		} catch (ParseException e) {
+			return false;
+		}
+	}
 
+	private void showToast(String show_String, int icon) {
+		// TODO Auto-generated method stub
+		Toast showToast = Toast.makeText(getApplicationContext(), show_String,
+				Toast.LENGTH_SHORT);
+		showToast.setGravity(Gravity.CENTER, 0, 0);
+		LinearLayout toastView = (LinearLayout) showToast.getView();
+		ImageView imgToast = new ImageView(getApplicationContext());
+		imgToast.setImageResource(icon);
+		toastView.addView(imgToast, 0);
+		showToast.show();
+	}
 
 }

@@ -21,32 +21,42 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int success=0x7f020001;
-        public static final int takepic=0x7f020002;
+        public static final int caution=0x7f020000;
+        public static final int custom_btn_arsenic=0x7f020001;
+        public static final int custom_btn_black_pearl=0x7f020002;
+        public static final int error=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int success=0x7f020005;
+        public static final int takepic=0x7f020006;
     }
     public static final class id {
-        public static final int action_settings=0x7f090010;
+        public static final int action_settings=0x7f090014;
         public static final int anno=0x7f090004;
-        public static final int btn_clearRect=0x7f09000e;
-        public static final int button_send_server=0x7f090009;
-        public static final int button_take_new=0x7f090008;
-        public static final int carmakespinner=0x7f09000b;
-        public static final int carmodelspinner=0x7f09000d;
+        public static final int btn_confirmRect=0x7f090010;
+        public static final int btn_getbackaccount=0x7f090009;
+        public static final int btn_signup=0x7f090008;
+        public static final int button_send_server=0x7f09000b;
+        public static final int button_take_new=0x7f09000a;
+        public static final int carmakespinner=0x7f09000d;
+        public static final int carmodelspinner=0x7f09000f;
         public static final int facebook_account=0x7f090006;
         public static final int facebook_password=0x7f090007;
         public static final int facebookaccounthint=0x7f090005;
-        public static final int imageView1=0x7f09000f;
+        public static final int imageView1=0x7f090011;
         public static final int login=0x7f090003;
         public static final int loginorvisitor=0x7f090002;
-        public static final int make_text=0x7f09000a;
-        public static final int model_text=0x7f09000c;
+        public static final int make_text=0x7f09000c;
+        public static final int model_text=0x7f09000e;
+        public static final int standard_spinner_dropdown_format=0x7f090013;
+        public static final int standard_spinner_format=0x7f090012;
         public static final int take_photo_initial=0x7f090001;
         public static final int welcome_words=0x7f090000;
     }
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int main_screen=0x7f030001;
+        public static final int simple_spinner_item=0x7f030002;
+        public static final int spinner_dropdown_item=0x7f030003;
     }
     public static final class menu {
         public static final int login=0x7f080000;
@@ -65,10 +75,12 @@ public final class R {
         public static final int app_name=0x7f060000;
         public static final int clear_rect=0x7f06000c;
         public static final int desc=0x7f06000b;
+        public static final int forget_string=0x7f060010;
         public static final int login_string=0x7f060005;
         public static final int make_text_string=0x7f06000d;
         public static final int model_text_string=0x7f06000e;
         public static final int send_server_string=0x7f060009;
+        public static final int sign_up_string=0x7f06000f;
         public static final int take_new_string=0x7f060008;
         public static final int take_photo_onStart=0x7f060007;
         public static final int welcome_words_string=0x7f060006;
@@ -100,5 +112,7 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f070001;
+        public static final int btnStyleArsenic=0x7f070003;
+        public static final int btnStyleBlackpearl=0x7f070002;
     }
 }

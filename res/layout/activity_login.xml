@@ -5,11 +5,7 @@
     android:orientation="vertical"
     tools:context=".Login" >
 
-<!-- <View
-    android:layout_width="1dip"
-    android:layout_height="fill_parent"
-    android:layout_centerInParent="true"
-    android:background="#FF0000FF" /> -->
+
 
     <TextView
         android:id="@+id/welcome_words"
@@ -32,7 +28,8 @@
         android:drawableLeft="@drawable/takepic"
         android:text="@string/take_photo_onStart"
         android:textColor="@android:color/black"
-        android:textSize="50sp" />
+        android:textSize="50sp" 
+        />
 
     <RadioGroup
         android:id="@+id/loginorvisitor"
@@ -93,6 +90,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
+        <LinearLayout 
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+        <Button 
+            android:id="@+id/btn_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_string"/>
+        <Button 
+            android:id="@+id/btn_getbackaccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forget_string"/>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

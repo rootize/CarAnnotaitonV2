@@ -12,7 +12,7 @@ import android.widget.ImageView;
 public class DrawImageView extends ImageView {
 
 	private Paint currentPaint;
-	public boolean drawPoint = false;
+	public boolean drawRect = false;
 	public float left;/* Point center; */
 	public float top;
 	public float right;
@@ -26,11 +26,11 @@ public class DrawImageView extends ImageView {
 		super(context, attrs);
 		currentPaint = new Paint();
 		currentPaint.setDither(true);
-		currentPaint.setColor(Color.BLACK);
+		currentPaint.setColor(Color.YELLOW);
 		currentPaint.setStyle(Paint.Style.STROKE);
 		currentPaint.setStrokeCap(Paint.Cap.ROUND);
 		currentPaint.setStrokeJoin(Paint.Join.ROUND);
-		currentPaint.setStrokeWidth(2);
+		currentPaint.setStrokeWidth(4);
 
 	}
 
@@ -44,7 +44,7 @@ public class DrawImageView extends ImageView {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 
-		if (drawPoint) {
+		if (drawRect) {
 			// canvas.drawCircle(center.x, center.y, c_radius, currentPaint);
 			canvas.drawRect(left, top, right, bottom, currentPaint);
 		}
