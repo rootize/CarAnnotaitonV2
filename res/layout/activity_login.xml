@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Login" >
+    tools:context=".Login" 
+    android:background="@drawable/login_back_ground">
 
 
 
@@ -15,9 +16,57 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="@string/welcome_words_string"
-        android:textSize="35sp" />
+        android:textSize="45sp" 
+        android:textColor="#AFDEFE"
+        android:typeface="serif"
+        android:textStyle="italic"/>
 
-    <Button
+    <!-- change this button! -->
+    <!--  <com.facebook.widget.LoginButton
+        android:id="@+id/login_facebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/take_photo_initial"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:textSize="50sp" 
+        /> -->
+        <LinearLayout 
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/welcome_words"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="300sp"
+             >
+            <Button
+          android:id="@+id/login_facebook"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:gravity="bottom"
+          android:text="@string/login_facebook_string_onbtn"
+          android:textColor="@android:color/black"
+          android:textSize="50sp" />
+     <Button
+          android:id="@+id/take_photo_initial"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+         android:gravity="bottom"
+         android:layout_marginTop="20sp"
+          android:layout_marginBottom="100dp"
+          android:text="@string/login_anonymous_string_onbtn"
+          android:textColor="@android:color/black"
+          android:textSize="50sp" />
+     </LinearLayout>
+     
+        <Button 
+            android:layout_alignParentRight="true" 
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/readme_string_onbtn"
+            />   <!--  <Button
         android:id="@+id/take_photo_initial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,9 +79,9 @@
         android:textColor="@android:color/black"
         android:textSize="50sp" 
         style="@style/btnStyleBlackpearl"
-        />
+        /> -->
 
-    <RadioGroup
+    <!-- <RadioGroup
         android:id="@+id/loginorvisitor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,9 +108,9 @@
             android:text="@string/anno_string"
             android:textSize="25sp" />
 
-    </RadioGroup>
+    </RadioGroup> -->
 
-    <LinearLayout
+    <!-- <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/loginorvisitor"
@@ -111,6 +160,8 @@
             android:text="@string/forget_string"
             style="@style/btnStyleArsenic" />      
               </LinearLayout>
-    </LinearLayout>
+    </LinearLayout> -->
+
+      
 
 </RelativeLayout>

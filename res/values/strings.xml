@@ -8,7 +8,7 @@
     <string name="Password">Password</string>
     <string name="anno_string">Take a photo as annoymous</string>
     <string name="login_string">Login using Facebook account</string>
-    <string name="welcome_words_string">Thanks for Using APPNAME</string>
+    <string name="welcome_words_string">Thanks for using CarNot!</string>
     <string name="take_photo_onStart">Start!</string>
     <string name="take_new_string">Take a Photo!</string>
     <string name="send_server_string">Send to Server!</string>
@@ -19,5 +19,9 @@
      <string name="model_text_string">Select Model:</string>
      <string name="sign_up_string">Sign Up Now!</string>
      <string name="forget_string">Forget Password/Account?</string>
-     
+     <string name="finish_annotating">Done!</string>
+     <string name="addonemorestring">Add another car!</string>
+     <string name="login_facebook_string_onbtn">Login with Facebook</string>
+     <string name="login_anonymous_string_onbtn">Anonymous User</string>
+     <string name="readme_string_onbtn">ReadMe</string>
 </resources>

@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -49,13 +52,15 @@ public class Login extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
+        
 		// ***************initialize parse****************//
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
+		ParseFacebookUtils.initialize("622959081070950");
 		// *************************************************//
 		this.tkphotoButton = (Button) findViewById(R.id.take_photo_initial);
 		// this.loginButton = (RadioButton) findViewById(R.id.login);
@@ -95,10 +100,29 @@ public class Login extends Activity {
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						// TODO Auto-generated method stub
 						if (R.id.login == checkedId) {
-							usrnameEditText.setEnabled(true);
-							passwordEditText.setEnabled(true);
-							signup_btn.setEnabled(true);
-							getaccount_btn.setEnabled(true);
+						//	ParseFacebookUtils.logIn(this, new LogInCallback);
+							
+							ParseFacebookUtils.logIn(Login.this, new LogInCallback(){
+
+								@Override
+								public void done(ParseUser user,
+										ParseException err) {
+									// TODO Auto-generated method stub
+									 if (user == null) {
+									      Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
+									    } else if (user.isNew()) {
+									      Log.d("MyApp", "User signed up and logged in through Facebook!");
+									    } else {
+									      Log.d("MyApp", "User logged in through Facebook!");
+									    }
+									  }	
+								
+								
+							});
+//							usrnameEditText.setEnabled(true);
+//							passwordEditText.setEnabled(true);
+//							//signup_btn.setEnabled(true);
+//							getaccount_btn.setEnabled(true);
 
 						} else {
 							usrnameEditText.setEnabled(false);
@@ -201,4 +225,22 @@ public class Login extends Activity {
 		showToast.show();
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if (requestCode==com.facebook.Session.DEFAULT_AUTHORIZE_ACTIVITY_CODE) {
+			ParseFacebookUtils.finishAuthentication(requestCode, requestCode, data);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		
+		
+	}
+
+	
+	
+	
 }
