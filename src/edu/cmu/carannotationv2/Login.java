@@ -71,6 +71,18 @@ public class Login extends Activity {
 		passwordEditText.setEnabled(false);
 		addLisntersOnButton();
 
+		
+		
+//		signup_btn.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+////				Intent signupIntent=new Intent(Login.this,sign_up.class);
+////				startActivity(signupIntent);
+//				
+//			}
+//		});
 	}
 
 	private void addLisntersOnButton() {

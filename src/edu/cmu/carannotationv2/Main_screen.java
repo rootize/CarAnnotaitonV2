@@ -385,7 +385,7 @@ public class Main_screen extends Activity {
 					pb_send.put("Rect_Rigth", rect_br.x);
 					pb_send.put("Location_Lati", lati+" "+lati_ref);
 					pb_send.put("Location_Longti", longti+" "+longti_ref);
-					pb_send.put("imgName", imageFileName);
+					pb_send.put("imgName", imageFileName+JPEG_FILE_SUFFIX);
                     // Send image --file
 					//pb_send.saveInBackground();
 					//FileInputStream imageStream=null;
@@ -397,7 +397,7 @@ public class Main_screen extends Activity {
 						ByteArrayOutputStream baos=new ByteArrayOutputStream();
 						bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
 						byte[] data=baos.toByteArray();
-						ParseFile imgFile=new ParseFile(imageFileName,data);
+						ParseFile imgFile=new ParseFile(imageFileName+JPEG_FILE_SUFFIX,data);
 						
 						
 						pb_send.put("imagefile",imgFile);

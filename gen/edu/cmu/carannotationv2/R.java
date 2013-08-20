@@ -55,8 +55,9 @@ public final class R {
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int main_screen=0x7f030001;
-        public static final int simple_spinner_item=0x7f030002;
-        public static final int spinner_dropdown_item=0x7f030003;
+        public static final int signup_data=0x7f030002;
+        public static final int simple_spinner_item=0x7f030003;
+        public static final int spinner_dropdown_item=0x7f030004;
     }
     public static final class menu {
         public static final int login=0x7f080000;
