@@ -4,7 +4,7 @@
     <string name="app_name">CarAnnotationV2</string>
     <string name="action_settings">Settings</string>
     <!-- <string name="hello_world">Hello world!</string> -->
-    <string name="Email">Email</string>
+    <string name="Email">Email:</string>
     <string name="Password">Password</string>
     <string name="anno_string">Take a photo as annoymous</string>
     <string name="login_string">Login using Facebook account</string>
@@ -20,8 +20,14 @@
      <string name="sign_up_string">Sign Up Now!</string>
      <string name="forget_string">Forget Password/Account?</string>
      <string name="finish_annotating">Done!</string>
-     <string name="addonemorestring">Add another car!</string>
-     <string name="login_facebook_string_onbtn">Login with Facebook</string>
+     <string name="addonemorestring">Annotate one more</string>
+     <string name="login_string_onbtn">Log in </string>
      <string name="login_anonymous_string_onbtn">Anonymous User</string>
      <string name="readme_string_onbtn">ReadMe</string>
+     <string name="whyemail">Why Email?</string>
+     <string name="logging_string">Logging in, please wait</string>
+     <string name="cancel_btn">Cancel</string>
+     <string name="signup_nickname_string">Nickname</string>
+     <string name="savecurrentrect">Save Information</string>
+     <string name="usrname_string">User name:</string>
 </resources>

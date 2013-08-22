@@ -16,9 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import android.R.integer;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -48,6 +53,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -59,11 +65,20 @@ import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.cmu.carannotationv2.R.string;
+
+
 
 public class Main_screen extends Activity {
 	private static final int CAMERA_REQUEST = 1888;
 
+	private static final String offline_filename="offline";
+	
+	private static final int NUM = 20;
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";// save in jpg format
 															// to save space
@@ -73,9 +88,11 @@ public class Main_screen extends Activity {
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	// ********************************************//
 
+	private static final int total_rects = 100;
 	private boolean first_login;
 	private Button retakeButton;
 	private Button sendButton;
+
 	// three flags indicating if sendButton works
 	// 只有在 1. makespinner 被选中， && modelspinner被选中 && drawView被画
 	// sendbutton 才会真正起作用
@@ -84,16 +101,21 @@ public class Main_screen extends Activity {
 	private boolean model_done = false;
 	private boolean draw_done = false;
 
-	/* button for clearing rectangle */
-	private Button btn_confirm;
+	private TextView welcomeText;
+	/* button for add one more rectangle */
 
+	private Button btn_save;
+	private int global_info_count = 0;
+	private String[] makes = new String[NUM];
+	private String[] models = new String[NUM];
+	private int[][] rects = new int[NUM][4]; // records the number of rects
 	// Temporily using ImageView instead of DrawImageView
 	// private DrawImageView mImageView;
 	private DrawImageView mImageView;
 	private Bitmap mImageBitmap; // stores the bitmap
 	private String mCurrentPhotoPath;
-	private String imageFileName=null;
-	private boolean prevent_reDraw = false;
+	private String imageFileName = null;
+	private boolean global_prevent_reDraw = false;// 等到最后再来看看怎么样
 	/** draw rectangles on ***/
 	private Canvas canvas;
 
@@ -147,17 +169,116 @@ public class Main_screen extends Activity {
 
 	// Parse Related...
 	private ParseObject pb_send;
+	private String usr_name;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
+	
+	 private WifiManager wifi_connected ;
+	// in order to save all the information:
+
+	 
+	  private JSONArray offline_JsonArray;
+	private void cleanVectors() {
+		for (int i = 0; i < NUM; i++) {
+			makes[i] = null;
+			models[i] = null;
+			for (int j = 0; j < 4; j++) {
+				rects[i][j] = 0;
+			}
+
+		}
+
+	}
+
+	
+	public static JSONArray remove(final int idx, final JSONArray from) {
+	    final List<JSONObject> objs = asList(from);
+	    objs.remove(idx);
+
+	    final JSONArray ja = new JSONArray();
+	    for (final JSONObject obj : objs) {
+	        ja.put(obj);
+	    }
+
+	    return ja;
+	}
+
+	public static List<JSONObject> asList(final JSONArray ja) {
+	    final int len = ja.length();
+	    final ArrayList<JSONObject> result = new ArrayList<JSONObject>(len);
+	    for (int i = 0; i < len; i++) {
+	        final JSONObject obj = ja.optJSONObject(i);
+	        if (obj != null) {
+	            result.add(obj);
+	        }
+	    }
+	    return result;
+	}
+	
+	
+	private void recursive_upload() {
+		// TODO Auto-generated method stub
+		if(offline_JsonArray.length()>0) {
+			
+			JSONObject tem_item;
+			try {
+				tem_item = (JSONObject)offline_JsonArray.get(0);
+			
+			 ParseObject pobject=new ParseObject("annotation_info");
+			 pobject.put("usr", tem_item.getString("usr"));
+			transfer_Json_Pobject(pobject, tem_item);
+			 pobject.saveInBackground(new SaveCallback() {
+				
+				@Override
+				public void done(ParseException arg0) {
+					// TODO Auto-generated method stub
+					offline_JsonArray=remove(0, offline_JsonArray);
+			         	recursive_upload();	
+				}
+
+				
+			});
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.d("Main_Screen", "JSON array null");
+			}
+			 
+		}
+		else {
+			filesaveread.delete(getApplicationContext(), offline_filename);
+		}
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
+      //   filesaveread fsr=new filesaveread();
+		// Get intent from the login
+		Intent receiver = getIntent();
+		usr_name = receiver.getStringExtra("usr");
+
+		//test wifi
+		 wifi_connected = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		
+		 
+		 if (wifi_connected.isWifiEnabled()) {
+			//create database
+			new UploadFileThread().start();
+			 
+
+		}
+		 
+		String welcome_name = "";
+		if (isEmailValid(usr_name)) {
+			welcome_name = usr_name;
+		} else {
+			welcome_name = "dear guest";
+		}
+
+		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
+		welcomeText.setText("Welcome! " + welcome_name);
+
 		// initialize PARSE
 
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
@@ -168,12 +289,10 @@ public class Main_screen extends Activity {
 
 		retakeButton = (Button) findViewById(R.id.button_take_new);
 		sendButton = (Button) findViewById(R.id.button_send_server);
+		btn_save = (Button) findViewById(R.id.btn_confirm);
 
-		// button for clearing rectangles on DrawImageView
-		btn_confirm = (Button) findViewById(R.id.btn_confirmRect);
-
+		btn_save.setEnabled(false);
 		sendButton.setEnabled(false);
-		btn_confirm.setEnabled(false);
 
 		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
 		mImageView.setVisibility(DrawImageView.VISIBLE);
@@ -188,7 +307,14 @@ public class Main_screen extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				dispathTakePictureIntent();
+				
+				if (global_info_count!=0) {
+					String showMessa="Abondon all the rectangles and start a new one?";
+					showDialog(showMessa);
+				}else {
+					dispathTakePictureIntent();
+				}
+				
 			}
 		});
 
@@ -197,11 +323,7 @@ public class Main_screen extends Activity {
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-		// modelSpinner.setEnabled(false);
-		makeSpinner.setEnabled((mCurrentPhotoPath != null));// 要仔细看看这里:
-															// 想做的：
-															// 当第一次登入界面的时候是关闭的
-															// 后来登入的过程中是被激活的
+	
 
 		// 2.3 get database data from raw
 		// 2.3.1 read from raw file to local file
@@ -235,14 +357,15 @@ public class Main_screen extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
+				global_prevent_reDraw = true;
 				selectedMake = arg0.getItemAtPosition(arg2).toString();
 				if (selectedMake.equals(NONE_EXISTING)) {
 					selectedModel = NONE_EXISTING;
-
-					sendButton.setEnabled(true);
+					btn_save.setEnabled(true);
 				} else if (selectedMake.equals(BLANK_FISRT_ITEM)) {
 					modelSpinner.setEnabled(false);
 				} else {
+					btn_save.setEnabled(false);
 					modelSpinner.setEnabled(true);
 					sendButton.setEnabled(false);
 					setModelSpinnerContent(SELECT_ONE_MODEL_PREFIX
@@ -265,7 +388,8 @@ public class Main_screen extends Activity {
 					int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				selectedModel = arg0.getItemAtPosition(arg2).toString();
-				sendButton.setEnabled(true);
+				btn_save.setEnabled(true);
+				
 			}
 
 			@Override
@@ -279,44 +403,42 @@ public class Main_screen extends Activity {
 		// 4.1.1 TODO: load a bitmap indicating to start ...
 		// 4.1.2 set on touchlisnter
 		mImageView.setOnTouchListener(new OnTouchListener() {
-			// float ul_x_original;
-			// float ul_y_original;
-			// float br_y_original;
-			// float br_x_original;
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				// int actionNo=event.getAction();
+
 				DrawImageView drawView = (DrawImageView) v;
 				// private boolean prevent_reDraw=false;
 
-				if (prevent_reDraw) {
-					// do nothing! jump out.
-					return true;
-
+				if (!global_prevent_reDraw) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						drawView.left = event.getX();
+						drawView.top = event.getY();
+					} else {
+						drawView.right = event.getX();
+						drawView.bottom = event.getY();
+					}
+					drawView.invalidate();
+					drawView.drawRect = true;
+					// prevent_reDraw=true;
+					// btn_save.setEnabled(true);
+					// btn_onemore.setEnabled(false);
+					makeSpinner.setEnabled(true);
+                    sendButton.setEnabled(false);
 				}
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					drawView.left = event.getX();
-					drawView.top = event.getY();
-				} else {
-					drawView.right = event.getX();
-					drawView.bottom = event.getY();
-				}
-				drawView.invalidate();
-				drawView.drawRect = true;
-				// prevent_reDraw=true;
-				btn_confirm.setEnabled(true);
-
+                
 				return true;
 			}
 		});
 
-		// 4.1.3 clearRect
-		btn_confirm.setOnClickListener(new OnClickListener() {
+		// 4.1.3 add another rect!
+		//rect_count = 0;
+		rects = new int[total_rects][4];
+		btn_save.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+
 				// TODO Auto-generated method stub
 				// FIXME Transform local rect parameter to the image!
 				int targetW = mImageView.getWidth();
@@ -340,17 +462,58 @@ public class Main_screen extends Activity {
 				}
 				Log.d("scalefactor_w", "" + w_scaleFactor);
 				Log.d("scalefactor_h", "" + h_scaleFactor);
+				rect_ul=new Point();
+				rect_br=new Point();
 				rect_ul.x = (int) (mImageView.left * w_scaleFactor);
 				rect_ul.y = (int) (mImageView.top * h_scaleFactor);
 				rect_br.x = (int) (mImageView.right * w_scaleFactor);
 				rect_br.y = (int) (mImageView.bottom * h_scaleFactor);
+
+				
+				
+				mImageView.rectArray[global_info_count][0] = (int) mImageView.top;
+				mImageView.rectArray[global_info_count][1] = (int) mImageView.left;
+				mImageView.rectArray[global_info_count][2] = (int) mImageView.bottom;
+				mImageView.rectArray[global_info_count][3] = (int) mImageView.right;
+
+				// by sequence: upper left bottom right
+
+				rects[global_info_count][0] = rect_ul.y;
+				rects[global_info_count][1] = rect_ul.x;
+				rects[global_info_count][2] = rect_br.y;
+				rects[global_info_count][3] = rect_br.x;
+
+				
+				makes[global_info_count]=new String(selectedMake);
+				models[global_info_count]=new String(selectedModel);
 				Log.d("Test", "left:  " + rect_ul.x);
 				Log.d("Test", "right: " + rect_br.x);
 				Log.d("Test", "top:  " + rect_ul.y);
 				Log.d("Test", "bottom: " + rect_br.y);
-				prevent_reDraw = true;
+				global_prevent_reDraw = false;
+				global_info_count = global_info_count + 1; // only at this place +1;
+				mImageView.rect_count = global_info_count;
+				//after imaged saved make all other things gray
+				btn_save.setEnabled(false);
+				global_prevent_reDraw=false;
+				makeSpinner.setEnabled(false);
+				modelSpinner.setEnabled(false);
+				
+				
+				Log.d("OnRectCount", ""+global_info_count);
+				if (global_info_count==5) {
+					btn_save.setEnabled(false);
+					global_prevent_reDraw=true;
+					makeSpinner.setEnabled(false);
+					modelSpinner.setEnabled(false);
+					String showMessage="The number annotations has exceeded 5";
+					showToast(showMessage, R.drawable.caution);
+				}
+				sendButton.setEnabled(true);
 			}
 		});
+
+
 		// 3.1 Parse information and so on...
 
 		// ********send file & point***************//
@@ -362,89 +525,160 @@ public class Main_screen extends Activity {
 				// boolean flag_send = true;
 
 				// Save rescaled image:
-/*				Bitmap temp = BitmapFactory.decodeFile(mCurrentPhotoPath);
-				File public_dir = Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);*/
-                ExifInterface exif;
+				/*
+				 * Bitmap temp = BitmapFactory.decodeFile(mCurrentPhotoPath);
+				 * File public_dir = Environment
+				 * .getExternalStoragePublicDirectory
+				 * (Environment.DIRECTORY_DCIM);
+				 */
+				ExifInterface exif;
 				try {
 					exif = new ExifInterface(mCurrentPhotoPath);
+
+					String longti = exif
+							.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+					String lati = exif
+							.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+					String longti_ref = exif
+							.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+					String lati_ref = exif
+							.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+				    
+					pb_send = new ParseObject("annotation_info");
+					pb_send.put("usr", usr_name);
+
+					if (global_info_count != 0) {
+
+						for (int i = 0; i < global_info_count; i++) {
+							pb_send.put("make_"+i, makes[i]);
+							pb_send.put("model_"+i, models[i]);
+							
+							 pb_send.put("Rect_Top_"+i,rects[i][0] );
+							 pb_send.put("Rect_Left_"+i, rects[i][1]);
+							 pb_send.put("Rect_Bottom_"+i, rects[i][2]);
+							 pb_send.put("Rect_Rigth_"+i, rects[i][3]);
+							
+
+						}
+						
+					}
 				
-                String longti=exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                String lati=exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                String longti_ref=exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-                String lati_ref=exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-                //String imgName=exif.getAttribute()
-				WifiManager wifi_connected = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+					pb_send.put("Location_Lati", lati + " " + lati_ref);
+					pb_send.put("Location_Longti", longti + " " + longti_ref);
+					pb_send.put("focalLength", exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
+					pb_send.put("flash", exif.getAttribute(ExifInterface.TAG_FLASH));
+					pb_send.put("exposuretime",exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME));
+					pb_send.put("image_make", exif.getAttribute(ExifInterface.TAG_MAKE));
+					pb_send.put("imagemodel", exif.getAttribute(ExifInterface.TAG_MODEL));
+					pb_send.put("whitebalance", exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE));
+					
+					
+					pb_send.put("imgName", imageFileName + JPEG_FILE_SUFFIX);
+					
+					
+					
 				
-//				if (wifi_connected.isWifiEnabled()) {
-					// Send everything except image !
-					pb_send=new ParseObject("annotation_info");
-					pb_send.put("Rect_Top",rect_ul.y );
-					pb_send.put("Rect_Left", rect_ul.x);
-					pb_send.put("Rect_Botton", rect_br.y);
-					pb_send.put("Rect_Rigth", rect_br.x);
-					pb_send.put("Location_Lati", lati+" "+lati_ref);
-					pb_send.put("Location_Longti", longti+" "+longti_ref);
-					pb_send.put("imgName", imageFileName+JPEG_FILE_SUFFIX);
-                    // Send image --file
-					//pb_send.saveInBackground();
-					//FileInputStream imageStream=null;
 					try {
-					//	imageStream=new FileInputStream(mCurrentPhotoPath);
-						//final byte[] data = IOUtils.toByteArray(imageStream);
-						//final byte[] data=imageStream.
-						Bitmap bm=BitmapFactory.decodeFile(mCurrentPhotoPath);
-						ByteArrayOutputStream baos=new ByteArrayOutputStream();
+						// imageStream=new FileInputStream(mCurrentPhotoPath);
+						// final byte[] data = IOUtils.toByteArray(imageStream);
+						// final byte[] data=imageStream.
+						Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
 						bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-						byte[] data=baos.toByteArray();
-						ParseFile imgFile=new ParseFile(imageFileName+JPEG_FILE_SUFFIX,data);
-						
-						
-						pb_send.put("imagefile",imgFile);
-						
-						
+						byte[] data = baos.toByteArray();
+						ParseFile imgFile = new ParseFile(imageFileName
+								+ JPEG_FILE_SUFFIX, data);
+
+						pb_send.put("imagefile", imgFile);
+
 						if (wifi_connected.isWifiEnabled()) {
-							 pb_send.saveInBackground(new SaveCallback() {
-									
-									@Override
-									public void done(ParseException arg0) {
-										// TODO Auto-generated method stub
-									
+							pb_send.saveInBackground(new SaveCallback() {
 
-											String send_success="Send to server successfully!";
-											showToast(send_success, R.drawable.success);
-
-									}
-								});
-						}else {
-							pb_send.saveEventually(new SaveCallback() {
-								
 								@Override
 								public void done(ParseException arg0) {
 									// TODO Auto-generated method stub
-									String send_success="Last unsent items send successfully";
+
+									String send_success = "Send to server successfully!";
 									showToast(send_success, R.drawable.success);
+                                   
+									global_info_count=0;
+									
 								}
 							});
+							//FIXME
+							//1. delete all files
+							//2. draw a new image---please take a new one!
+							
+							
+						} else {//这里建立数据库
+//FIXME
+							JSONArray old_offlineJsonArray;
+							String temp=filesaveread.read(getApplicationContext(), offline_filename);
+							if (temp==null) {
+								old_offlineJsonArray=new JSONArray();
+							}else {
+								old_offlineJsonArray=new JSONArray(temp);
+							}
+						
+		
+							JSONObject toSend_item=new JSONObject();
+							
+						//toSend_item.put("", "");
+							//pb_send = new ParseObject("annotation_info");
+							toSend_item.put("usr", usr_name);
+                            toSend_item.put("globalcount", global_info_count);
+							if (global_info_count != 0) {
+
+								for (int i = 0; i < global_info_count; i++) {
+									toSend_item.put("make_"+i, makes[i]);
+									toSend_item.put("model_"+i, models[i]);
+									
+									 toSend_item.put("Rect_Top_"+i,rects[i][0] );
+									 toSend_item.put("Rect_Left_"+i, rects[i][1]);
+									 toSend_item.put("Rect_Bottom_"+i, rects[i][2]);
+									 toSend_item.put("Rect_Rigth_"+i, rects[i][3]);
+									
+
+								}
+								
+							}
+						
+							toSend_item.put("Location_Lati", lati + " " + lati_ref);
+							toSend_item.put("Location_Longti", longti + " " + longti_ref);
+							toSend_item.put("focalLength", exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
+							toSend_item.put("flash", exif.getAttribute(ExifInterface.TAG_FLASH));
+							toSend_item.put("exposuretime",exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME));
+							toSend_item.put("image_make", exif.getAttribute(ExifInterface.TAG_MAKE));
+							toSend_item.put("imagemodel", exif.getAttribute(ExifInterface.TAG_MODEL));
+							toSend_item.put("whitebalance", exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE));
+							
+							
+							toSend_item.put("imgName", imageFileName + JPEG_FILE_SUFFIX);
+							toSend_item.put("savepath", mCurrentPhotoPath);
+							
+							
+						    old_offlineJsonArray.put( toSend_item);
+						    
+						 filesaveread.save(getApplicationContext(), offline_filename, old_offlineJsonArray.toString());
+							global_info_count=0;
+							String showMessage="Saved in Local machine, image will be uploaded when wifi available";
 						}
- 
 
 					} catch (Exception e) {
 						// TODO: handle exception
-					}finally{
-						//IOUtils.closeQuietly(imageStream);
+					} finally {
+						// IOUtils.closeQuietly(imageStream);
 					}
-//				} else {
-//					// Save data
-//					String wifi_not_available_string = "Cannot connect to Wifi, will save image on your local momory ";
-//					showToast(wifi_not_available_string, R.drawable.caution);
-//					
-//					
-//				}
+				
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
+				sendButton.setEnabled(false);
+				makeSpinner.setEnabled(false);
+				modelSpinner.setEnabled(false);
 			}
 
 		});
@@ -454,6 +688,59 @@ public class Main_screen extends Activity {
 		// XXX Parse data
 
 	}// end of OnCreate
+
+	private void transfer_Json_Pobject(ParseObject pobject, JSONObject tem_item) {
+		// TODO Auto-generated method stub
+		//pobject = new ParseObject("annotation_info");
+		try {
+			pobject.put("usr", tem_item.getString("usr"));
+		
+
+		//if (global_info_count != 0) {
+
+			for (int i = 0; i < tem_item.getInt("globalcount"); i++) {
+				pobject.put("make_"+i, tem_item.getString("make_"+i));
+				pobject.put("model_"+i, tem_item.getString("model_"+i));
+				
+				 pobject.put("Rect_Top_"+i,    tem_item.getInt("Rect_Top_"+i) );
+				 pobject.put("Rect_Left_"+i,   tem_item.getInt("Rect_Left_"+i));
+				 pobject.put("Rect_Bottom_"+i, tem_item.getInt("Rect_Bottom_"+i));
+				 pobject.put("Rect_Rigth_"+i,  tem_item.getInt("Rect_Rigth_"+i));
+				
+			
+		}
+	
+		pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
+		pobject.put("Location_Longti", tem_item.getString("Location_Longti"));
+		pobject.put("focalLength",tem_item.getString("focalLength") );
+		pobject.put("flash", tem_item.getString("flash"));
+		pobject.put("exposuretime",tem_item.getString("exposuretime"));
+		pobject.put("image_make", tem_item.getString("image_make"));
+		pobject.put("imagemodel",tem_item.getString("imagemodel"));
+		pobject.put("whitebalance", tem_item.getString("whitebalance"));
+		
+		
+		pobject.put("imgName", tem_item.get("imgName"));
+		
+			// imageStream=new FileInputStream(mCurrentPhotoPath);
+			// final byte[] data = IOUtils.toByteArray(imageStream);
+			// final byte[] data=imageStream.
+			Bitmap bm = BitmapFactory.decodeFile(tem_item.getString("savepath"));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+			byte[] data = baos.toByteArray();
+//			ParseFile imgFile = new ParseFile(imageFileName
+//					+ JPEG_FILE_SUFFIX, data);
+			ParseFile imgFile = new ParseFile(tem_item.getString("imgName"), data);
+
+			pobject.put("imagefile", imgFile);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 
 	private void showToast(String show_String, int icon) {
 		// TODO Auto-generated method stub
@@ -644,7 +931,7 @@ public class Main_screen extends Activity {
 	private File createImageFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(new Date());
-		 imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+		imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
 		File albumF = getAlbumDir();
 		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
 				albumF);
@@ -763,14 +1050,14 @@ public class Main_screen extends Activity {
 	 */
 	@Override
 	protected void onResume() {
-		// FIXME Not Verified
-		modelEnabled = false;
-		modelSpinner.setEnabled(modelEnabled);
-
-		prevent_reDraw = false;
-		invalidateSendBtn();
-		rect_br = new Point();
-		rect_ul = new Point();
+        cleanVectors();
+		makeSpinner.setEnabled(false);
+		modelSpinner.setEnabled(false);
+		btn_save.setEnabled(false);
+		sendButton.setEnabled(false);
+		retakeButton.setEnabled(true);
+		global_prevent_reDraw = false;
+		global_info_count=0; //每次重新一张图片的时候清零
 		super.onResume();
 	}
 
@@ -792,8 +1079,9 @@ public class Main_screen extends Activity {
 		// TODO Auto-generated method stub
 		if (null != mImageView) {
 			mImageView.clearrect();// 去除留下的rect
+			mImageView.clearRecords();
 		}
-		prevent_reDraw = false;
+		//global_prevent_reDraw= false;
 		super.onPause();
 	}
 
@@ -801,4 +1089,131 @@ public class Main_screen extends Activity {
 
 	// Toast
 
+	private static boolean isEmailValid(String email) {
+		boolean isValid = false;
+
+		String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+		CharSequence inputStr = email;
+
+		Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(inputStr);
+		if (matcher.matches()) {
+			isValid = true;
+		}
+		return isValid;
+	}
+
+	
+	
+	
+	private void showDialog(String showString) {
+		 
+		  AlertDialog.Builder wifi_perference = new AlertDialog.Builder(
+		  Main_screen.this); wifi_perference.setTitle("Warning");
+		  wifi_perference.setMessage(showString);
+		  wifi_perference.setIcon(R.drawable.caution);
+		  
+		  wifi_perference.setPositiveButton("OK", new
+		  DialogInterface.OnClickListener() {
+		  
+		  @Override public void onClick(DialogInterface dialog, int which) {
+			  
+			  dispathTakePictureIntent();
+		  
+		  } });
+		  
+		  wifi_perference.setNegativeButton("No", new
+		  DialogInterface.OnClickListener() {
+		  
+		  @Override public void onClick(DialogInterface dialog, int which) { } });
+		  wifi_perference.setCancelable(true); AlertDialog wifi_dialog =
+		 wifi_perference.create(); wifi_dialog.show();
+		  
+		 }
+	
+	
+
+	class FileSavingThread extends Thread
+	{
+		private String content;
+		private String fileName;
+
+		public FileSavingThread(String fileName,String content)
+		{
+			this.fileName = fileName;
+			this.content = content;
+		}
+		@Override
+		public void run()
+		{
+			filesaveread.save(getApplicationContext(),fileName, content);
+		}
+	}
+	
+		class UploadFileThread extends Thread{
+			public   UploadFileThread() {
+				// TODO Auto-generated constructor stub
+			}
+
+			/* (non-Javadoc)
+			 * @see java.lang.Thread#run()
+			 */
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				//super.run();
+
+				String offline_string= filesaveread.read(getApplicationContext(), offline_filename);
+				 if (offline_string==null) {
+					//do nothing 
+				}else {
+					 try {
+						offline_JsonArray=new JSONArray(offline_string);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					int item_num=offline_JsonArray.length();
+					
+				if(item_num>0) {
+					
+						JSONObject tem_item;
+						try {
+							tem_item = (JSONObject)offline_JsonArray.get(0);
+						
+						 ParseObject pobject=new ParseObject("annotation_info");
+						// pobject.put("", tem_item.getString("usr"));
+						
+						transfer_Json_Pobject(pobject,tem_item);
+						 
+						 pobject.saveInBackground(new SaveCallback() {
+							
+							@Override
+							public void done(ParseException arg0) {
+								// TODO Auto-generated method stub
+								
+								offline_JsonArray=remove(0, offline_JsonArray);
+						         	recursive_upload();	
+							}
+
+							
+						});
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						 
+					}
+				
+				
+					
+				}
+				 
+			}
+			
+		} 
 }// Ending of whole class!
+
+
+
+

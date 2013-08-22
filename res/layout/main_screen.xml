@@ -2,86 +2,120 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="4" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
         android:orientation="vertical" >
 
+        <TextView
+            android:id="@+id/mainscreen_welcome_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:typeface="serif" />
+
         <Button
-            style="@style/btnStyleBlackpearl"
             android:id="@+id/button_take_new"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/take_new_string" 
-            android:textSize="20sp"
-           />
-
-        
-        <TextView
-            android:id="@+id/make_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:text="@string/make_text_string"
+            android:text="@string/take_new_string"
             android:textSize="20sp" />
 
-        <Spinner 
-            android:id="@+id/carmakespinner"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            
-            />
+            android:orientation="horizontal"
+            android:weightSum="2" >
 
-        <TextView
-            android:id="@+id/model_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/model_text_string"
-            android:textSize="20sp" />
+            <!--
+                 <Button
+                android:id="@+id/btn_onemore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/addonemorestring" />
+            -->
 
-        <Spinner android:id= "@+id/carmodelspinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-<LinearLayout 
-    android:orientation="horizontal">
-        <Button
-            android:id="@+id/btn_confirmRect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:text="@string/clear_rect"
-            android:textSize="20sp" 
-            style="@style/btnStyleBlackpearl"/>
-        <Button 
-            android:id="@+id/btn_onemore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/addonemorestring"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/make_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/make_text_string"
+                    android:textSize="20sp" />
+
+                <Spinner
+                    android:id="@+id/carmakespinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/model_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/model_text_string"
+                    android:textSize="20sp" />
+
+                <Spinner
+                    android:id="@+id/carmodelspinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+           <RelativeLayout 
+               android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1">
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Save informaton" />
+</RelativeLayout>
         </LinearLayout>
-        <Button
-            style="@style/btnStyleBlackpearl"
-            android:id="@+id/button_send_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/finish_annotating" 
-            android:singleLine="true"
-            android:textSize="20sp"
-            />
-        
 
+        <Button
+            android:id="@+id/button_send_server"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/finish_annotating"
+            android:textSize="20sp" />
+        
+        <TextView 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Note:"/>
+        
+        <TextView 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Please draw rectangle first then select the make and model in the dropdown list"/>
     </LinearLayout>
 
-   <!--  <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible" /> -->
-  <edu.cmu.carannotationv2.DrawImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible" /> 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="3" >
+
+        <edu.cmu.carannotationv2.DrawImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="visible" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -2,11 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_back_ground"
     android:orientation="vertical"
-    tools:context=".Login" 
-    android:background="@drawable/login_back_ground">
-
-
+    tools:context=".Login" >
 
     <TextView
         android:id="@+id/welcome_words"
@@ -16,152 +14,78 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="@string/welcome_words_string"
-        android:textSize="45sp" 
         android:textColor="#AFDEFE"
-        android:typeface="serif"
-        android:textStyle="italic"/>
+        android:textSize="45sp"
+        android:textStyle="italic"
+        android:typeface="serif" />
 
-    <!-- change this button! -->
-    <!--  <com.facebook.widget.LoginButton
-        android:id="@+id/login_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/take_photo_initial"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
-        android:textSize="50sp" 
-        /> -->
-        <LinearLayout 
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/welcome_words"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="300sp"
-             >
-            <Button
-          android:id="@+id/login_facebook"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:gravity="bottom"
-          android:text="@string/login_facebook_string_onbtn"
-          android:textColor="@android:color/black"
-          android:textSize="50sp" />
-     <Button
-          android:id="@+id/take_photo_initial"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-         android:gravity="bottom"
-         android:layout_marginTop="20sp"
-          android:layout_marginBottom="100dp"
-          android:text="@string/login_anonymous_string_onbtn"
-          android:textColor="@android:color/black"
-          android:textSize="50sp" />
-     </LinearLayout>
-     
-        <Button 
-            android:layout_alignParentRight="true" 
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/readme_string_onbtn"
-            />   <!--  <Button
-        android:id="@+id/take_photo_initial"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_below="@id/welcome_words"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="75dp"
-        android:background="@android:color/background_light"
-        android:drawableLeft="@drawable/takepic"
-        android:text="@string/take_photo_onStart"
-        android:textColor="@android:color/black"
-        android:textSize="50sp" 
-        style="@style/btnStyleBlackpearl"
-        /> -->
+        android:layout_marginTop="100sp"
+        android:orientation="vertical"
+        android:weightSum="4" >
 
-    <!-- <RadioGroup
-        android:id="@+id/loginorvisitor"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/Email"
+            android:textColor="@android:color/white"
+            android:textSize="50sp" />
+
+        <EditText
+            android:id="@+id/login_account"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:inputType="text" 
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/login_login_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/login_string_onbtn"
+            android:textColor="@android:color/white"
+            android:textSize="50sp" />
+
+        <Button
+            android:id="@+id/login_anonymous_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp" 
+            android:layout_weight="1"
+            android:layout_marginBottom="100dp"
+            android:layout_marginTop="20sp"
+            android:gravity="bottom"
+            android:text="@string/login_anonymous_string_onbtn"
+            android:textColor="@android:color/white"
+            android:textSize="50sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_below="@+id/welcome_words"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login_string"
-            android:textSize="25sp" 
-            android:checked="false" />
-
-        <RadioButton
-            android:id="@+id/anno"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="19dp"
-            android:checked="true"
-            android:text="@string/anno_string"
-            android:textSize="25sp" />
-
-    </RadioGroup> -->
-
-    <!-- <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/loginorvisitor"
-        android:layout_below="@+id/loginorvisitor"
-        android:layout_marginLeft="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/facebookaccounthint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Email" />
-
-        <EditText
-            android:id="@+id/facebook_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="text" 
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Password" />
-
-        <EditText
-            android:id="@+id/facebook_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword" />
-        <LinearLayout 
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-        <Button 
-            android:id="@+id/btn_signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_string"
-            style="@style/btnStyleBlackpearl"
-            android:textSize="20sp"/>
         <Button
-            android:id="@+id/btn_getbackaccount"
+            android:id="@+id/readme_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/readme_string_onbtn" />
+
+        <!-- <Button
+            android:id="@+id/login_signup_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forget_string"
-            style="@style/btnStyleArsenic" />      
-              </LinearLayout>
-    </LinearLayout> -->
-
-      
+            android:text="@string/sign_up_string" /> -->
+    </LinearLayout>
 
 </RelativeLayout>

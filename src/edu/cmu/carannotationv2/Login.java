@@ -1,9 +1,19 @@
 package edu.cmu.carannotationv2;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 import android.util.Log;
 import android.view.Gravity;
@@ -16,185 +26,148 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 
+
+import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
+import com.parse.CountCallback;
+import com.parse.CountCallback;
+//import com.parse.ParseFacebookUtils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 
+//import edu.cmu.cma.MainActivity;
+//import edu.cmu.cma.R;
+
 public class Login extends Activity {
 
-	private Button tkphotoButton;
-	private Button signup_btn;
-	private Button getaccount_btn;
-	private String usrname;
-	private String usrpass;
-	// private RadioButton loginButton;
-	// private RadioButton visitorButton;
-	private EditText usrnameEditText;
-	private EditText passwordEditText;
-	private RadioGroup loginchoiceRadioGroup;
+	
 
+	
+	private Button login_login_btn;
+	private Button login_anonymous_btn;
+	private Button ReadMe_btn;
+	
+	private TextView whyEmail;
+	private EditText emailEditText;
+	private String email;
 	private ParseUser puser;
-
-	// private Toast showToast;
-	// private RadioButton selectedRadioButton;
-
+    private boolean connected_flag;
+	
+    private boolean check_one_out=false;
+	private SharedPreferences sp;// remember the account infomation
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
+      
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        
+
+		sp=this.getSharedPreferences("usrInfo", Context.MODE_PRIVATE);
+		
 		// ***************initialize parse****************//
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
-		ParseFacebookUtils.initialize("622959081070950");
+		// ParseFacebookUtils.initialize("622959081070950");
 		// *************************************************//
-		this.tkphotoButton = (Button) findViewById(R.id.take_photo_initial);
-		// this.loginButton = (RadioButton) findViewById(R.id.login);
-		// this.visitorButton = (RadioButton) findViewById(R.id.anno);
-		this.usrnameEditText = (EditText) findViewById(R.id.facebook_account);
-		this.passwordEditText = (EditText) findViewById(R.id.facebook_password);
-
-		this.loginchoiceRadioGroup = (RadioGroup) findViewById(R.id.loginorvisitor);
-		// this.selectedRadioButton=(RadioButton)findViewById(R.id.anno);
-		// this.selectedRadioButton = null;
-		// usrnameEditText.setFocusable(false);//if this edittext is gray?
-		usrnameEditText.setEnabled(false);
-		passwordEditText.setEnabled(false);
-		addLisntersOnButton();
-
 		
 		
-//		signup_btn.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-////				Intent signupIntent=new Intent(Login.this,sign_up.class);
-////				startActivity(signupIntent);
-//				
-//			}
-//		});
+		
+		this.login_login_btn = (Button) findViewById(R.id.login_login_btn);
+		this.login_anonymous_btn = (Button) findViewById(R.id.login_anonymous_btn);
+		this.emailEditText = (EditText) findViewById(R.id.login_account);
+		//this.whyEmail = (TextView) findViewById(R.id.signin_whyEmail_textview);
+
+		// *******Maybe Comment Later!****//
+		this.ReadMe_btn = (Button) findViewById(R.id.readme_btn);
+		//this.singup_btn = (Button) findViewById(R.id.login_signup_btn);
+		// **********************************************//
+
+		if (!sp.getString("usrEmail", "").equals("")) {
+//			Intent toMain=new Intent(Login.this,Main_screen.class);
+//			toMain.putExtra("usr", sp.getString("usrEmail", ""));
+			emailEditText.setText(sp.getString("usrEmail", ""));
+		}
+		
+		
+		
+		
+		emailEditText.setEnabled(true);
+		emailEditText.requestFocus();
+		addLisntersOnButton_login();
+		//addLisntersOnButton_signup_btn();
+		addLisntersOnButton_anony();
+		
 	}
 
-	private void addLisntersOnButton() {
+	
+	private void addLisntersOnButton_anony() {
 		// TODO Auto-generated method stub
-
-		loginchoiceRadioGroup
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-					@Override
-					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						// TODO Auto-generated method stub
-						if (R.id.login == checkedId) {
-						//	ParseFacebookUtils.logIn(this, new LogInCallback);
-							
-							ParseFacebookUtils.logIn(Login.this, new LogInCallback(){
-
-								@Override
-								public void done(ParseUser user,
-										ParseException err) {
-									// TODO Auto-generated method stub
-									 if (user == null) {
-									      Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
-									    } else if (user.isNew()) {
-									      Log.d("MyApp", "User signed up and logged in through Facebook!");
-									    } else {
-									      Log.d("MyApp", "User logged in through Facebook!");
-									    }
-									  }	
-								
-								
-							});
-//							usrnameEditText.setEnabled(true);
-//							passwordEditText.setEnabled(true);
-//							//signup_btn.setEnabled(true);
-//							getaccount_btn.setEnabled(true);
-
-						} else {
-							usrnameEditText.setEnabled(false);
-							passwordEditText.setEnabled(false);
-							signup_btn.setEnabled(false);
-							getaccount_btn.setEnabled(false);
-						}
-					}
-				});
-
-		tkphotoButton.setOnClickListener(new OnClickListener() {
-
+		login_anonymous_btn.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				int selectedId = loginchoiceRadioGroup
-						.getCheckedRadioButtonId();
-				// selectedRadioButton=(RadioButton)findViewById(selectedId);
-				if (selectedId == R.id.login) {
-					// 1 do password thing!
-					// 1.1 password declined!
-					// 1.2 Password accepted!
-					ParseUser.logInInBackground(usrnameEditText.getText()
-							.toString(), passwordEditText.getText().toString(),
-							new LogInCallback() {
-
-								@Override
-								public void done(ParseUser arg0,
-										ParseException arg1) {
-									// TODO Auto-generated method stub
-
-									if (arg0 != null) {
-										// login successfully!
-//										Intent toMain = new Intent(Login.this, Main_screen.class);
-//										startActivity(toMain);
-									} else {
-										if (arg1.getCode() == ParseException.CONNECTION_FAILED) {
-
-											// wifi not working!
-											String showMessage = "Wifi not working now, system will update your information later!";
-											showToast(showMessage,
-													R.drawable.error);
-
-										} else {
-											if (!queryCredentials(usrnameEditText
-													.getText().toString())) {
-												// usr doesn't exist!
-												// clear all edit text
-												String showMessage = "Invalid password/usrname!";
-												showToast(showMessage,
-														R.drawable.error);
-											}
-
-										}
-
-									}
-								}
-
-							});
-
-					// Also show the process dialog
-
-				} else {
-					// without login
-				}
-
-				Intent toMain = new Intent(Login.this, Main_screen.class);
+				String anonymoususrName="anonymous_root";
+				Intent toMain=new Intent(Login.this,Main_screen.class);
+				toMain.putExtra("usr", anonymoususrName);
 				startActivity(toMain);
+				
+				
 			}
 		});
 	}
 
+
+	private void addLisntersOnButton_login() {
+		// TODO Auto-generated method stub
+
+		login_login_btn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+             
+				email=emailEditText.getText().toString();
+				if (isEmailValid(email)) {
+					String showMessage = "Loged in";
+					showToast(showMessage, R.drawable.success);
+
+					//remember me!
+					if (!sp.getString("usrEmail", "").equals(emailEditText.getText().toString())) {
+						Editor editor=sp.edit();
+						editor.putString("usrEmail", email);
+	                    editor.commit();
+					}
+														
+					Intent toMain = new Intent(Login.this,
+							Main_screen.class);
+					toMain.putExtra("usr", email);
+				
+
+					startActivity(toMain);}
+					else {
+						emailEditText.setText("");
+						String showMessage="Please input valid email address";
+						showToast(showMessage, R.drawable.caution);
+					}
+					
+				}
+		});
+	}
+
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -202,17 +175,7 @@ public class Login extends Activity {
 		return true;
 	}
 
-	private boolean queryCredentials(String username) {
-		ParseQuery<ParseUser> queryuserlist = ParseUser.getQuery();
-		queryuserlist.whereEqualTo("username", username);
-		try {
-			// attempt to find a user with the specified credentials.
-			return (queryuserlist.count() != 0) ? true : false;
-		} catch (ParseException e) {
-			return false;
-		}
-	}
-
+	
 	private void showToast(String show_String, int icon) {
 		// TODO Auto-generated method stub
 		Toast showToast = Toast.makeText(getApplicationContext(), show_String,
@@ -225,22 +188,19 @@ public class Login extends Activity {
 		showToast.show();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		if (requestCode==com.facebook.Session.DEFAULT_AUTHORIZE_ACTIVITY_CODE) {
-			ParseFacebookUtils.finishAuthentication(requestCode, requestCode, data);
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		
-		
-	}
+	
+	
+	private static boolean isEmailValid(String email) {
+	    boolean isValid = false;
 
-	
-	
-	
+	    String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+	    CharSequence inputStr = email;
+
+	    Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+	    Matcher matcher = pattern.matcher(inputStr);
+	    if (matcher.matches()) {
+	        isValid = true;
+	    }
+	    return isValid;
+	}
 }
