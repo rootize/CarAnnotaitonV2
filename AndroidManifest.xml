@@ -46,6 +46,8 @@
             android:name="edu.cmu.carannotationv2.sign_up"
             android:label="@string/app_name" >
         </activity>
+        <activity android:name="edu.cmu.carannotationv2.readme"
+            ></activity>
     </application>
 
 </manifest>

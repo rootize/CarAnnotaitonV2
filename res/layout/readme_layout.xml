@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:weightSum="5"
+    android:layout_gravity="center">
+    
+<TextView android:id="@+id/audioTextView"
+    android:layout_height = "0dp"
+    android:layout_weight="4"
+    android:layout_width = "fill_parent"
+    android:text="Thanks for using   ,\n just for clarification , We will not: \n 1, Use any 3G data; \n 2, Send you spams unless we will give gift to you :)"
+    android:singleLine="false"
+    android:textSize="20sp"
+    android:scrollbars="vertical"
+    android:maxLines="5"
+    ></TextView>
+<Button 
+    android:id="@+id/btn_readme_OK"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    
+    android:text="OK"
+    />
+</LinearLayout>
