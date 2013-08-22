@@ -43,11 +43,13 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="edu.cmu.carannotationv2.sign_up"
+            android:name="edu.cmu.carannotationv2.Sign_up"
             android:label="@string/app_name" >
         </activity>
         <activity android:name="edu.cmu.carannotationv2.readme"
-            ></activity>
+            >
+            
+        </activity>
     </application>
 
 </manifest>

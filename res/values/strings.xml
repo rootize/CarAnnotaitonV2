@@ -3,15 +3,9 @@
 
     <string name="app_name">CarAnnotationV2</string>
     <string name="action_settings">Settings</string>
-    <!-- <string name="hello_world">Hello world!</string> -->
     <string name="Email">Email:</string>
-    <string name="Password">Password</string>
-    <string name="anno_string">Take a photo as annoymous</string>
-    <string name="login_string">Login using Facebook account</string>
     <string name="welcome_words_string">Thanks for using CarNot!</string>
-    <string name="take_photo_onStart">Start!</string>
     <string name="take_new_string">Take a Photo!</string>
-    <string name="send_server_string">Send to Server!</string>
      <string name="album_name">CameraSample</string>
      <string name="desc">Cropped image show</string>
      <string name="clear_rect">Confirm Rectangle</string>
@@ -22,12 +16,18 @@
      <string name="finish_annotating">Done!</string>
      <string name="addonemorestring">Annotate one more</string>
      <string name="login_string_onbtn">Log in </string>
-     <string name="login_anonymous_string_onbtn">Anonymous User</string>
-     <string name="readme_string_onbtn">ReadMe</string>
+     <string name="login_anonymous_string_onbtn">Anonymous</string>
+     <string name="readme_string_onbtn">Fisrt time use?</string>
      <string name="whyemail">Why Email?</string>
      <string name="logging_string">Logging in, please wait</string>
      <string name="cancel_btn">Cancel</string>
      <string name="signup_nickname_string">Nickname</string>
      <string name="savecurrentrect">Save Information</string>
      <string name="usrname_string">User name:</string>
+     <string name="mainscreen_note">Note:</string>
+     <string name="mainscreen_note_extent">Please draw rectangle first then select the make and model in the dropdown list</string>
+     <string name="mainscreen_btn_saveinformation_string">Save Information</string>
+     <string name="mainscreen_textview_guidance_string">Please press "take a new picture to start"</string>
+     <string name="mainscreen_textview_sampletextwelcome_string">Welcome XXX</string>
+     <string name="mainscreen_checkbox_hideguidance_string">Hide guidance</string>
 </resources>

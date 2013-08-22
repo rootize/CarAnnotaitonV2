@@ -4,22 +4,59 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    android:weightSum="4" >
+    android:weightSum="5" >
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical" >
+        android:gravity="top"
+        android:orientation="vertical"
+        android:weightSum="10" >
 
         <TextView
             android:id="@+id/mainscreen_welcome_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/mainscreen_textview_sampletextwelcome_string"
             android:textSize="20sp"
             android:textStyle="italic"
             android:typeface="serif" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:weightSum="7" >
+
+            <TextView
+                android:id="@+id/mainscreen_textview_textguidance"
+                android:textColor="@android:color/holo_blue_bright"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:maxLines="2"
+                android:text="@string/mainscreen_textview_guidance_string" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:contentDescription="@string/desc"
+                 android:src="@drawable/caution"/>
+            <CheckBox 
+                android:id="@+id/mainscreen_checkbox_hideguidance"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp" 
+                android:layout_weight="1"
+                android:text="@string/mainscreen_checkbox_hideguidance_string"
+                android:layout_gravity="right|bottom"
+                android:gravity="right|center_vertical"
+                
+                />
+        </LinearLayout>
 
         <Button
             android:id="@+id/button_take_new"
@@ -31,17 +68,9 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal"
             android:weightSum="2" >
-
-            <!--
-                 <Button
-                android:id="@+id/btn_onemore"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/addonemorestring" />
-            -->
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -74,17 +103,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-           <RelativeLayout 
-               android:layout_width="0dp"
+
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1">
-            <Button
-                android:id="@+id/btn_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Save informaton" />
-</RelativeLayout>
+                android:layout_weight="1" >
+
+                <Button
+                    android:id="@+id/btn_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/mainscreen_btn_saveinformation_string" />
+            </RelativeLayout>
         </LinearLayout>
 
         <Button
@@ -94,27 +125,28 @@
             android:singleLine="true"
             android:text="@string/finish_annotating"
             android:textSize="20sp" />
-        
-        <TextView 
+
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Note:"/>
-        
-        <TextView 
+            android:text="@string/mainscreen_note" />
+
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Please draw rectangle first then select the make and model in the dropdown list"/>
+            android:text="@string/mainscreen_note_extent" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="3" >
+        android:layout_weight="4" >
 
         <edu.cmu.carannotationv2.DrawImageView
             android:id="@+id/imageView1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_gravity="right|bottom"
             android:visibility="visible" />
     </LinearLayout>
 

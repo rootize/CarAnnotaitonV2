@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:background="@drawable/login_back_ground"
     android:orientation="vertical"
-    tools:context=".Login" >
+    android:padding="10sp"
+    tools:context=".Login" 
+     >
 
     <TextView
         android:id="@+id/welcome_words"
@@ -15,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/welcome_words_string"
         android:textColor="#AFDEFE"
-        android:textSize="45sp"
+        android:textSize="50sp"
         android:textStyle="italic"
         android:typeface="serif" />
 
@@ -25,46 +27,54 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/welcome_words"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100sp"
         android:orientation="vertical"
-        android:weightSum="4" >
+        android:weightSum="6" 
+        android:gravity="bottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:text="@string/Email"
+            android:gravity="bottom|left"
             android:textColor="@android:color/white"
-            android:textSize="50sp" />
+            android:textSize="35sp" />
 
         <EditText
             android:id="@+id/login_account"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:inputType="text" 
-            android:layout_weight="1"/>
+            android:layout_weight="0.8"
+            android:gravity="bottom"
+            android:textSize="25sp"
+            android:textColor="@android:color/white"/>
 
         <Button
             android:id="@+id/login_login_btn"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="right|bottom"
             android:text="@string/login_string_onbtn"
             android:textColor="@android:color/white"
-            android:textSize="50sp" />
+            android:textSize="50sp" 
+            android:drawableLeft="@drawable/login"
+            android:background="#669900"/>
 
         <Button
             android:id="@+id/login_anonymous_btn"
             android:layout_width="wrap_content"
             android:layout_height="0dp" 
             android:layout_weight="1"
-            android:layout_marginBottom="100dp"
+            android:drawableLeft="@drawable/anonymous"
             android:layout_marginTop="20sp"
             android:gravity="bottom"
             android:text="@string/login_anonymous_string_onbtn"
             android:textColor="@android:color/white"
-            android:textSize="50sp" />
+            android:textSize="50sp" 
+            android:layout_gravity="bottom"
+            android:background="#669900"/>
     </LinearLayout>
 
     <LinearLayout
@@ -78,14 +88,11 @@
             android:id="@+id/readme_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/readme_string_onbtn" />
+            android:gravity="center|bottom" 
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/question"/>
 
-        <!-- <Button
-            android:id="@+id/login_signup_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_string" /> -->
+   
     </LinearLayout>
 
 </RelativeLayout>
