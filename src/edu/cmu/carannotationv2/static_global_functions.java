@@ -1,9 +1,20 @@
 package edu.cmu.carannotationv2;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,5 +51,85 @@ public class static_global_functions {
 	    }
 	    return isValid;
 	}
+	
+	public static JSONArray remove(final int idx, final JSONArray from) {
+		final List<JSONObject> objs = asList(from);
+		objs.remove(idx);
+
+		final JSONArray ja = new JSONArray();
+		for (final JSONObject obj : objs) {
+			ja.put(obj);
+		}
+
+		return ja;
+	}
+
+	public static List<JSONObject> asList(final JSONArray ja) {
+		final int len = ja.length();
+		final ArrayList<JSONObject> result = new ArrayList<JSONObject>(len);
+		for (int i = 0; i < len; i++) {
+			final JSONObject obj = ja.optJSONObject(i);
+			if (obj != null) {
+				result.add(obj);
+			}
+		}
+		return result;
+	}
+
+	public static  void transfer_Json_Pobject(ParseObject pobject, JSONObject tem_item) {
+		// TODO Auto-generated method stub
+		// pobject = new ParseObject("annotation_info");
+		try {
+			pobject.put("usr", tem_item.getString("usr"));
+
+			// if (global_info_count != 0) {
+
+			for (int i = 0; i < tem_item.getInt("globalcount"); i++) {
+				pobject.put("make_" + i, tem_item.getString("make_" + i));
+				pobject.put("model_" + i, tem_item.getString("model_" + i));
+
+				pobject.put("Rect_Top_" + i, tem_item.getInt("Rect_Top_" + i));
+				pobject.put("Rect_Left_" + i, tem_item.getInt("Rect_Left_" + i));
+				pobject.put("Rect_Bottom_" + i,
+						tem_item.getInt("Rect_Bottom_" + i));
+				pobject.put("Rect_Rigth_" + i,
+						tem_item.getInt("Rect_Rigth_" + i));
+
+			}
+
+			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
+			pobject.put("Location_Longti",
+					tem_item.getString("Location_Longti"));
+			pobject.put("focalLength", tem_item.getString("focalLength"));
+			pobject.put("flash", tem_item.getString("flash"));
+			pobject.put("exposuretime", tem_item.getString("exposuretime"));
+			pobject.put("image_make", tem_item.getString("image_make"));
+			pobject.put("imagemodel", tem_item.getString("imagemodel"));
+			pobject.put("whitebalance", tem_item.getString("whitebalance"));
+
+			pobject.put("imgName", tem_item.get("imgName"));
+
+			// imageStream=new FileInputStream(mCurrentPhotoPath);
+			// final byte[] data = IOUtils.toByteArray(imageStream);
+			// final byte[] data=imageStream.
+			Bitmap bm = BitmapFactory
+					.decodeFile(tem_item.getString("savepath"));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+			byte[] data = baos.toByteArray();
+			// ParseFile imgFile = new ParseFile(imageFileName
+			// + JPEG_FILE_SUFFIX, data);
+			ParseFile imgFile = new ParseFile(tem_item.getString("imgName"),
+					data);
+
+			pobject.put("imagefile", imgFile);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	
 	
 }
