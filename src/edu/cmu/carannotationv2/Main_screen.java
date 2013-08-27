@@ -31,7 +31,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -43,6 +46,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
@@ -61,11 +65,18 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
+
+import edu.cmu.carannotationv2.MyLocation.LocationResult;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Main_screen extends Activity {
+	
+	
+	static String lati=null;
+	static String longti=null;
 	private static final int CAMERA_REQUEST = 1888;
 
 	private static final String offline_filename = "offline";
@@ -75,7 +86,7 @@ public class Main_screen extends Activity {
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-	private Bitmap mImageBitmap; // stores the bitmap
+	private Bitmap mImageBitmap; 
 	private String mCurrentPhotoPath;
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
@@ -85,7 +96,7 @@ public class Main_screen extends Activity {
 
 	private TextView welcomeText;
 	private TextView GuideText;
-	private ImageView GuideImage;
+	//private ImageView GuideImage;
 	private CheckBox hg_CheckBox;
 	private Button btn_takeimg;
 	private Button btn_send;
@@ -116,9 +127,15 @@ public class Main_screen extends Activity {
 
 	private ParseObject pb_send;
 	private String usr_name; // data received from intent
-	private WifiManager wifi_connected;
+	//private WifiManager wifi_connected;
 	private JSONArray offline_JsonArray;
 
+	
+	
+	private LocationManager mgr=null;
+	
+	
+	private boolean wifi_connected;
 	private void cleanVectors() {
 		for (int i = 0; i < NUM; i++) {
 			makes[i] = null;
@@ -140,7 +157,7 @@ public class Main_screen extends Activity {
 
 				ParseObject pobject = new ParseObject("annotation_info");
 				pobject.put("usr", tem_item.getString("usr"));
-				static_global_functions.transfer_Json_Pobject(pobject, tem_item);
+				static_global_functions.transfer_Json_Pobject(pobject, tem_item,lati,longti);
 				pobject.saveInBackground(new SaveCallback() {
 
 					@Override
@@ -167,6 +184,7 @@ public class Main_screen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main_screen);
 
 		// initialize parse
@@ -179,15 +197,22 @@ public class Main_screen extends Activity {
 		Intent receiver = getIntent();
 		usr_name = receiver.getStringExtra("usr");
 
+		
+	//	ConnectivityManager manager=(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)
+		
+		
+		
 		// check wifi
-		wifi_connected = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		
+		//wifi_connected = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
 		String welcome_name = "";
 		if (static_global_functions.isEmailValid(usr_name)) {
 			welcome_name = usr_name;
 		} else {
 			welcome_name = "Dear guest";
 		}
-		if (wifi_connected.isWifiEnabled()) {
+		if (wifi_connected) {
 			new UploadFileThread().start();
 			welcome_name = welcome_name + " (online)";
 
@@ -222,10 +247,14 @@ public class Main_screen extends Activity {
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-		GuideImage = (ImageView) findViewById(R.id.mainscreen_imageview_imageguidance);
+	//	GuideImage = (ImageView) findViewById(R.id.mainscreen_imageview_imageguidance);
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		hg_CheckBox = (CheckBox) findViewById(R.id.mainscreen_checkbox_hideguidance);
-
+	//	hg_CheckBox = (CheckBox) findViewById(R.id.mainscreen_checkbox_hideguidance);
+        //hg_CheckBox.set
+		//hg_CheckBox.setVisibility(false);
+		//hg_CheckBox.setVisibility(View.INVISIBLE);
+		
+		
 		// Don't know what exactly !
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -295,6 +324,7 @@ public class Main_screen extends Activity {
 				// TODO Auto-generated method stub
 				selectedModel = arg0.getItemAtPosition(arg2).toString();
 				btn_save.setEnabled(true);
+				GuideText.setText("If everything is correct, press \"Save Information\"  nutton to save");
 
 			}
 
@@ -330,6 +360,7 @@ public class Main_screen extends Activity {
 					makeSpinner.setEnabled(true);
 					btn_save.setEnabled(false);
 					btn_send.setEnabled(false);
+					GuideText.setText("Please set make/model of the car");
 				}
 
 				return true;
@@ -386,26 +417,6 @@ public class Main_screen extends Activity {
 				makes[global_info_count] = new String(selectedMake);
 				models[global_info_count] = new String(selectedModel);
 
-				Log.d("Image view upper", ""
-						+ mImageView.rectArray[global_info_count][0]);
-				Log.d("Image view left", ""
-						+ mImageView.rectArray[global_info_count][0]);
-				Log.d("Image view bottom", ""
-						+ mImageView.rectArray[global_info_count][0]);
-				Log.d("Image view right", ""
-						+ mImageView.rectArray[global_info_count][0]);
-
-				
-				
-				Log.d("Stored image upper", ""
-						+ rects[global_info_count][0]);
-				Log.d("Stored image left", ""
-						+ rects[global_info_count][0]);
-				Log.d("Stored image bottom", ""
-						+ rects[global_info_count][0]);
-				Log.d("Stored image right", ""
-						+ rects[global_info_count][0]);
-				
 				global_prevent_reDraw = false;
 				global_info_count = global_info_count + 1; // only at this place
 															// +1;
@@ -426,6 +437,8 @@ public class Main_screen extends Activity {
 					static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.caution);
 				}
 				btn_send.setEnabled(true);
+				GuideText.setText("Press \"Done!\" to finish or start annotating another image by drawing on the image");
+				
 			}
 		});
 
@@ -498,7 +511,7 @@ public class Main_screen extends Activity {
 
 						pb_send.put("imagefile", imgFile);
 
-						if (wifi_connected.isWifiEnabled()) {
+						if (wifi_connected) {
 							pb_send.saveInBackground(new SaveCallback() {
 
 								@Override
@@ -605,7 +618,7 @@ public class Main_screen extends Activity {
 				global_prevent_reDraw=true;
 				mImageView.setImageDrawable(getResources().getDrawable(R.drawable.buttonfinish));
 				
-				
+				GuideText.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 				
 			}
 
@@ -614,6 +627,10 @@ public class Main_screen extends Activity {
 			
 		});
 
+		
+		//step1:
+		
+		GuideText.setText("Please press \" Take a Photo! \"  to take a picture");
 		// *****************************************//
 
 		// XXX Parse data
@@ -894,7 +911,9 @@ public class Main_screen extends Activity {
 		if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
 			Log.d("OnActivityResult", "Called!");
 			handleBigCameraPhoto();
-			makeSpinner.setEnabled(true);
+			//step2:
+			GuideText.setText("Please draw a rectangle that covers the (first)car in the photo");
+			//makeSpinner.setEnabled(true);
 		}
 	}
 
@@ -982,7 +1001,20 @@ public class Main_screen extends Activity {
 		public void run() {
 			// TODO Auto-generated method stub
 			// super.run();
-
+			
+			LocationResult locationResult = new LocationResult(){
+			    @Override
+			    public void gotLocation(Location location){
+			        //Got the location!
+			    	
+			   lati=Location.convert(location.getLatitude(), Location.FORMAT_SECONDS);
+			   longti=Location.convert(location.getLongitude(), Location.FORMAT_SECONDS);
+			    }
+			};
+			MyLocation myLocation = new MyLocation();
+			myLocation.getLocation(getApplicationContext(), locationResult);
+			//myLocation.
+			//locationResult.gotLocation(location)
 			String offline_string = filesaveread.read(getApplicationContext(),
 					offline_filename);
 			if (offline_string == null) {
@@ -1005,7 +1037,7 @@ public class Main_screen extends Activity {
 						ParseObject pobject = new ParseObject("annotation_info");
 						// pobject.put("", tem_item.getString("usr"));
 
-						static_global_functions.transfer_Json_Pobject(pobject, tem_item);
+						static_global_functions.transfer_Json_Pobject(pobject, tem_item,lati,longti);
 
 						pobject.saveInBackground(new SaveCallback() {
 

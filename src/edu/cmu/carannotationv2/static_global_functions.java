@@ -15,6 +15,12 @@ import com.parse.ParseObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,36 +28,34 @@ import android.widget.Toast;
 
 public class static_global_functions {
 
-	
-	public static void ShowToast_short(Context context, String showString,int icon){
-		
-		
-			Toast showToast = Toast.makeText(context, showString,
-					Toast.LENGTH_SHORT);
-			showToast.setGravity(Gravity.BOTTOM, 0, 0);
-			LinearLayout toastView = (LinearLayout) showToast.getView();
-			ImageView imgToast = new ImageView(context);
-			imgToast.setImageResource(icon);
-			toastView.addView(imgToast, 0);
-			showToast.show();
-		
+	public static void ShowToast_short(Context context, String showString,
+			int icon) {
+
+		Toast showToast = Toast.makeText(context, showString,
+				Toast.LENGTH_SHORT);
+		showToast.setGravity(Gravity.BOTTOM, 0, 0);
+		LinearLayout toastView = (LinearLayout) showToast.getView();
+		ImageView imgToast = new ImageView(context);
+		imgToast.setImageResource(icon);
+		toastView.addView(imgToast, 0);
+		showToast.show();
 
 	}
-	
+
 	public static boolean isEmailValid(String email) {
-	    boolean isValid = false;
+		boolean isValid = false;
 
-	    String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-	    CharSequence inputStr = email;
+		String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+		CharSequence inputStr = email;
 
-	    Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-	    Matcher matcher = pattern.matcher(inputStr);
-	    if (matcher.matches()) {
-	        isValid = true;
-	    }
-	    return isValid;
+		Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(inputStr);
+		if (matcher.matches()) {
+			isValid = true;
+		}
+		return isValid;
 	}
-	
+
 	public static JSONArray remove(final int idx, final JSONArray from) {
 		final List<JSONObject> objs = asList(from);
 		objs.remove(idx);
@@ -76,7 +80,8 @@ public class static_global_functions {
 		return result;
 	}
 
-	public static  void transfer_Json_Pobject(ParseObject pobject, JSONObject tem_item) {
+	public static void transfer_Json_Pobject(ParseObject pobject,
+			JSONObject tem_item, String lati, String longti) {
 		// TODO Auto-generated method stub
 		// pobject = new ParseObject("annotation_info");
 		try {
@@ -97,9 +102,14 @@ public class static_global_functions {
 
 			}
 
-			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
+//			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
+//			pobject.put("Location_Longti",
+//					tem_item.getString("Location_Longti"));
+			
+			
+			pobject.put("Location_Lati", lati);
 			pobject.put("Location_Longti",
-					tem_item.getString("Location_Longti"));
+					longti);
 			pobject.put("focalLength", tem_item.getString("focalLength"));
 			pobject.put("flash", tem_item.getString("flash"));
 			pobject.put("exposuretime", tem_item.getString("exposuretime"));
@@ -130,6 +140,40 @@ public class static_global_functions {
 
 	}
 
-	
-	
+	//
+	public static boolean wifi_connection(Context context) {
+		ConnectivityManager manager = (ConnectivityManager) context
+				.getSystemService(context.CONNECTIVITY_SERVICE);
+		boolean is3G = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+				.isConnectedOrConnecting();
+		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+				.isConnectedOrConnecting();
+		if (isWifi) {
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+
+//	public static String getLocation(Context context) {
+//         String lati=null;
+//         String longti=null;
+//         
+//		LocationManager mgr = (LocationManager) context
+//				.getSystemService(context.LOCATION_SERVICE);
+//		boolean statusGPS=mgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//		if (statusGPS) {
+//			Location location = mgr
+//					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+//			 lati = Location.convert(location.getLatitude(),
+//					Location.FORMAT_SECONDS);
+//		 longti = Location.convert(location.getLongitude(),
+//					Location.FORMAT_SECONDS);
+//		}
+//		
+//        return lati+"#"+longti;
+//	}
+
 }

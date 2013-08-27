@@ -226,14 +226,14 @@ containing a value of this type.
         public static final int takepic=0x7f02002b;
     }
     public static final class id {
-        public static final int action_settings=0x7f050034;
-        public static final int audioTextView=0x7f05002c;
-        public static final int btn_confirm=0x7f050029;
-        public static final int btn_readme_OK=0x7f05002d;
-        public static final int button_send_server=0x7f05002a;
-        public static final int button_take_new=0x7f050024;
-        public static final int carmakespinner=0x7f050026;
-        public static final int carmodelspinner=0x7f050028;
+        public static final int action_settings=0x7f050033;
+        public static final int audioTextView=0x7f05002b;
+        public static final int btn_confirm=0x7f050027;
+        public static final int btn_readme_OK=0x7f05002c;
+        public static final int button_send_server=0x7f050028;
+        public static final int button_take_new=0x7f050022;
+        public static final int carmakespinner=0x7f050024;
+        public static final int carmodelspinner=0x7f050026;
         public static final int com_facebook_login_activity_progress_bar=0x7f05000a;
         public static final int com_facebook_picker_activity_circle=0x7f050009;
         public static final int com_facebook_picker_checkbox=0x7f05000c;
@@ -253,31 +253,30 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_login_button=0x7f05001c;
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f05001a;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f05001b;
-        public static final int facebookaccounthint=0x7f05002e;
-        public static final int imageView1=0x7f05002b;
+        public static final int facebookaccounthint=0x7f05002d;
+        public static final int imageView1=0x7f050029;
         public static final int large=0x7f050002;
         public static final int logging_cancel_btn=0x7f05001f;
         public static final int logging_textview=0x7f05001e;
         public static final int login_account=0x7f050004;
         public static final int login_anonymous_btn=0x7f050006;
         public static final int login_login_btn=0x7f050005;
-        public static final int mainscreen_checkbox_hideguidance=0x7f050023;
-        public static final int mainscreen_imageview_imageguidance=0x7f050022;
+        public static final int mainscreen_checkbox_hideguidance=0x7f05002a;
         public static final int mainscreen_textview_textguidance=0x7f050021;
         public static final int mainscreen_welcome_text=0x7f050020;
-        public static final int make_text=0x7f050025;
-        public static final int model_text=0x7f050027;
+        public static final int make_text=0x7f050023;
+        public static final int model_text=0x7f050025;
         public static final int normal=0x7f050001;
         public static final int pgBar=0x7f05001d;
         public static final int picker_subtitle=0x7f050019;
         public static final int readme_btn=0x7f050007;
         public static final int search_box=0x7f050018;
-        public static final int signup_email_edittext=0x7f05002f;
-        public static final int signup_nickname_edittext=0x7f050030;
-        public static final int signup_signip_btn=0x7f050031;
+        public static final int signup_email_edittext=0x7f05002e;
+        public static final int signup_nickname_edittext=0x7f05002f;
+        public static final int signup_signip_btn=0x7f050030;
         public static final int small=0x7f050000;
-        public static final int standard_spinner_dropdown_format=0x7f050033;
-        public static final int standard_spinner_format=0x7f050032;
+        public static final int standard_spinner_dropdown_format=0x7f050032;
+        public static final int standard_spinner_format=0x7f050031;
         public static final int welcome_words=0x7f050003;
     }
     public static final class layout {
