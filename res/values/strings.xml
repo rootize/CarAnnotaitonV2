@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="appname">AnnoCar</string>
     <string name="app_name">CarAnnotationV2</string>
     <string name="action_settings">Settings</string>
     <string name="Email">Email:</string>
@@ -30,4 +30,14 @@
      <string name="mainscreen_textview_guidance_string">Please press "take a new picture to start"</string>
      <string name="mainscreen_textview_sampletextwelcome_string">Welcome XXX</string>
      <string name="mainscreen_checkbox_hideguidance_string">Hide guidance</string>
+     <string name="readme_title_string">Frequently Asked Questions about AnnoCar</string>
+     <string name="readme_question1_string">Q1 What is AnnoCar?</string>
+     <string name="readme_answer1_string">A:  XXx, xxxxxx,xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxx, pppppppppppppppppppp. qqqqqqqqqqqqqqqqqqqq</string>
+     <string name="readme_question2_string">Q2 What are the risks of AnnoCar?</string>
+     <string name="readme_answer2_string">A:  We promise that we will NEVER use any of your 3G data for any reason, nor will we use your email information except informing you that we want to send a gift to you for your support to AnnoCar, in other words, use AnnoCar will bring you surprise without any harm :)</string>
+     <string name="readme_question3_string">Q3 How to use AnnoCar?</string>
+     <string name="readme_answer3_string">A:  In order to make you a wonderful experience using AnnoCar, we have detailed guidelines on the leftside of screen when you use it.</string>
+     <string name="readme_question4_string">Q4 I find AnnoCar very interesting and intend to modify or improve it. How can I get the source code?</string>
+     <string name="readme_answer4_string">A:  Thanks for your effort, you can email us zijunw@andrew.cmu.edu  </string> 
+     <string name="readme_buttontext_string">OK</string>
 </resources>

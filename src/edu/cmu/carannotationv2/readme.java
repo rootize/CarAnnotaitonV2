@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class readme extends Activity {
-private TextView multilineTextView;
+//private TextView multilineTextView;
 private Button   btn_ok;
 
 /* (non-Javadoc)
@@ -21,7 +21,7 @@ protected void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.readme_layout);
 	
-	multilineTextView=(TextView)findViewById(R.id.audioTextView);
+	//multilineTextView=(TextView)findViewById(R.id.audioTextView);
 	btn_ok=(Button)findViewById(R.id.btn_readme_OK);
 	btn_ok.setOnClickListener(new OnClickListener() {
 		

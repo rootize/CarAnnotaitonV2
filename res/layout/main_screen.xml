@@ -40,18 +40,7 @@
                 android:text="@string/mainscreen_textview_guidance_string"
                 android:textColor="@android:color/holo_blue_bright"
                 android:textSize="10dp" />
-            <!--
-                 <CheckBox 
-                android:id="@+id/mainscreen_checkbox_hideguidance"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp" 
-                android:layout_weight="1"
-                android:text="@string/mainscreen_checkbox_hideguidance_string"
-                android:layout_gravity="right|bottom"
-                android:gravity="right|center_vertical"
-                
-                />
-            -->
+         
         </LinearLayout>
 
         <Button

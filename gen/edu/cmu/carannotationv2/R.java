@@ -226,10 +226,9 @@ containing a value of this type.
         public static final int takepic=0x7f02002b;
     }
     public static final class id {
-        public static final int action_settings=0x7f050033;
-        public static final int audioTextView=0x7f05002b;
+        public static final int action_settings=0x7f05003c;
         public static final int btn_confirm=0x7f050027;
-        public static final int btn_readme_OK=0x7f05002c;
+        public static final int btn_readme_OK=0x7f050035;
         public static final int button_send_server=0x7f050028;
         public static final int button_take_new=0x7f050022;
         public static final int carmakespinner=0x7f050024;
@@ -253,7 +252,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_login_button=0x7f05001c;
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f05001a;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f05001b;
-        public static final int facebookaccounthint=0x7f05002d;
+        public static final int facebookaccounthint=0x7f050036;
         public static final int imageView1=0x7f050029;
         public static final int large=0x7f050002;
         public static final int logging_cancel_btn=0x7f05001f;
@@ -269,14 +268,24 @@ containing a value of this type.
         public static final int normal=0x7f050001;
         public static final int pgBar=0x7f05001d;
         public static final int picker_subtitle=0x7f050019;
+        public static final int readme_answer1=0x7f05002e;
+        public static final int readme_answer2=0x7f050030;
+        public static final int readme_answer3=0x7f050032;
+        public static final int readme_answer4=0x7f050034;
         public static final int readme_btn=0x7f050007;
+        public static final int readme_ll=0x7f05002c;
+        public static final int readme_question1=0x7f05002d;
+        public static final int readme_question2=0x7f05002f;
+        public static final int readme_question3=0x7f050031;
+        public static final int readme_question4=0x7f050033;
+        public static final int readme_title=0x7f05002b;
         public static final int search_box=0x7f050018;
-        public static final int signup_email_edittext=0x7f05002e;
-        public static final int signup_nickname_edittext=0x7f05002f;
-        public static final int signup_signip_btn=0x7f050030;
+        public static final int signup_email_edittext=0x7f050037;
+        public static final int signup_nickname_edittext=0x7f050038;
+        public static final int signup_signip_btn=0x7f050039;
         public static final int small=0x7f050000;
-        public static final int standard_spinner_dropdown_format=0x7f050032;
-        public static final int standard_spinner_format=0x7f050031;
+        public static final int standard_spinner_dropdown_format=0x7f05003b;
+        public static final int standard_spinner_format=0x7f05003a;
         public static final int welcome_words=0x7f050003;
     }
     public static final class layout {
@@ -308,13 +317,14 @@ containing a value of this type.
         public static final int car_make_model_revised=0x7f040000;
     }
     public static final class string {
-        public static final int Email=0x7f06001b;
-        public static final int action_settings=0x7f06001a;
-        public static final int addonemorestring=0x7f060026;
-        public static final int album_name=0x7f06001e;
-        public static final int app_name=0x7f060019;
-        public static final int cancel_btn=0x7f06002c;
-        public static final int clear_rect=0x7f060020;
+        public static final int Email=0x7f06001c;
+        public static final int action_settings=0x7f06001b;
+        public static final int addonemorestring=0x7f060027;
+        public static final int album_name=0x7f06001f;
+        public static final int app_name=0x7f06001a;
+        public static final int appname=0x7f060019;
+        public static final int cancel_btn=0x7f06002d;
+        public static final int clear_rect=0x7f060021;
         public static final int com_facebook_choose_friends=0x7f06000f;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f060000;
         public static final int com_facebook_internet_permission_error_message=0x7f060013;
@@ -340,28 +350,38 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_log_in_button=0x7f060008;
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f060009;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f06000a;
-        public static final int desc=0x7f06001f;
-        public static final int finish_annotating=0x7f060025;
-        public static final int forget_string=0x7f060024;
-        public static final int logging_string=0x7f06002b;
-        public static final int login_anonymous_string_onbtn=0x7f060028;
-        public static final int login_string_onbtn=0x7f060027;
-        public static final int mainscreen_btn_saveinformation_string=0x7f060032;
-        public static final int mainscreen_checkbox_hideguidance_string=0x7f060035;
-        public static final int mainscreen_note=0x7f060030;
-        public static final int mainscreen_note_extent=0x7f060031;
-        public static final int mainscreen_textview_guidance_string=0x7f060033;
-        public static final int mainscreen_textview_sampletextwelcome_string=0x7f060034;
-        public static final int make_text_string=0x7f060021;
-        public static final int model_text_string=0x7f060022;
-        public static final int readme_string_onbtn=0x7f060029;
-        public static final int savecurrentrect=0x7f06002e;
-        public static final int sign_up_string=0x7f060023;
-        public static final int signup_nickname_string=0x7f06002d;
-        public static final int take_new_string=0x7f06001d;
-        public static final int usrname_string=0x7f06002f;
-        public static final int welcome_words_string=0x7f06001c;
-        public static final int whyemail=0x7f06002a;
+        public static final int desc=0x7f060020;
+        public static final int finish_annotating=0x7f060026;
+        public static final int forget_string=0x7f060025;
+        public static final int logging_string=0x7f06002c;
+        public static final int login_anonymous_string_onbtn=0x7f060029;
+        public static final int login_string_onbtn=0x7f060028;
+        public static final int mainscreen_btn_saveinformation_string=0x7f060033;
+        public static final int mainscreen_checkbox_hideguidance_string=0x7f060036;
+        public static final int mainscreen_note=0x7f060031;
+        public static final int mainscreen_note_extent=0x7f060032;
+        public static final int mainscreen_textview_guidance_string=0x7f060034;
+        public static final int mainscreen_textview_sampletextwelcome_string=0x7f060035;
+        public static final int make_text_string=0x7f060022;
+        public static final int model_text_string=0x7f060023;
+        public static final int readme_answer1_string=0x7f060039;
+        public static final int readme_answer2_string=0x7f06003b;
+        public static final int readme_answer3_string=0x7f06003d;
+        public static final int readme_answer4_string=0x7f06003f;
+        public static final int readme_buttontext_string=0x7f060040;
+        public static final int readme_question1_string=0x7f060038;
+        public static final int readme_question2_string=0x7f06003a;
+        public static final int readme_question3_string=0x7f06003c;
+        public static final int readme_question4_string=0x7f06003e;
+        public static final int readme_string_onbtn=0x7f06002a;
+        public static final int readme_title_string=0x7f060037;
+        public static final int savecurrentrect=0x7f06002f;
+        public static final int sign_up_string=0x7f060024;
+        public static final int signup_nickname_string=0x7f06002e;
+        public static final int take_new_string=0x7f06001e;
+        public static final int usrname_string=0x7f060030;
+        public static final int welcome_words_string=0x7f06001d;
+        public static final int whyemail=0x7f06002b;
     }
     public static final class style {
         /** 

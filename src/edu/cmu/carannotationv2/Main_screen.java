@@ -24,6 +24,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -75,8 +77,8 @@ import org.json.JSONObject;
 public class Main_screen extends Activity {
 	
 	
-	static String lati=null;
-	static String longti=null;
+	private String lati=null;
+	private String longti=null;
 	private static final int CAMERA_REQUEST = 1888;
 
 	private static final String offline_filename = "offline";
@@ -90,8 +92,7 @@ public class Main_screen extends Activity {
 	private String mCurrentPhotoPath;
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-	// private int scaleFactor;
-
+	
 	private static final int total_rects = 100;
 
 	private TextView welcomeText;
@@ -132,53 +133,13 @@ public class Main_screen extends Activity {
 
 	
 	
-	private LocationManager mgr=null;
+	//private LocationManager mgr=null;
 	
+	//SharedPreference for location information
+	private SharedPreferences sp_location;
 	
 	private boolean wifi_connected;
-	private void cleanVectors() {
-		for (int i = 0; i < NUM; i++) {
-			makes[i] = null;
-			models[i] = null;
-			for (int j = 0; j < 4; j++) {
-				rects[i][j] = 0;
-			}
-
-		}
-
-	}
-
-	private void recursive_upload() {
-		if (offline_JsonArray.length() > 0) {
-
-			JSONObject tem_item;
-			try {
-				tem_item = (JSONObject) offline_JsonArray.get(0);
-
-				ParseObject pobject = new ParseObject("annotation_info");
-				pobject.put("usr", tem_item.getString("usr"));
-				static_global_functions.transfer_Json_Pobject(pobject, tem_item,lati,longti);
-				pobject.saveInBackground(new SaveCallback() {
-
-					@Override
-					public void done(ParseException arg0) {
-						// TODO Auto-generated method stub
-						offline_JsonArray = static_global_functions.remove(0,
-								offline_JsonArray);
-						recursive_upload();
-					}
-
-				});
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Log.d("Main_Screen", "JSON array null");
-			}
-
-		} else {
-			filesaveread.delete(getApplicationContext(), offline_filename);
-		}
-	}
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -187,24 +148,20 @@ public class Main_screen extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main_screen);
 
+		
+		//shared preference
+		sp_location=this.getSharedPreferences("location_info", Context.MODE_PRIVATE);
+		
+		
 		// initialize parse
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
-
 		ParseAnalytics.trackAppOpened(getIntent());
-
 		// get intent
 		Intent receiver = getIntent();
 		usr_name = receiver.getStringExtra("usr");
 
 		
-	//	ConnectivityManager manager=(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)
-		
-		
-		
-		// check wifi
-		
-		//wifi_connected = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
 		String welcome_name = "";
 		if (static_global_functions.isEmailValid(usr_name)) {
@@ -212,15 +169,17 @@ public class Main_screen extends Activity {
 		} else {
 			welcome_name = "Dear guest";
 		}
+		//*********************************************************
 		if (wifi_connected) {
+			lati=sp_location.getString("lati", "");
+			longti=sp_location.getString("longti", "");
 			new UploadFileThread().start();
 			welcome_name = welcome_name + " (online)";
 
 		} else {
 			welcome_name = welcome_name + " (offline)";
 		}
-
-		// set welcome title based on wifi condition and usr name
+		//*************************************************************
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText("Welcome! " + welcome_name);
 
@@ -242,27 +201,22 @@ public class Main_screen extends Activity {
 		mImageView.setVisibility(DrawImageView.VISIBLE);
 		mImageView.setImageDrawable(getResources().getDrawable(
 				R.drawable.firstlogin));
-		global_prevent_reDraw = true;
+		global_prevent_reDraw = true; //indicator if one could draw on iamge
 
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-	//	GuideImage = (ImageView) findViewById(R.id.mainscreen_imageview_imageguidance);
+	
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-	//	hg_CheckBox = (CheckBox) findViewById(R.id.mainscreen_checkbox_hideguidance);
-        //hg_CheckBox.set
-		//hg_CheckBox.setVisibility(false);
-		//hg_CheckBox.setVisibility(View.INVISIBLE);
-		
-		
-		// Don't know what exactly !
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
 		} else {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
+		
+		
+		//take a new image, if the current number of annotated rects is not 0, reminds user if they want to give up
 		btn_takeimg.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				if (global_info_count != 0) {
@@ -311,7 +265,6 @@ public class Main_screen extends Activity {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-
 				// Do nothing
 			}
 		});
@@ -372,20 +325,15 @@ public class Main_screen extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				// TODO Auto-generated method stub
-				// FIXME Transform local rect parameter to the image!
 				int targetW = mImageView.getWidth();
 				int targetH = mImageView.getHeight();
-				// Size of iamge stored in temp
 				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 				bmOptions.inJustDecodeBounds = true;
 				BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
 				int photoW = bmOptions.outWidth;
 				int photoH = bmOptions.outHeight;
-
 				Log.d("Image view width", "" + targetW);
 				Log.d("Image view height", "" + targetH);
-
 				Log.d("stored image width", "" + photoW);
 				Log.d("stored image height", "" + photoH);
 				double w_scaleFactor = 1;
@@ -442,9 +390,7 @@ public class Main_screen extends Activity {
 			}
 		});
 
-		// 3.1 Parse information and so on...
 
-		// ********send file & point***************//
 		btn_send.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -483,6 +429,19 @@ public class Main_screen extends Activity {
 
 					pb_send.put("Location_Lati", lati + " " + lati_ref);
 					pb_send.put("Location_Longti", longti + " " + longti_ref);
+					
+					
+					//if (!(sp_location.getString("lati", "").equals(lati + " " + lati_ref)&&sp_location.getString("longti", "").equals(longti + " " + longti_ref))) {
+					if (wifi_connected) {
+						Editor editor=sp_location.edit();
+						editor.putString("lati", lati + " " + lati_ref);
+						editor.putString("longti", longti + " " + longti_ref);
+						editor.commit();
+					}
+					
+					//}
+						Log.d("lati", sp_location.getString("lati", ""));
+						Log.d("longti", sp_location.getString("longti", ""));
 					pb_send.put("focalLength",
 							exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
 					pb_send.put("flash",
@@ -529,8 +488,8 @@ public class Main_screen extends Activity {
 							// 1. delete all files
 							// 2. draw a new image---please take a new one!
 
-						} else {// 这里建立数据库
-							// FIXME
+						} else {
+						
 							JSONArray old_offlineJsonArray;
 							String temp = filesaveread.read(
 									getApplicationContext(), offline_filename);
@@ -542,8 +501,7 @@ public class Main_screen extends Activity {
 
 							JSONObject toSend_item = new JSONObject();
 
-							// toSend_item.put("", "");
-							// pb_send = new ParseObject("annotation_info");
+							
 							toSend_item.put("usr", usr_name);
 							toSend_item.put("globalcount", global_info_count);
 							if (global_info_count != 0) {
@@ -565,10 +523,10 @@ public class Main_screen extends Activity {
 
 							}
 
-							toSend_item.put("Location_Lati", lati + " "
-									+ lati_ref);
-							toSend_item.put("Location_Longti", longti + " "
-									+ longti_ref);
+							toSend_item.put("Location_Lati", sp_location.getString("lati", ""));
+							toSend_item.put("Location_Longti", sp_location.getString("longti", ""));
+									Log.d("lati", sp_location.getString("lati", ""));
+									Log.d("longti", sp_location.getString("longti", ""));
 							toSend_item.put(
 									"focalLength",
 									exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
@@ -596,6 +554,7 @@ public class Main_screen extends Activity {
 									old_offlineJsonArray.toString());
 							global_info_count = 0;
 							String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+							static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.success);
 						}
 
 					} catch (Exception e) {
@@ -627,32 +586,20 @@ public class Main_screen extends Activity {
 			
 		});
 
-		
-		//step1:
-		
 		GuideText.setText("Please press \" Take a Photo! \"  to take a picture");
 		// *****************************************//
-
-		// XXX Parse data
-
 	}// end of OnCreate
 
 	
 
 
 	private void setModelSpinnerContent(String string) {
-		// TODO Auto-generated method stub
-		// modelSpinner.setEnabled(true==(modelEnabled=true));
-		// modelSpinner.setEnabled(true);
+		
 		generateAdapter(modelSpinner, string, modelAdapter);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-	 */
+	
 
 	private void generateAdapter(Spinner spinner, String select_query,
 			ArrayAdapter<String> adapter) {
@@ -703,12 +650,7 @@ public class Main_screen extends Activity {
 
 		while ((line = databaseBufferedReader.readLine()) != null) {
 			String[] all_elements = line.split(",");
-			/*
-			 * Log.d("Generate DATABASE",
-			 * ""+all_elements.length+"   "+all_elements[1]); String[]
-			 * test_elements=all_elements[0].split(":");
-			 * Log.d(""+test_elements[0], test_elements[1]);
-			 */
+			
 			String[] make_model_String = new String[2];
 			for (int i = 0; i < all_elements.length; i++) {
 				StringBuilder sb_insert = new StringBuilder(
@@ -832,7 +774,7 @@ public class Main_screen extends Activity {
 	}
 
 	private void setPic() {
-		// Size of Imageview
+	
 		int targetW = mImageView.getWidth();
 		int targetH = mImageView.getHeight();
 		Log.d("width_target", "" + targetW);
@@ -890,19 +832,12 @@ public class Main_screen extends Activity {
 	private void handleBigCameraPhoto() {
 		if (mCurrentPhotoPath != null) {
 			setPic();
-
-			galleryAddPic(); // mCurrentPhotoPath = null;
-			// */// needed?
+			galleryAddPic(); 
 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -917,11 +852,7 @@ public class Main_screen extends Activity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onDestroy()
-	 */
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
@@ -929,14 +860,7 @@ public class Main_screen extends Activity {
 		carDatabase.close();
 	}
 
-	// 2.3
 
-	// Create OnResume: when comes back to
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		cleanVectors();
@@ -950,11 +874,7 @@ public class Main_screen extends Activity {
 		super.onResume();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onPause()
-	 */
+
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -962,15 +882,11 @@ public class Main_screen extends Activity {
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
 		}
-		// global_prevent_reDraw= false;
+		
 		super.onPause();
 	}
 
-	// 4.? getSizeof imageview
 
-	// Toast
-
-	
 
 	class FileSavingThread extends Thread {
 		private String content;
@@ -980,7 +896,6 @@ public class Main_screen extends Activity {
 			this.fileName = fileName;
 			this.content = content;
 		}
-
 		@Override
 		public void run() {
 			filesaveread.save(getApplicationContext(), fileName, content);
@@ -989,32 +904,10 @@ public class Main_screen extends Activity {
 
 	class UploadFileThread extends Thread {
 		public UploadFileThread() {
-			// TODO Auto-generated constructor stub
 		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Thread#run()
-		 */
 		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			// super.run();
-			
-			LocationResult locationResult = new LocationResult(){
-			    @Override
-			    public void gotLocation(Location location){
-			        //Got the location!
-			    	
-			   lati=Location.convert(location.getLatitude(), Location.FORMAT_SECONDS);
-			   longti=Location.convert(location.getLongitude(), Location.FORMAT_SECONDS);
-			    }
-			};
-			MyLocation myLocation = new MyLocation();
-			myLocation.getLocation(getApplicationContext(), locationResult);
-			//myLocation.
-			//locationResult.gotLocation(location)
+		public void run() {		
+
 			String offline_string = filesaveread.read(getApplicationContext(),
 					offline_filename);
 			if (offline_string == null) {
@@ -1023,7 +916,6 @@ public class Main_screen extends Activity {
 				try {
 					offline_JsonArray = new JSONArray(offline_string);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				int item_num = offline_JsonArray.length();
@@ -1035,9 +927,8 @@ public class Main_screen extends Activity {
 						tem_item = (JSONObject) offline_JsonArray.get(0);
 
 						ParseObject pobject = new ParseObject("annotation_info");
-						// pobject.put("", tem_item.getString("usr"));
-
-						static_global_functions.transfer_Json_Pobject(pobject, tem_item,lati,longti);
+								
+						static_global_functions.transfer_Json_Pobject(pobject, tem_item);
 
 						pobject.saveInBackground(new SaveCallback() {
 
@@ -1051,7 +942,6 @@ public class Main_screen extends Activity {
 
 						});
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -1066,12 +956,12 @@ public class Main_screen extends Activity {
 	public void showDialog(String showString) {
 
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
-				getApplicationContext());
+				this);
 		alertBuilder.setTitle("Warning");
 		alertBuilder.setMessage(showString);
 		alertBuilder.setIcon(R.drawable.caution);
 
-		alertBuilder.setPositiveButton("OK",
+		alertBuilder.setPositiveButton("YES",
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -1093,6 +983,50 @@ public class Main_screen extends Activity {
 		AlertDialog warningDialog = alertBuilder.create();
 		warningDialog.show();
 
+	}
+	
+	private void cleanVectors() {
+		for (int i = 0; i < NUM; i++) {
+			makes[i] = null;
+			models[i] = null;
+			for (int j = 0; j < 4; j++) {
+				rects[i][j] = 0;
+			}
+
+		}
+
+	}
+
+	private void recursive_upload() {
+		if (offline_JsonArray.length() > 0) {
+
+			JSONObject tem_item;
+			try {
+				tem_item = (JSONObject) offline_JsonArray.get(0);
+
+				ParseObject pobject = new ParseObject("annotation_info");
+				pobject.put("usr", tem_item.getString("usr"));
+				static_global_functions.transfer_Json_Pobject(pobject, tem_item/*,lati,longti*/);
+				pobject.saveInBackground(new SaveCallback() {
+
+					@Override
+					public void done(ParseException arg0) {
+						
+						offline_JsonArray = static_global_functions.remove(0,
+								offline_JsonArray);
+						recursive_upload();
+					}
+
+				});
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.d("Main_Screen", "JSON array null");
+			}
+
+		} else {
+			filesaveread.delete(getApplicationContext(), offline_filename);
+		}
 	}
 }// Ending of whole class!
 

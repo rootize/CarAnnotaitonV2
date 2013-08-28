@@ -4,31 +4,114 @@
     android:layout_height="match_parent"
     android:orientation="vertical" 
    >
+   <TextView 
+       android:id="@+id/readme_title"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_title_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:typeface="serif"
+       android:layout_alignParentTop="true"
+       android:layout_centerHorizontal="true"
+       android:gravity="center_horizontal"
+       android:shadowColor="#000022"/>
+   
     <LinearLayout 
+        android:id="@+id/readme_ll"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:weightSum="5"
         android:orientation="vertical"
-        android:layout_centerInParent="true" >
-<TextView android:id="@+id/audioTextView"
-    android:layout_height = "0dp"
-    android:layout_weight="4"
-    android:layout_width = "fill_parent"
-    android:text="Thanks for using   ,\n just for clarification , We will NEVER:  \n 1, Use any 3G data; \n 2, Send you spams unless we will give gift to you :)"
-    android:singleLine="false"
-    android:gravity="center"
-    android:textSize="20sp"
-    android:scrollbars="vertical"
-    android:maxLines="5"
-    ></TextView>
-<Button 
-    android:id="@+id/btn_readme_OK"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    
-    android:text="OK"
-    />
+        android:layout_below="@id/readme_title" 
+        android:layout_alignParentLeft="true"
+        >
+        <TextView 
+       android:id="@+id/readme_question1"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_question1_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:textStyle="italic"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_answer1"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_answer1_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+ <TextView 
+       android:id="@+id/readme_question2"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_question2_string"
+        android:textStyle="italic"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_answer2"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_answer2_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_question3"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_question3_string"
+        android:textStyle="italic"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_answer3"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_answer3_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_question4"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_question4_string"
+        android:textStyle="italic"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+        <TextView 
+       android:id="@+id/readme_answer4"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/readme_answer4_string"
+       android:textColor="#000000"
+       android:textSize="20sp"
+       android:gravity="left|top"
+       android:shadowColor="#000022"/>
+
 
 </LinearLayout>
+<Button 
+    android:id="@+id/btn_readme_OK"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_below="@id/readme_ll"
+    android:layout_centerHorizontal="true"
+    android:text="@string/readme_buttontext_string"
+    />
 </RelativeLayout>

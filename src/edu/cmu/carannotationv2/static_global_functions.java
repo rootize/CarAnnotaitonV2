@@ -81,7 +81,7 @@ public class static_global_functions {
 	}
 
 	public static void transfer_Json_Pobject(ParseObject pobject,
-			JSONObject tem_item, String lati, String longti) {
+			JSONObject tem_item /*,String lati, String longti*/) {
 		// TODO Auto-generated method stub
 		// pobject = new ParseObject("annotation_info");
 		try {
@@ -102,14 +102,12 @@ public class static_global_functions {
 
 			}
 
-//			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
-//			pobject.put("Location_Longti",
-//					tem_item.getString("Location_Longti"));
-			
-			
-			pobject.put("Location_Lati", lati);
+			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
 			pobject.put("Location_Longti",
-					longti);
+					tem_item.getString("Location_Longti"));
+			
+			
+
 			pobject.put("focalLength", tem_item.getString("focalLength"));
 			pobject.put("flash", tem_item.getString("flash"));
 			pobject.put("exposuretime", tem_item.getString("exposuretime"));
@@ -144,8 +142,9 @@ public class static_global_functions {
 	public static boolean wifi_connection(Context context) {
 		ConnectivityManager manager = (ConnectivityManager) context
 				.getSystemService(context.CONNECTIVITY_SERVICE);
-		boolean is3G = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-				.isConnectedOrConnecting();
+		
+//		boolean is3G=false; = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+//				.isConnectedOrConnecting();
 		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
 				.isConnectedOrConnecting();
 		if (isWifi) {
@@ -156,24 +155,6 @@ public class static_global_functions {
 		}
 	}
 
-//	public static String getLocation(Context context) {
-//         String lati=null;
-//         String longti=null;
-//         
-//		LocationManager mgr = (LocationManager) context
-//				.getSystemService(context.LOCATION_SERVICE);
-//		boolean statusGPS=mgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//		if (statusGPS) {
-//			Location location = mgr
-//					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//			 lati = Location.convert(location.getLatitude(),
-//					Location.FORMAT_SECONDS);
-//		 longti = Location.convert(location.getLongitude(),
-//					Location.FORMAT_SECONDS);
-//		}
-//		
-//        return lati+"#"+longti;
-//	}
+
 
 }
