@@ -277,7 +277,7 @@ public class Main_screen extends Activity {
 				// TODO Auto-generated method stub
 				selectedModel = arg0.getItemAtPosition(arg2).toString();
 				btn_save.setEnabled(true);
-				GuideText.setText("If everything is correct, press \"Save Information\"  nutton to save");
+				GuideText.setText("If everything is correct, press \"Save Information\"  button to save");
 
 			}
 
@@ -300,12 +300,15 @@ public class Main_screen extends Activity {
 
 						drawView.setRect_left(event.getX());
 						drawView.setRect_top(event.getY());
-
+                        Log.d("imageview left", drawView.getRect_left()+"");
+                        Log.d("imageview top", drawView.getRect_top()+"");
 					} else {
 
 						drawView.setRect_right(event.getX());
 						drawView.setRect_bottom(event.getY());
-
+						Log.d("imageview right", drawView.getRect_right()+"");
+						Log.d("imageview bottom", drawView.getRect_bottom()+"");
+						
 					}
 					drawView.invalidate();
 					// drawView.drawRect = true;
@@ -357,10 +360,10 @@ public class Main_screen extends Activity {
 
 				// by sequence: upper left bottom right
 
-				rects[global_info_count][0] = mImageView.rectArray[global_info_count][0];
-				rects[global_info_count][1] = mImageView.rectArray[global_info_count][1];
-				rects[global_info_count][2] = mImageView.rectArray[global_info_count][2];
-				rects[global_info_count][3] = mImageView.rectArray[global_info_count][3];
+				rects[global_info_count][0] = (int) (mImageView.rectArray[global_info_count][0]*h_scaleFactor);
+				rects[global_info_count][1] = (int) (mImageView.rectArray[global_info_count][1]*w_scaleFactor);
+				rects[global_info_count][2] = (int) (mImageView.rectArray[global_info_count][2]*h_scaleFactor);
+				rects[global_info_count][3] = (int) (mImageView.rectArray[global_info_count][3]*w_scaleFactor);
 
 				makes[global_info_count] = new String(selectedMake);
 				models[global_info_count] = new String(selectedModel);
@@ -523,8 +526,8 @@ public class Main_screen extends Activity {
 
 							}
 
-							toSend_item.put("Location_Lati", sp_location.getString("lati", ""));
-							toSend_item.put("Location_Longti", sp_location.getString("longti", ""));
+							toSend_item.put("Location_Lati", sp_location.getString("lati", "")+ " ap");
+							toSend_item.put("Location_Longti", sp_location.getString("longti", "")+" ap");
 									Log.d("lati", sp_location.getString("lati", ""));
 									Log.d("longti", sp_location.getString("longti", ""));
 							toSend_item.put(
