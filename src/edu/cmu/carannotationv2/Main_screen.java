@@ -75,14 +75,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Main_screen extends Activity {
-	
-	
 	private String lati=null;
 	private String longti=null;
 	private static final int CAMERA_REQUEST = 1888;
-
 	private static final String offline_filename = "offline";
-
 	private static final int NUM = 20;
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
@@ -92,13 +88,10 @@ public class Main_screen extends Activity {
 	private String mCurrentPhotoPath;
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-	
 	private static final int total_rects = 100;
-
 	private TextView welcomeText;
+	String welcome_name = "";
 	private TextView GuideText;
-	//private ImageView GuideImage;
-	private CheckBox hg_CheckBox;
 	private Button btn_takeimg;
 	private Button btn_send;
 	private Button btn_save;
@@ -107,52 +100,34 @@ public class Main_screen extends Activity {
 	private Spinner modelSpinner;
 	private ArrayAdapter<String> makeAdapter;
 	private ArrayAdapter<String> modelAdapter;
-
 	private boolean global_prevent_reDraw = false;// 等到最后再来看看怎么样
-
 	// ***************also items that will be sent to parse**********//
-
 	private String selectedMake;
 	private String selectedModel;
 	private Point rect_ul;// the uppler_left point of rectangle
 	private Point rect_br;// the bottom_right point of rectangle
-
 	private String[] makes = new String[NUM];
 	private String[] models = new String[NUM];
 	private int[][] rects = new int[NUM][4]; // records the number of rects
 	private int global_info_count = 0;
 	// **************************************************************//
-
 	private File makeModelDataFile;
 	private SQLiteDatabase carDatabase;
-
 	private ParseObject pb_send;
 	private String usr_name; // data received from intent
-	//private WifiManager wifi_connected;
 	private JSONArray offline_JsonArray;
-
-	
-	
-	//private LocationManager mgr=null;
-	
-	//SharedPreference for location information
 	private SharedPreferences sp_location;
-	
 	private boolean wifi_connected;
 	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main_screen);
-
-		
+	
 		//shared preference
 		sp_location=this.getSharedPreferences("location_info", Context.MODE_PRIVATE);
-		
-		
 		// initialize parse
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
@@ -163,19 +138,18 @@ public class Main_screen extends Activity {
 
 		
 		wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
-		String welcome_name = "";
+		
 		if (static_global_functions.isEmailValid(usr_name)) {
 			welcome_name = usr_name;
 		} else {
 			welcome_name = "Dear guest";
 		}
+		
 		//*********************************************************
 		if (wifi_connected) {
-			lati=sp_location.getString("lati", "");
-			longti=sp_location.getString("longti", "");
-			new UploadFileThread().start();
 			welcome_name = welcome_name + " (online)";
-
+			check_upload_localData();
+			
 		} else {
 			welcome_name = welcome_name + " (offline)";
 		}
@@ -188,20 +162,11 @@ public class Main_screen extends Activity {
 		global_info_count = 0;
 		rects = new int[total_rects][4];
 
-		// initialize views in layout
-		btn_takeimg = (Button) findViewById(R.id.button_take_new);
-		btn_send = (Button) findViewById(R.id.button_send_server);
-		btn_save = (Button) findViewById(R.id.btn_confirm);
-
-		btn_takeimg.setEnabled(true);
-		btn_save.setEnabled(false);
-		btn_send.setEnabled(false);
-
-		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
-		mImageView.setVisibility(DrawImageView.VISIBLE);
-		mImageView.setImageDrawable(getResources().getDrawable(
-				R.drawable.firstlogin));
-		global_prevent_reDraw = true; //indicator if one could draw on iamge
+		initialize_btn_takeimg();
+		initialize_btn_send();
+		initialize_btn_save();
+		initialize_drawImageView();
+	
 
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
@@ -216,24 +181,7 @@ public class Main_screen extends Activity {
 		
 		
 		//take a new image, if the current number of annotated rects is not 0, reminds user if they want to give up
-		btn_takeimg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (global_info_count != 0) {
-					String showMessa = "Abondon all the rectangles and start a new one?";
-					showDialog(showMessa);
-				} else {
-					dispathTakePictureIntent();
-				}
-			}
-		});
-
-		try {
-			ReadDataFromRaw(R.raw.car_make_model_revised);
-			FormDatabase();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
 
 		// 注释： 为了使第一次的两个spinner 都变成 disabled， 添加了第一行为空白行
 		generateAdapter(makeSpinner, database.SELECT_MAKE, makeAdapter);
@@ -594,6 +542,70 @@ public class Main_screen extends Activity {
 	}// end of OnCreate
 
 	
+
+
+	private void initialize_drawImageView() {
+		// TODO Auto-generated method stub
+
+		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
+		mImageView.setVisibility(DrawImageView.VISIBLE);
+		mImageView.setImageDrawable(getResources().getDrawable(
+				R.drawable.firstlogin));
+		global_prevent_reDraw = true; //indicator if one could draw on iamge
+
+	}
+
+
+
+
+	private void initialize_btn_save() {
+		// TODO Auto-generated method stub
+		btn_save = (Button) findViewById(R.id.btn_confirm);
+		btn_save.setEnabled(false);
+	}
+
+
+	private void initialize_btn_send() {
+		// TODO Auto-generated method stub
+		btn_send = (Button) findViewById(R.id.button_send_server);
+		btn_send.setEnabled(false);
+	}
+
+	private void initialize_btn_takeimg() {
+		// TODO Auto-generated method stub
+		btn_takeimg = (Button) findViewById(R.id.button_take_new);
+
+		btn_takeimg.setEnabled(true);
+		btn_takeimg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (global_info_count != 0) {
+					String showMessage = "Abondon all the rectangles and start a new one?";
+					showDialog(showMessage);
+				} else {
+					dispathTakePictureIntent();
+				}
+			}
+		});
+
+		try {
+			ReadDataFromRaw(R.raw.car_make_model_revised);
+			FormDatabase();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+
+	private void check_upload_localData() {
+		lati=sp_location.getString("lati", "");
+		longti=sp_location.getString("longti", "");
+		new UploadFileThread().start();
+	}
+
+
 
 
 	private void setModelSpinnerContent(String string) {
