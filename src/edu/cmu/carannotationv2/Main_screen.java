@@ -136,6 +136,12 @@ public class Main_screen extends Activity {
 		Intent receiver = getIntent();
 		usr_name = receiver.getStringExtra("usr");
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+		} else {
+			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+		}
+		
 		
 		wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
 		
@@ -159,6 +165,9 @@ public class Main_screen extends Activity {
 
 		// initialization on counting images
 
+		
+		
+		
 		global_info_count = 0;
 		rects = new int[total_rects][4];
 
@@ -168,16 +177,21 @@ public class Main_screen extends Activity {
 		initialize_drawImageView();
 	
 
+		
+		try {
+			ReadDataFromRaw(R.raw.car_make_model_revised);
+			FormDatabase();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-	
-		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-		} else {
-			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-		}
+	   GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		
 		
 		//take a new image, if the current number of annotated rects is not 0, reminds user if they want to give up
@@ -275,43 +289,19 @@ public class Main_screen extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
-				int targetW = mImageView.getWidth();
-				int targetH = mImageView.getHeight();
-				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-				bmOptions.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-				int photoW = bmOptions.outWidth;
-				int photoH = bmOptions.outHeight;
-				Log.d("Image view width", "" + targetW);
-				Log.d("Image view height", "" + targetH);
-				Log.d("stored image width", "" + photoW);
-				Log.d("stored image height", "" + photoH);
-				double w_scaleFactor = 1;
-				double h_scaleFactor = 1;
-				if (targetH > 0 && targetW > 0) {
-					w_scaleFactor = (double) photoW / targetW;
-					h_scaleFactor = (double) photoH / targetH;
-
-				}
-				Log.d("scalefactor_w", "" + w_scaleFactor);
-				Log.d("scalefactor_h", "" + h_scaleFactor);
-
-				mImageView.rectArray[global_info_count][0] = (int) mImageView
-						.getRect_top();
-				mImageView.rectArray[global_info_count][1] = (int) mImageView
-						.getRect_left();
-				mImageView.rectArray[global_info_count][2] = (int) mImageView
-						.getRect_bottom();
-				mImageView.rectArray[global_info_count][3] = (int) mImageView
-						.getRect_right();
+                
+				ScaleRatio sr=new ScaleRatio(mImageView, mCurrentPhotoPath);
+				mImageView.addRect();
+				
 
 				// by sequence: upper left bottom right
 
-				rects[global_info_count][0] = (int) (mImageView.rectArray[global_info_count][0]*h_scaleFactor);
-				rects[global_info_count][1] = (int) (mImageView.rectArray[global_info_count][1]*w_scaleFactor);
-				rects[global_info_count][2] = (int) (mImageView.rectArray[global_info_count][2]*h_scaleFactor);
-				rects[global_info_count][3] = (int) (mImageView.rectArray[global_info_count][3]*w_scaleFactor);
+				
+				
+				rects[global_info_count][0] = (int) (mImageView.rectArray[global_info_count][0]*sr.getH_scalefactor());
+				rects[global_info_count][1] = (int) (mImageView.rectArray[global_info_count][1]*sr.getW_scalefactor());
+				rects[global_info_count][2] = (int) (mImageView.rectArray[global_info_count][2]*sr.getH_scalefactor());
+				rects[global_info_count][3] = (int) (mImageView.rectArray[global_info_count][3]*sr.getW_scalefactor());
 
 				makes[global_info_count] = new String(selectedMake);
 				models[global_info_count] = new String(selectedModel);
@@ -572,9 +562,8 @@ public class Main_screen extends Activity {
 	}
 
 	private void initialize_btn_takeimg() {
-		// TODO Auto-generated method stub
+		
 		btn_takeimg = (Button) findViewById(R.id.button_take_new);
-
 		btn_takeimg.setEnabled(true);
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
@@ -588,12 +577,7 @@ public class Main_screen extends Activity {
 			}
 		});
 
-		try {
-			ReadDataFromRaw(R.raw.car_make_model_revised);
-			FormDatabase();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
 
 	}
 

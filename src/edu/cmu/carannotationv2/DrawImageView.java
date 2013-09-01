@@ -1,7 +1,5 @@
 package edu.cmu.carannotationv2;
 
-
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,22 +11,17 @@ import android.widget.ImageView;
 
 public class DrawImageView extends ImageView {
 
-	
-	private static final int arraySize=5;
+	private static final int arraySize = 5;
 	private Paint currentPaint;
 	private boolean drawRect = false;
 	private float rect_left;/* Point center; */
 	private float rect_top;
 	private float rect_right;
 	private float rect_bottom;
-    public int[][] rectArray=new int[arraySize][4];
+	public int[][] rectArray = new int[arraySize][4];
 	// private Bitmap orgBitmap;
 	private int rect_count;
 
-	
-	
-	
-	
 	/**
 	 * @return the rect_left
 	 */
@@ -37,7 +30,8 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param rect_left the rect_left to set
+	 * @param rect_left
+	 *            the rect_left to set
 	 */
 	public void setRect_left(float rect_left) {
 		this.rect_left = rect_left;
@@ -51,7 +45,8 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param rect_top the rect_top to set
+	 * @param rect_top
+	 *            the rect_top to set
 	 */
 	public void setRect_top(float rect_top) {
 		this.rect_top = rect_top;
@@ -65,7 +60,8 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param rect_right the rect_right to set
+	 * @param rect_right
+	 *            the rect_right to set
 	 */
 	public void setRect_right(float rect_right) {
 		this.rect_right = rect_right;
@@ -79,7 +75,8 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param rect_bottom the rect_bottom to set
+	 * @param rect_bottom
+	 *            the rect_bottom to set
 	 */
 	public void setRect_bottom(float rect_bottom) {
 		this.rect_bottom = rect_bottom;
@@ -93,14 +90,13 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param drawRect the drawRect to set
+	 * @param drawRect
+	 *            the drawRect to set
 	 */
 	public void setDrawRect(boolean drawRect) {
 		this.drawRect = drawRect;
 	}
 
-	
-	
 	/**
 	 * @return the rect_count
 	 */
@@ -109,7 +105,8 @@ public class DrawImageView extends ImageView {
 	}
 
 	/**
-	 * @param rect_count the rect_count to set
+	 * @param rect_count
+	 *            the rect_count to set
 	 */
 	public void setRect_count(int rect_count) {
 		this.rect_count = rect_count;
@@ -126,7 +123,7 @@ public class DrawImageView extends ImageView {
 		currentPaint.setStrokeCap(Paint.Cap.ROUND);
 		currentPaint.setStrokeJoin(Paint.Join.ROUND);
 		currentPaint.setStrokeWidth(4);
-        
+
 	}
 
 	/*
@@ -139,14 +136,16 @@ public class DrawImageView extends ImageView {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 
-		//if (drawRect) {
-			// canvas.drawCircle(center.x, center.y, c_radius, currentPaint);
-		canvas.drawRect(rect_left, rect_top, rect_right, rect_bottom, currentPaint);
-			for (int i = 0; i < rect_count; i++) {
-				
-				canvas.drawRect(rectArray[i][1], rectArray[i][0], rectArray[i][3], rectArray[i][2], currentPaint);
-			}
-		//}
+		// if (drawRect) {
+		// canvas.drawCircle(center.x, center.y, c_radius, currentPaint);
+		canvas.drawRect(rect_left, rect_top, rect_right, rect_bottom,
+				currentPaint);
+		for (int i = 0; i < rect_count; i++) {
+
+			canvas.drawRect(rectArray[i][1], rectArray[i][0], rectArray[i][3],
+					rectArray[i][2], currentPaint);
+		}
+		// }
 	}
 
 	/*
@@ -167,16 +166,26 @@ public class DrawImageView extends ImageView {
 		rect_top = 0;
 		rect_bottom = 0;
 	}
-	public void clearRecords(){
+
+	public void clearRecords() {
 		for (int i = 0; i < rect_count; i++) {
 			for (int j = 0; j < 4; j++) {
-				
-				rectArray[i][j]=0;
-				
+
+				rectArray[i][j] = 0;
+
 			}
-			
+
 		}
-		
-		rect_count=0;
+
+		rect_count = 0;
+	}
+
+	public void addRect() {
+		// TODO Auto-generated method stub
+		this.rectArray[rect_count][0] = (int) rect_top;
+		this.rectArray[rect_count][1] = (int) rect_left;
+		this.rectArray[rect_count][2] = (int) rect_bottom;
+		this.rectArray[rect_count][3] = (int) rect_right;
+		rect_count = rect_count + 1;
 	}
 }
