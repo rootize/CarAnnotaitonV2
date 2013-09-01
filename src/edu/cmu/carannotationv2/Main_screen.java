@@ -109,7 +109,7 @@ public class Main_screen extends Activity {
 	private String[] makes = new String[NUM];
 	private String[] models = new String[NUM];
 	private int[][] rects = new int[NUM][4]; // records the number of rects
-	private int global_info_count = 0;
+	private int gRectCount=0;
 	// **************************************************************//
 	private File makeModelDataFile;
 	private SQLiteDatabase carDatabase;
@@ -119,6 +119,10 @@ public class Main_screen extends Activity {
 	private SharedPreferences sp_location;
 	private boolean wifi_connected;
 	
+	
+	
+	private AnnotatorInput annotatorInput;
+	private JSONdata jsonData;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -127,7 +131,7 @@ public class Main_screen extends Activity {
 		setContentView(R.layout.main_screen);
 	
 		//shared preference
-		sp_location=this.getSharedPreferences("location_info", Context.MODE_PRIVATE);
+		//sp_location=this.getSharedPreferences("location_info", Context.MODE_PRIVATE);
 		// initialize parse
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
@@ -166,9 +170,9 @@ public class Main_screen extends Activity {
 		// initialization on counting images
 
 		
+	//	annotatorInput=new AnnotatorInput();
 		
-		
-		global_info_count = 0;
+		gRectCount = 0;
 		rects = new int[total_rects][4];
 
 		initialize_btn_takeimg();
@@ -290,41 +294,22 @@ public class Main_screen extends Activity {
 			@Override
 			public void onClick(View v) {
                 
-				ScaleRatio sr=new ScaleRatio(mImageView, mCurrentPhotoPath);
+				
+				//ScaleRatio sr=new ScaleRatio(mImageView, mCurrentPhotoPath);
 				mImageView.addRect();
+				annotatorInput.update(mImageView.getLastRect(), selectedMake, selectedModel);
+				gRectCount=gRectCount+1;
 				
-
-				// by sequence: upper left bottom right
-
-				
-				
-				rects[global_info_count][0] = (int) (mImageView.rectArray[global_info_count][0]*sr.getH_scalefactor());
-				rects[global_info_count][1] = (int) (mImageView.rectArray[global_info_count][1]*sr.getW_scalefactor());
-				rects[global_info_count][2] = (int) (mImageView.rectArray[global_info_count][2]*sr.getH_scalefactor());
-				rects[global_info_count][3] = (int) (mImageView.rectArray[global_info_count][3]*sr.getW_scalefactor());
-
-				makes[global_info_count] = new String(selectedMake);
-				models[global_info_count] = new String(selectedModel);
-
 				global_prevent_reDraw = false;
-				global_info_count = global_info_count + 1; // only at this place
-															// +1;
-				mImageView.setRect_count(global_info_count) ;
-				// after imaged saved make all other things gray
-				btn_save.setEnabled(false);
-				global_prevent_reDraw = false;
-				makeSpinner.setEnabled(false);
-				modelSpinner.setEnabled(false);
-
-				Log.d("OnRectCount", "" + global_info_count);
-				if (global_info_count == 5) {
-					btn_save.setEnabled(false);
+				
+				if (gRectCount == 5) {
 					global_prevent_reDraw = true;
-					//btn_send.setEnabled(true);
-					String showMessage = "The number annotations has exceeded 5";
-					//showToast(showMessage, R.drawable.caution);
+					String showMessage = "You have annotated 5 cars";
 					static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.caution);
 				}
+				btn_save.setEnabled(false);				
+				makeSpinner.setEnabled(false);
+				modelSpinner.setEnabled(false);
 				btn_send.setEnabled(true);
 				GuideText.setText("Press \"Done!\" to finish or start annotating another image by drawing on the image");
 				
@@ -337,6 +322,12 @@ public class Main_screen extends Activity {
 			@Override
 			public void onClick(View v) {
 			
+				wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
+				
+				jsonData=new JSONdata(mImageView,annotatorInput,wifi_connected,getApplicationContext());
+				
+				
+				
 				ExifInterface exif;
 				try {
 					exif = new ExifInterface(mCurrentPhotoPath);
@@ -491,7 +482,7 @@ public class Main_screen extends Activity {
 							old_offlineJsonArray.put(toSend_item);
 
 							filesaveread.save(getApplicationContext(),
-									offline_filename,
+									offline_filename,	
 									old_offlineJsonArray.toString());
 							global_info_count = 0;
 							String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
@@ -568,7 +559,7 @@ public class Main_screen extends Activity {
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (global_info_count != 0) {
+				if (gRectCount != 0) {
 					String showMessage = "Abondon all the rectangles and start a new one?";
 					showDialog(showMessage);
 				} else {
@@ -759,9 +750,9 @@ public class Main_screen extends Activity {
 	private File createImageFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(new Date());
-		imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+		imageFileName = JPEG_FILE_PREFIX + timeStamp ;
 		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
+		File imageF = File.createTempFile(imageFileName+"_", JPEG_FILE_SUFFIX,
 				albumF);
 		return imageF;
 	}
@@ -830,6 +821,8 @@ public class Main_screen extends Activity {
 
 	private void handleBigCameraPhoto() {
 		if (mCurrentPhotoPath != null) {
+			annotatorInput.addPath(mCurrentPhotoPath);
+			annotatorInput.addImgName(imageFileName+JPEG_FILE_SUFFIX);
 			setPic();
 			galleryAddPic(); 
 
@@ -869,7 +862,9 @@ public class Main_screen extends Activity {
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
 		global_prevent_reDraw = false;
-		global_info_count = 0; // 每次重新一张图片的时候清零
+		//global_info_count = 0; // 每次重新一张图片的时候清零
+		annotatorInput=new AnnotatorInput();
+		annotatorInput.addUsr(usr_name);
 		super.onResume();
 	}
 

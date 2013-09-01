@@ -1,5 +1,7 @@
 package edu.cmu.carannotationv2;
 
+import android.R.integer;
+
 
 
 //by sequence: upper left bottom right
@@ -33,6 +35,11 @@ public void setRectRight(int rectRight) {
 	this.rectRight = rectRight;
 }
 
-
+public RectInfo(int upper,int left,int bottom,int right){
+	this.rectUpper=upper;
+	this.rectLeft=left;
+	this.rectBottom=bottom;
+	this.rectRight=right;
+}
 
 }

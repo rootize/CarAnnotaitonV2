@@ -188,4 +188,8 @@ public class DrawImageView extends ImageView {
 		this.rectArray[rect_count][3] = (int) rect_right;
 		rect_count = rect_count + 1;
 	}
+
+	public RectInfo getLastRect() {
+		return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
+	}
 }
