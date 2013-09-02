@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9ce9f505-0b61-4955-be9f-959d8b100d92" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/CarAnnotaitonV2.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Parse_1_3_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/dexedLibs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gen/com/facebook/android/R.java" afterPath="" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up$1$1.class" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up$1.class" afterPath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up$1.class" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up.class" afterPath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up.class" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/cmu/carannotationv2/sign_up.java" afterPath="$PROJECT_DIR$/src/edu/cmu/carannotationv2/sign_up.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/edu/cmu/carannotationv2/BuildConfig.java" afterPath="$PROJECT_DIR$/gen/edu/cmu/carannotationv2/BuildConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/edu/cmu/carannotationv2/R.java" afterPath="$PROJECT_DIR$/gen/edu/cmu/carannotationv2/R.java" />
     </list>
     <ignored path="CarAnnotaitonV2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -76,6 +69,9 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="CarAnnotaitonV2" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitLogSettings">
     <option name="myDateState">
