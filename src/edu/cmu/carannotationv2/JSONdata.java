@@ -9,14 +9,12 @@ import org.json.JSONObject;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
-import android.R.bool;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.util.Log;
 
 public class JSONdata {
 	public static final String SP_STRING="loc_info";
@@ -64,7 +62,7 @@ public class JSONdata {
 		ArrayList<RectInfo> tempRectInfos = annotatorInput.getRectTosend();
 		ArrayList<String> tempMakes = annotatorInput.getMake();
 		ArrayList<String> tempModels = annotatorInput.getModel();
-        ScaleRatio sr=annotatorInput.getmScaleRatio();
+        ScaleRatio sr=annotatorInput.getScaleRatio();
 		int annoNum = tempRectInfos.size();
 		try {
 			jsonObject.put(ParseAtributes.IMG_NAME, annotatorInput.getImgName());

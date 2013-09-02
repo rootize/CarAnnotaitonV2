@@ -83,14 +83,14 @@ public class AnnotatorInput {
 
 	public void addScaleRatio(ScaleRatio scaleRatio) {
 		// TODO Auto-generated method stub
-		this.setmScaleRatio(new ScaleRatio(scaleRatio.getW_scalefactor(), scaleRatio.getH_scalefactor()));
+		this.setScaleRatio(new ScaleRatio(scaleRatio.getW_scalefactor(), scaleRatio.getH_scalefactor()));
 	}
 
-	public ScaleRatio getmScaleRatio() {
+	public ScaleRatio getScaleRatio() {
 		return mScaleRatio;
 	}
 
-	public void setmScaleRatio(ScaleRatio mScaleRatio) {
+	public void setScaleRatio(ScaleRatio mScaleRatio) {
 		this.mScaleRatio = mScaleRatio;
 	}
 
