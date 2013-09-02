@@ -32,5 +32,8 @@ public class ScaleRatio {
 	}
 		
 	}
-	
+	public ScaleRatio(double w,double h){
+		this.w_scalefactor=w;
+		this.h_scalefactor=h;
+	}
 }

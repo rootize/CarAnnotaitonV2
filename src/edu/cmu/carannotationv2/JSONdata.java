@@ -16,30 +16,42 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.util.Log;
 
 public class JSONdata {
+	public static final String SP_STRING="loc_info";
 	private static final int MAX_ELEMETNS = 5;
-	private ScaleRatio scaleRatio;
+//	private ScaleRatio scaleRatio;
 	private JSONObject jsonObject;
-	
-	private SharedPreferences locSP;
 	private String mCurrentPhotoPath;
+	private SharedPreferences locSP;
 	private ExifInterface exif;
-
 	public JSONdata() {
 
 	}
 
-	public JSONdata(DrawImageView mImageView, 
-			AnnotatorInput annotatorInput, boolean wifi_connected,
+	
+	public JSONObject getJsonObject(){
+		return this.jsonObject;
+	}
+	
+	public JSONdata(JSONObject jo){
+	this. jsonObject=jo;
+	}
+	public JSONdata(
+			AnnotatorInput annotatorInput,
 			Context context) {
-		calculateScaleRatio(mImageView);
+		jsonObject=new JSONObject();
+		locSP=context.getSharedPreferences(SP_STRING,Context.MODE_PRIVATE );
+		//calculateScaleRatio(mImageView,annotatorInput.getImgPath());
 		getInfoFromAnnotatorInput(annotatorInput);
+		mCurrentPhotoPath=annotatorInput.getImgPath();
 		try {
-			exif = new ExifInterface(jsonObject.getString(ParseAtributes.IMG_PATH));
-			getInfoFromExif(wifi_connected);
+			exif = new ExifInterface(mCurrentPhotoPath);
+			
+			getInfoFromExif(annotatorInput.isWifiStatus());
 		} catch (Exception e) {
-
+          e.printStackTrace();
 		}
 
 		
@@ -52,7 +64,7 @@ public class JSONdata {
 		ArrayList<RectInfo> tempRectInfos = annotatorInput.getRectTosend();
 		ArrayList<String> tempMakes = annotatorInput.getMake();
 		ArrayList<String> tempModels = annotatorInput.getModel();
-
+        ScaleRatio sr=annotatorInput.getmScaleRatio();
 		int annoNum = tempRectInfos.size();
 		try {
 			jsonObject.put(ParseAtributes.IMG_NAME, annotatorInput.getImgName());
@@ -63,19 +75,19 @@ public class JSONdata {
 				if (i < annoNum) {
 
 					jsonObject.put(ParseAtributes.TOP+i, tempRectInfos.get(i)
-							.getRectUpper()*scaleRatio.getH_scalefactor());
-					jsonObject.put(ParseAtributes.LEFT+i, tempRectInfos.get(i).getRectLeft()*scaleRatio.getW_scalefactor());
-					jsonObject.put(ParseAtributes.BOTTOM+i, tempRectInfos.get(i).getRectBottom()*scaleRatio.getH_scalefactor());
-					jsonObject.put(ParseAtributes.RIGHT+i, tempRectInfos.get(i).getRectRight()*scaleRatio.getW_scalefactor());
+							.getRectUpper()*sr.getH_scalefactor());
+					jsonObject.put(ParseAtributes.LEFT+i, tempRectInfos.get(i).getRectLeft()*sr.getW_scalefactor());
+					jsonObject.put(ParseAtributes.BOTTOM+i, tempRectInfos.get(i).getRectBottom()*sr.getH_scalefactor());
+					jsonObject.put(ParseAtributes.RIGHT+i, tempRectInfos.get(i).getRectRight()*sr.getW_scalefactor());
                     jsonObject.put(ParseAtributes.MAKE+i, tempMakes.get(i).toString());
                     jsonObject.put(ParseAtributes.MODEL+i, tempModels.get(i).toString());
 				} else {
-					jsonObject.put(ParseAtributes.TOP+i, ParseAtributes.NULL_STRING);
-					jsonObject.put(ParseAtributes.LEFT+i, ParseAtributes.NULL_STRING);
-					jsonObject.put(ParseAtributes.BOTTOM+i, ParseAtributes.NULL_STRING);
-					jsonObject.put(ParseAtributes.RIGHT+i, ParseAtributes.NULL_STRING);
-					jsonObject.put(ParseAtributes.MAKE+i, ParseAtributes.NULL_STRING);
-                    jsonObject.put(ParseAtributes.MODEL+i, ParseAtributes.NULL_STRING);
+					jsonObject.put(ParseAtributes.TOP+i, ParseAtributes.NULL_NUM);
+					jsonObject.put(ParseAtributes.LEFT+i, ParseAtributes.NULL_NUM);
+					jsonObject.put(ParseAtributes.BOTTOM+i, ParseAtributes.NULL_NUM);
+					jsonObject.put(ParseAtributes.RIGHT+i, ParseAtributes.NULL_NUM);
+					jsonObject.put(ParseAtributes.MAKE+i, ParseAtributes.NULL_NUM);
+                    jsonObject.put(ParseAtributes.MODEL+i, ParseAtributes.NULL_NUM);
 
 				}
 			}
@@ -86,11 +98,7 @@ public class JSONdata {
 		}
 	}
 
-	private void calculateScaleRatio(DrawImageView div) {
-
-		this.scaleRatio = new ScaleRatio(div, mCurrentPhotoPath);
-
-	}
+	
 
 	private void getInfoFromExif(boolean wifi_connected) {
 		if (wifi_connected) {
@@ -117,7 +125,7 @@ public class JSONdata {
 			jsonObject.put(ParseAtributes.WH_BLN,
 					exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -127,9 +135,9 @@ public class JSONdata {
 	private void getInfo_offline() {
 		try {
 			jsonObject.put(ParseAtributes.LATI_LOCATION,
-					locSP.getString(ParseAtributes.LATI_LOCATION, ""));
+					locSP.getString(ParseAtributes.LATI_LOCATION, "")+ParseAtributes.GPS_OFFLINE);
 			jsonObject.put(ParseAtributes.LONGTI_LOCATION,
-					locSP.getString(ParseAtributes.LONGTI_LOCATION, ""));
+					locSP.getString(ParseAtributes.LONGTI_LOCATION, "")+ParseAtributes.GPS_OFFLINE);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,13 +164,8 @@ public class JSONdata {
 
 	}
 
-	public ScaleRatio getScaleRatio(){
-		return this.scaleRatio;
-	}
-	public void setScaleRatio(ScaleRatio scaleRatio) {
-		this.scaleRatio = scaleRatio;
-	}
-
+	
+	
 	
 	public ParseObject formatParseObject(){
 		ParseObject tempObject=new ParseObject(ParseAtributes.PARSE_CLASS_NAME);

@@ -190,6 +190,7 @@ public class DrawImageView extends ImageView {
 	}
 
 	public RectInfo getLastRect() {
-		return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
+		//return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
+		return new RectInfo((int)rect_top,(int) rect_left,(int) rect_bottom,(int) rect_right);
 	}
 }

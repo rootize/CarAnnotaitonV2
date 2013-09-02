@@ -2,6 +2,8 @@ package edu.cmu.carannotationv2;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class AnnotatorInput {
 	private static final int CAP=5;
 	private ArrayList<RectInfo> rectTosend;
@@ -10,6 +12,8 @@ public class AnnotatorInput {
 	private String mCurrentPhotoPath;
 	private String mImageFileName;
 	private String usr;
+	private ScaleRatio mScaleRatio;
+	private boolean wifiStatus;
 	public AnnotatorInput(){
 		this.setRectTosend(new ArrayList<RectInfo>(CAP));
 		this.setMake(new ArrayList<String>(CAP));
@@ -49,21 +53,23 @@ public class AnnotatorInput {
 
 	public void addPath(String mCurrentPhotoPath) {
 		this.mCurrentPhotoPath=mCurrentPhotoPath;
+		Log.d("Path", mCurrentPhotoPath);
 	}
 
 	public void addImgName(String mImageFileName) {
 		this.mImageFileName=mImageFileName;
+		Log.d("ImgName", mImageFileName);
 		
 	}
 
-	public Object getImgName() {
+	public String getImgName() {
 		
-		return this.mImageFileName;
+		return mImageFileName;
 	}
 
-	public Object getImgPath() {
+	public String getImgPath() {
 		
-		return this.mCurrentPhotoPath;
+		return mCurrentPhotoPath;
 	}
 
 	public void addUsr(String usr_name) {
@@ -75,4 +81,32 @@ public class AnnotatorInput {
 		return this.usr;
 	}
 
+	public void addScaleRatio(ScaleRatio scaleRatio) {
+		// TODO Auto-generated method stub
+		this.setmScaleRatio(new ScaleRatio(scaleRatio.getW_scalefactor(), scaleRatio.getH_scalefactor()));
+	}
+
+	public ScaleRatio getmScaleRatio() {
+		return mScaleRatio;
+	}
+
+	public void setmScaleRatio(ScaleRatio mScaleRatio) {
+		this.mScaleRatio = mScaleRatio;
+	}
+
+	public void addWifiStatus(boolean wifi_connected) {
+		setWifiStatus(wifi_connected);
+		
+	}
+
+	public boolean isWifiStatus() {
+		return wifiStatus;
+	}
+
+	public void setWifiStatus(boolean wifiStatus) {
+		this.wifiStatus = wifiStatus;
+	}
+
+	
+	
 }
