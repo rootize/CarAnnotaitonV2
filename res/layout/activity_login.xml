@@ -26,11 +26,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="80dp"
         android:layout_below="@id/welcome_words"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:weightSum="6" 
-        android:gravity="bottom">
+        android:weightSum="4"
+        android:gravity="bottom"
+        android:background="@color/trans_background">
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,8 +62,7 @@
             android:gravity="right|bottom"
             android:text="@string/login_string_onbtn"
             android:textColor="@android:color/white"
-            android:textSize="25dp" 
-            android:drawableLeft="@drawable/login"
+            android:textSize="25dp"
             android:background="#669900"/>
 
         <Button
@@ -68,7 +70,6 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp" 
             android:layout_weight="1"
-            android:drawableLeft="@drawable/anonymous"
             android:layout_marginTop="20sp"
             android:gravity="bottom"
             android:text="@string/login_anonymous_string_onbtn"

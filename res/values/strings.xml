@@ -16,7 +16,7 @@
      <string name="finish_annotating">Done!</string>
      <string name="addonemorestring">Annotate one more</string>
      <string name="login_string_onbtn">Log in </string>
-     <string name="login_anonymous_string_onbtn">Anonymous</string>
+     <string name="login_anonymous_string_onbtn">Don't want to provide my Email</string>
      <string name="readme_string_onbtn">Fisrt time use?</string>
      <string name="whyemail">Why Email?</string>
      <string name="logging_string">Logging in, please wait</string>
