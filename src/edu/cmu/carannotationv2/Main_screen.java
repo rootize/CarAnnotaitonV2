@@ -68,15 +68,13 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-import edu.cmu.carannotationv2.MyLocation.LocationResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Main_screen extends Activity {
-//	private String lati=null;
-//	private String longti=null;
+
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
 	private static final int NUM = 20;
@@ -306,81 +304,7 @@ public class Main_screen extends Activity {
 		});
 
 
-		btn_send.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				annotatorInput.addPath(mCurrentPhotoPath);
-				annotatorInput.addImgName(imageFileName+JPEG_FILE_SUFFIX);
-			    annotatorInput.addScaleRatio(new ScaleRatio(mImageView, mCurrentPhotoPath));
-				wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
-	
-				annotatorInput.addWifiStatus(wifi_connected);
-				jsonData=new JSONdata(annotatorInput,getApplicationContext());
-				
-
-						if (wifi_connected) {
-							ParseObject pb_send=jsonData.formatParseObject();
-							pb_send.saveInBackground(new SaveCallback() {
-								@Override
-								public void done(ParseException arg0) {
-									if (arg0==null) {
-										String send_success = "Send to server successfully!";
-	                                    static_global_functions.ShowToast_short(getApplicationContext(), send_success, R.drawable.success);
-									}
-									else {
-										Log.d("error", arg0.toString());
-									}
-								}
-							});
-							// FIXME
-							// 1. delete all files
-							// 2. draw a new image---please take a new one!
-
-						} else {
-							try {
-							JSONArray old_offlineJsonArray;
-							String temp = filesaveread.read(
-									getApplicationContext(), offline_filename);
-							if (temp == null) {
-								old_offlineJsonArray = new JSONArray();
-							} else {
-								
-									old_offlineJsonArray = new JSONArray(temp);
-								
-							}
-
-							JSONObject toSend_item = jsonData.getJsonObject();
-							old_offlineJsonArray.put(toSend_item);
-//Using Thread?
-							filesaveread.save(getApplicationContext(),
-									offline_filename,	
-									old_offlineJsonArray.toString());
-							String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-							static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.success);
-							} catch (JSONException e) {
-								
-								e.printStackTrace();
-							}
-							}
-							
-				btn_send.setEnabled(false);
-				makeSpinner.setEnabled(false);
-				modelSpinner.setEnabled(false);
-				mImageView.clearRecords();
-				mImageView.clearrect();
-				mImageView.invalidate();
-				global_prevent_reDraw=true;
-				mImageView.setImageDrawable(getResources().getDrawable(R.drawable.buttonfinish));
-				
-				GuideText.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
-				
-			}
-
-			
-			
-			
-		});
 
 		GuideText.setText("Please press \" Take a Photo! \"  to take a picture");
 		// *****************************************//
@@ -414,6 +338,81 @@ public class Main_screen extends Activity {
 		// TODO Auto-generated method stub
 		btn_send = (Button) findViewById(R.id.button_send_server);
 		btn_send.setEnabled(false);
+        btn_send.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                annotatorInput.addPath(mCurrentPhotoPath);
+                annotatorInput.addImgName(imageFileName+JPEG_FILE_SUFFIX);
+                annotatorInput.addScaleRatio(new ScaleRatio(mImageView, mCurrentPhotoPath));
+                wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
+
+                annotatorInput.addWifiStatus(wifi_connected);
+                jsonData=new JSONdata(annotatorInput,getApplicationContext());
+
+
+                if (wifi_connected) {
+                    ParseObject pb_send=jsonData.formatParseObject();
+                    pb_send.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException arg0) {
+                            if (arg0==null) {
+                                String send_success = "Send to server successfully!";
+                                static_global_functions.ShowToast_short(getApplicationContext(), send_success, R.drawable.success);
+                            }
+                            else {
+                                Log.d("error", arg0.toString());
+                            }
+                        }
+                    });
+                    // FIXME
+                    // 1. delete all files
+                    // 2. draw a new image---please take a new one!
+
+                } else {
+                    try {
+                        JSONArray old_offlineJsonArray;
+                        String temp = filesaveread.read(
+                                getApplicationContext(), offline_filename);
+                        if (temp == null) {
+                            old_offlineJsonArray = new JSONArray();
+                        } else {
+
+                            old_offlineJsonArray = new JSONArray(temp);
+
+                        }
+
+                        JSONObject toSend_item = jsonData.getJsonObject();
+                        old_offlineJsonArray.put(toSend_item);
+//Using Thread?
+                        filesaveread.save(getApplicationContext(),
+                                offline_filename,
+                                old_offlineJsonArray.toString());
+                        String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+                        static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.success);
+                    } catch (JSONException e) {
+
+                        e.printStackTrace();
+                    }
+                }
+
+                btn_send.setEnabled(false);
+                makeSpinner.setEnabled(false);
+                modelSpinner.setEnabled(false);
+                mImageView.clearRecords();
+                mImageView.clearrect();
+                mImageView.invalidate();
+                global_prevent_reDraw=true;
+                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.buttonfinish));
+
+                GuideText.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
+
+            }
+
+
+
+
+        });
 	}
 
 	private void initialize_btn_takeimg() {
