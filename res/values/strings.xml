@@ -15,7 +15,7 @@
      <string name="forget_string">Forget Password/Account?</string>
      <string name="finish_annotating">Done!</string>
      <string name="addonemorestring">Annotate one more</string>
-     <string name="login_string_onbtn">Log in </string>
+     <string name="login_string_onbtn">Start! </string>
      <string name="login_anonymous_string_onbtn">Don't want to provide my Email</string>
      <string name="readme_string_onbtn">Fisrt time use?</string>
      <string name="whyemail">Why Email?</string>
@@ -40,4 +40,8 @@
      <string name="readme_question4_string">Q4 I find AnnoCar very interesting and intend to modify or improve it. How can I get the source code?</string>
      <string name="readme_answer4_string">A:  Thanks for your effort, you can email us zijunw@andrew.cmu.edu  </string> 
      <string name="readme_buttontext_string">OK</string>
+    <string name="login_anonymous_string_onchkbx">I don't want to provide my email</string>
+    <string name="login_choice_between_string">- or -</string>
+    <string name="longin_setting">Settings</string>
+
 </resources>

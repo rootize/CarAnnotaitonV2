@@ -12,15 +12,34 @@
       </config>
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/res/layout-large/activity_login.xml">
+        <config>
+          <device>5.1in WVGA</device>
+          <state>Landscape</state>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/res/layout-large/main_screen.xml">
         <config>
           <device>5.1in WVGA</device>
           <theme>@style/AppTheme</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/res/layout-small/activity_login.xml">
+        <config>
+          <device>2.7in QVGA</device>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/res/layout-small/main_screen.xml">
         <config>
           <device>2.7in QVGA</device>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/res/layout-xlarge/activity_login.xml">
+        <config>
+          <device>10.1in WXGA (Tablet)</device>
           <theme>@style/AppTheme</theme>
         </config>
       </layout>
@@ -32,7 +51,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/res/layout/activity_login.xml">
         <config>
-          <device>Galaxy Nexus</device>
+          <device>4.65in 720p (Galaxy Nexus)</device>
           <state>Landscape</state>
           <theme>@style/AppTheme</theme>
         </config>
@@ -53,6 +72,7 @@
       <change type="MOVED" beforePath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up.class" afterPath="$PROJECT_DIR$/bin/classes/edu/cmu/carannotationv2/sign_up.class" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/cmu/carannotationv2/sign_up.java" afterPath="$PROJECT_DIR$/src/edu/cmu/carannotationv2/sign_up.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/activity_login.xml" afterPath="$PROJECT_DIR$/res/layout/activity_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/colors.xml" afterPath="$PROJECT_DIR$/res/values/colors.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -127,12 +147,44 @@
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="17" selection-start="879" selection-end="879" vertical-scroll-proportion="0.55469954" vertical-offset="0" max-vertical-offset="1545">
-              <folding>
-                <element signature="e#660#690#0" expanded="true" />
-                <element signature="e#2297#2325#0" expanded="true" />
-                <element signature="e#2758#2796#0" expanded="true" />
-              </folding>
+            <state line="47" column="46" selection-start="1750" selection-end="1750" vertical-scroll-proportion="0.51119894" vertical-offset="317" max-vertical-offset="1590">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="activity_login.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/layout-large/activity_login.xml">
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1545">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main_screen.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/layout/main_screen.xml">
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1890">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme_layout.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/layout/readme_layout.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="18" column="3" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="1875">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -140,7 +192,7 @@
       <file leaf-file-name="colors.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/res/values/colors.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="38" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="135">
+            <state line="2" column="38" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="135">
               <folding />
             </state>
           </provider>
@@ -158,7 +210,7 @@
       <file leaf-file-name="strings.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="79" selection-start="1035" selection-end="1035" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="735">
+            <state line="44" column="42" selection-start="3526" selection-end="3526" vertical-scroll-proportion="0.0" vertical-offset="9" max-vertical-offset="795">
               <folding />
             </state>
           </provider>
@@ -195,17 +247,17 @@
         <option value="$PROJECT_DIR$/src/edu/cmu/carannotationv2/AnnotatorInput.java" />
         <option value="$PROJECT_DIR$/src/edu/cmu/carannotationv2/Main_screen.java" />
         <option value="$PROJECT_DIR$/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/res/values/colors.html" />
-        <option value="$PROJECT_DIR$/res/layout/activity_login.xml" />
+        <option value="$PROJECT_DIR$/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/res/layout/titlebar.xml" />
         <option value="$PROJECT_DIR$/res/values/colors.xml" />
+        <option value="$PROJECT_DIR$/res/layout/activity_login.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
     <option name="width" value="1440" />
-    <option name="height" value="812" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -214,7 +266,7 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="1" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
@@ -252,74 +304,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="carannotationv2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="values" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CarAnnotaitonV2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
@@ -329,12 +313,12 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager2.WIDTH" value="227" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="FullScreen" value="true" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="FullScreen" value="false" />
-    <property name="DefaultHtmlFileTemplate" value="Html5" />
     <property name="GoToClass.includeLibraries" value="false" />
+    <property name="DefaultHtmlFileTemplate" value="Html5" />
     <property name="MemberChooser.copyJavadoc" value="false" />
   </component>
   <component name="RunManager" selected="Android Application.CarAnnotaitonV2">
@@ -487,13 +471,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="812" extended-state="6" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298611" sideWeight="0.97339785" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298611" sideWeight="0.97339785" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -506,7 +490,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29444444" sideWeight="0.97339785" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29444444" sideWeight="0.97339785" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -530,17 +514,41 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/db_tosend_item.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/BaseAlbumDirFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="13" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4395" />
+        <state line="6" column="19" selection-start="107" selection-end="107" vertical-scroll-proportion="0.077220075" vertical-offset="0" max-vertical-offset="777" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout-large/main_screen.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
+    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/backsaveddata.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="13" selection-start="319" selection-end="319" vertical-scroll-proportion="-0.096525095" vertical-offset="135" max-vertical-offset="1800" />
       </provider>
-      <provider editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2475">
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/filesaveread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="13" selection-start="322" selection-end="322" vertical-scroll-proportion="0.019305019" vertical-offset="135" max-vertical-offset="1575" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/AnnotatorInput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="85" column="16" selection-start="1750" selection-end="1750" vertical-scroll-proportion="0.36293435" vertical-offset="963" max-vertical-offset="1740" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/AlbumStorageDirFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="0" selection-start="162" selection-end="162" vertical-scroll-proportion="0.19305019" vertical-offset="0" max-vertical-offset="777" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="56" selection-start="1967" selection-end="1967" vertical-scroll-proportion="0.0" vertical-offset="251" max-vertical-offset="1050">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
           <folding />
         </state>
       </provider>
@@ -555,82 +563,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/Main_screen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="2350" selection-end="2350" vertical-scroll-proportion="-0.46332046" vertical-offset="480" max-vertical-offset="11730">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout-xlarge/main_screen.xml">
+    <entry file="file://$PROJECT_DIR$/res/layout/signup_data.xml">
       <provider editor-type-id="android-designer">
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2415">
-          <folding />
-        </state>
+        <state line="13" column="44" selection-start="0" selection-end="1679" vertical-scroll-proportion="-7.2222223" vertical-offset="0" max-vertical-offset="825" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/database.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="13" selection-start="47" selection-end="47" vertical-scroll-proportion="0.038610037" vertical-offset="0" max-vertical-offset="777">
-          <folding />
-        </state>
+    <entry file="file://$PROJECT_DIR$/res/layout/login_waiting.xml">
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/BaseAlbumDirFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="19" selection-start="107" selection-end="107" vertical-scroll-proportion="0.077220075" vertical-offset="0" max-vertical-offset="777">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/backsaveddata.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="13" selection-start="319" selection-end="319" vertical-scroll-proportion="-0.096525095" vertical-offset="135" max-vertical-offset="1800">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/filesaveread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="13" selection-start="322" selection-end="322" vertical-scroll-proportion="0.019305019" vertical-offset="135" max-vertical-offset="1575">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/AnnotatorInput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="16" selection-start="1750" selection-end="1750" vertical-scroll-proportion="0.36293435" vertical-offset="963" max-vertical-offset="1740">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/cmu/carannotationv2/AlbumStorageDirFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="162" selection-end="162" vertical-scroll-proportion="0.19305019" vertical-offset="0" max-vertical-offset="777">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="56" selection-start="1967" selection-end="1967" vertical-scroll-proportion="0.0" vertical-offset="251" max-vertical-offset="1050">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="795">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="79" selection-start="1035" selection-end="1035" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="735">
+        <state line="44" column="42" selection-start="3526" selection-end="3526" vertical-scroll-proportion="0.0" vertical-offset="9" max-vertical-offset="795">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
+    <entry file="file://$PROJECT_DIR$/res/layout/titlebar.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+        <state line="27" column="17" selection-start="948" selection-end="948" vertical-scroll-proportion="0.5335968" vertical-offset="0" max-vertical-offset="759" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/readme_layout.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="3" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="1875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout-large/activity_login.xml">
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1545">
           <folding />
         </state>
       </provider>
@@ -647,12 +628,8 @@
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="17" selection-start="879" selection-end="879" vertical-scroll-proportion="0.55469954" vertical-offset="0" max-vertical-offset="1545">
-          <folding>
-            <element signature="e#660#690#0" expanded="true" />
-            <element signature="e#2297#2325#0" expanded="true" />
-            <element signature="e#2758#2796#0" expanded="true" />
-          </folding>
+        <state line="47" column="46" selection-start="1750" selection-end="1750" vertical-scroll-proportion="0.51119894" vertical-offset="317" max-vertical-offset="1590">
+          <folding />
         </state>
       </provider>
     </entry>

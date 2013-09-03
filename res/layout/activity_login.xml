@@ -27,11 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:layout_below="@id/welcome_words"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:weightSum="4"
         android:gravity="bottom"
         android:background="@color/trans_background">
 
@@ -40,7 +39,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:text="@string/Email"
-            android:gravity="bottom|left"
+            android:gravity="top|left"
             android:textColor="@android:color/white"
             android:textSize="18dp" />
 
@@ -51,32 +50,42 @@
             android:inputType="text" 
             android:layout_weight="0.8"
             android:gravity="bottom"
-            android:textSize="13dp"
+            android:textSize="20sp"
+            android:text="@string/login_choice_between_string"
             android:textColor="@android:color/holo_blue_bright"/>
 
-        <Button
-            android:id="@+id/login_login_btn"
-            android:layout_width="fill_parent"
+        <TextView
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="right|bottom"
-            android:text="@string/login_string_onbtn"
+            android:layout_width="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="@string/login_choice_between_string"
+            android:textSize="20dp"
             android:textColor="@android:color/white"
-            android:textSize="25dp"
-            android:background="#669900"/>
+            />
 
+        <CheckBox
+            android:id="@+id/login_anonymous_checkbox"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/login_anonymous_string_onchkbx"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="right"
+            />
         <Button
             android:id="@+id/login_anonymous_btn"
             android:layout_width="wrap_content"
             android:layout_height="0dp" 
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:layout_marginTop="20sp"
             android:gravity="bottom"
-            android:text="@string/login_anonymous_string_onbtn"
+            android:text="@string/login_string_onbtn"
             android:textColor="@android:color/white"
-            android:textSize="25dp" 
-            android:layout_gravity="bottom"
-            android:background="#669900"/>
+            android:textSize="25sp"
+            android:layout_gravity="center"
+            android:background="#00000000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -86,13 +95,7 @@
         android:layout_alignParentTop="true"
         android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/readme_btn"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|bottom" 
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/question"/>
+
     </LinearLayout>
 
 </RelativeLayout>
