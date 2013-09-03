@@ -5,8 +5,7 @@
     android:background="@drawable/login_back_ground"
     android:orientation="vertical"
     android:padding="5dp"
-    tools:context=".Login" 
-     >
+    tools:context=".Login" >
 
     <TextView
         android:id="@+id/welcome_words"
@@ -26,20 +25,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="300dp"
         android:layout_below="@id/welcome_words"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="300dp"
+        android:background="@color/trans_background"
         android:gravity="bottom"
-        android:background="@color/trans_background">
+        android:orientation="vertical" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="0.6"
-            android:text="@string/Email"
             android:gravity="top|left"
+            android:text="@string/Email"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -47,46 +46,47 @@
             android:id="@+id/login_account"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:inputType="text" 
             android:layout_weight="0.8"
             android:gravity="bottom"
-            android:textSize="20sp"
+            android:inputType="text"
+            android:background="@color/trans_background"
             android:text="@string/login_choice_between_string"
-            android:textColor="@android:color/holo_blue_bright"/>
+            android:textColor="@android:color/holo_blue_bright"
+            android:textSize="20sp" />
 
         <TextView
-            android:layout_height="0dp"
             android:layout_width="fill_parent"
+            android:layout_height="0dp"
             android:layout_weight="0.6"
             android:gravity="center"
             android:text="@string/login_choice_between_string"
-            android:textSize="20sp"
             android:textColor="@android:color/white"
-            />
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/login_anonymous_checkbox"
+            android:checked="false"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_width="wrap_content"
             android:layout_weight="0.6"
+            android:gravity="right|center_vertical"
             android:text="@string/login_anonymous_string_onchkbx"
-            android:textSize="20sp"
             android:textColor="@android:color/white"
-            android:gravity="right"
-            />
+            android:textSize="20sp" 
+            android:background="@color/trans_background"/>
+
         <Button
-            android:id="@+id/login_anonymous_btn"
+            android:id="@+id/login_btn"
             android:layout_width="wrap_content"
-            android:layout_height="0dp" 
-            android:layout_weight="0.8"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
             android:layout_marginTop="20sp"
+            android:layout_weight="0.8"
+            android:background="#00000000"
             android:gravity="bottom"
             android:text="@string/login_string_onbtn"
             android:textColor="@android:color/white"
-            android:textSize="25sp"
-            android:layout_gravity="center"
-            android:background="#00000000"/>
+            android:textSize="25sp" />
     </LinearLayout>
-
 
 </RelativeLayout>

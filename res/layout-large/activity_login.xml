@@ -51,6 +51,7 @@
             android:layout_weight="0.8"
             android:gravity="bottom"
             android:textSize="20sp"
+            android:background="@color/trans_background"
             android:text="@string/login_choice_between_string"
             android:textColor="@android:color/holo_blue_bright"/>
 
@@ -72,10 +73,11 @@
             android:text="@string/login_anonymous_string_onchkbx"
             android:textSize="20sp"
             android:textColor="@android:color/white"
-            android:gravity="right"
+            android:gravity="right|center_vertical"
+            android:background="@color/trans_background"
             />
         <Button
-            android:id="@+id/login_anonymous_btn"
+            android:id="@+id/login_btn"
             android:layout_width="wrap_content"
             android:layout_height="0dp" 
             android:layout_weight="0.8"

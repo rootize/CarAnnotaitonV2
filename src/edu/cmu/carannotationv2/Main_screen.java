@@ -68,7 +68,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,11 +81,11 @@ public class Main_screen extends Activity {
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-	private Bitmap mImageBitmap; 
+	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-	
+
 	private TextView welcomeText;
 	String welcome_name = "";
 	private TextView GuideText;
@@ -102,28 +101,25 @@ public class Main_screen extends Activity {
 	private String selectedMake;
 	private String selectedModel;
 
-	private int gRectCount=0;
+	private int gRectCount = 0;
 	// **************************************************************//
 	private File makeModelDataFile;
 	private SQLiteDatabase carDatabase;
-	
-	private String usr_name; 
+
+	private String usr_name;
 	private JSONArray offline_JsonArray;
 	private boolean wifi_connected;
-	
-	
+
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		/* this.requestWindowFeature(Window.FEATURE_NO_TITLE); */
 		setContentView(R.layout.main_screen);
-	
-		
-		
+
 		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
 				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
 		ParseAnalytics.trackAppOpened(getIntent());
@@ -136,58 +132,51 @@ public class Main_screen extends Activity {
 		} else {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
-		
-		
-		wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
-		
+
+		wifi_connected = static_global_functions
+				.wifi_connection(getApplicationContext());
+
 		if (static_global_functions.isEmailValid(usr_name)) {
 			welcome_name = usr_name;
 		} else {
 			welcome_name = "Dear guest";
 		}
-		
-		//*********************************************************
+
+		// *********************************************************
 		if (wifi_connected) {
 			welcome_name = welcome_name + " (online)";
 			check_upload_localData();
-			
+
 		} else {
 			welcome_name = welcome_name + " (offline)";
 		}
-		//*************************************************************
+		// *************************************************************
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText("Welcome! " + welcome_name);
 
 		// initialization on counting images
 
-		
-		//gRectCount = 0;
+		// gRectCount = 0;
 
 		initialize_btn_takeimg();
 		initialize_btn_send();
 		initialize_btn_save();
 		initialize_drawImageView();
-	
 
-		
 		try {
 			ReadDataFromRaw(R.raw.car_make_model_revised);
 			FormDatabase();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
+
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-	   GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		
-		
-		//take a new image, if the current number of annotated rects is not 0, reminds user if they want to give up
-		
+		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
+
+		// take a new image, if the current number of annotated rects is not 0,
+		// reminds user if they want to give up
 
 		// 注释： 为了使第一次的两个spinner 都变成 disabled， 添加了第一行为空白行
 		generateAdapter(makeSpinner, database.SELECT_MAKE, makeAdapter);
@@ -231,7 +220,8 @@ public class Main_screen extends Activity {
 				// TODO Auto-generated method stub
 				selectedModel = arg0.getItemAtPosition(arg2).toString();
 				btn_save.setEnabled(true);
-				GuideText.setText("If everything is correct, press \"Save Information\"  button to save");
+				GuideText
+						.setText("If everything is correct, press \"Save Information\"  button to save");
 
 			}
 
@@ -252,18 +242,19 @@ public class Main_screen extends Activity {
 
 						drawView.setRect_left(event.getX());
 						drawView.setRect_top(event.getY());
-                        Log.d("imageview left", drawView.getRect_left()+"");
-                        Log.d("imageview top", drawView.getRect_top()+"");
+						Log.d("imageview left", drawView.getRect_left() + "");
+						Log.d("imageview top", drawView.getRect_top() + "");
 					} else {
 
 						drawView.setRect_right(event.getX());
 						drawView.setRect_bottom(event.getY());
-						Log.d("imageview right", drawView.getRect_right()+"");
-						Log.d("imageview bottom", drawView.getRect_bottom()+"");
-						
+						Log.d("imageview right", drawView.getRect_right() + "");
+						Log.d("imageview bottom", drawView.getRect_bottom()
+								+ "");
+
 					}
 					drawView.invalidate();
-					
+
 					makeSpinner.setEnabled(true);
 					btn_save.setEnabled(false);
 					btn_send.setEnabled(false);
@@ -278,40 +269,39 @@ public class Main_screen extends Activity {
 
 			@Override
 			public void onClick(View v) {
-                			
+
 				mImageView.addRect();
-				annotatorInput.update(mImageView.getLastRect(), selectedMake, selectedModel);
-				gRectCount=gRectCount+1;
+				annotatorInput.update(mImageView.getLastRect(), selectedMake,
+						selectedModel);
+				gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
-				
+
 				if (gRectCount == 5) {
 					global_prevent_reDraw = true;
 					String showMessage = "You have annotated 5 cars,click Done! ";
-					static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.caution);
+					static_global_functions.ShowToast_short(
+							getApplicationContext(), showMessage,
+							R.drawable.caution);
 				}
-				btn_save.setEnabled(false);				
+				btn_save.setEnabled(false);
 				makeSpinner.setEnabled(false);
 				modelSpinner.setEnabled(false);
 				btn_send.setEnabled(true);
-				if (global_prevent_reDraw==true) {
+				if (global_prevent_reDraw == true) {
 					GuideText.setText("Press \"Done!\" to finish");
-				}else {
-					GuideText.setText("Press \"Done!\" to finish or start annotating another image by drawing on the image");
+				} else {
+					GuideText
+							.setText("Press \"Done!\" to finish or start annotating another image by drawing on the image");
 
 				}
-				
+
 			}
 		});
 
-
-
-
-		GuideText.setText("Please press \" Take a Photo! \"  to take a picture");
+		GuideText
+				.setText("Please press \" Take a Photo! \"  to take a picture");
 		// *****************************************//
 	}// end of OnCreate
-
-	
-
 
 	private void initialize_drawImageView() {
 		// TODO Auto-generated method stub
@@ -320,12 +310,9 @@ public class Main_screen extends Activity {
 		mImageView.setVisibility(DrawImageView.VISIBLE);
 		mImageView.setImageDrawable(getResources().getDrawable(
 				R.drawable.firstlogin));
-		global_prevent_reDraw = true; //indicator if one could draw on iamge
+		global_prevent_reDraw = true; // indicator if one could draw on iamge
 
 	}
-
-
-
 
 	private void initialize_btn_save() {
 		// TODO Auto-generated method stub
@@ -333,90 +320,92 @@ public class Main_screen extends Activity {
 		btn_save.setEnabled(false);
 	}
 
-
 	private void initialize_btn_send() {
 		// TODO Auto-generated method stub
 		btn_send = (Button) findViewById(R.id.button_send_server);
 		btn_send.setEnabled(false);
-        btn_send.setOnClickListener(new OnClickListener() {
+		btn_send.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                annotatorInput.addPath(mCurrentPhotoPath);
-                annotatorInput.addImgName(imageFileName+JPEG_FILE_SUFFIX);
-                annotatorInput.addScaleRatio(new ScaleRatio(mImageView, mCurrentPhotoPath));
-                wifi_connected=static_global_functions.wifi_connection(getApplicationContext());
+			@Override
+			public void onClick(View v) {
+				annotatorInput.addPath(mCurrentPhotoPath);
+				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
+				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
+						mCurrentPhotoPath));
+				wifi_connected = static_global_functions
+						.wifi_connection(getApplicationContext());
 
-                annotatorInput.addWifiStatus(wifi_connected);
-                jsonData=new JSONdata(annotatorInput,getApplicationContext());
+				annotatorInput.addWifiStatus(wifi_connected);
+				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
+				if (wifi_connected) {
+					ParseObject pb_send = jsonData.formatParseObject();
+					pb_send.saveInBackground(new SaveCallback() {
+						@Override
+						public void done(ParseException arg0) {
+							if (arg0 == null) {
+								String send_success = "Send to server successfully!";
+								static_global_functions.ShowToast_short(
+										getApplicationContext(), send_success,
+										R.drawable.success);
+							} else {
+								Log.d("error", arg0.toString());
+							}
+						}
+					});
+					// FIXME
+					// 1. delete all files
+					// 2. draw a new image---please take a new one!
 
-                if (wifi_connected) {
-                    ParseObject pb_send=jsonData.formatParseObject();
-                    pb_send.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException arg0) {
-                            if (arg0==null) {
-                                String send_success = "Send to server successfully!";
-                                static_global_functions.ShowToast_short(getApplicationContext(), send_success, R.drawable.success);
-                            }
-                            else {
-                                Log.d("error", arg0.toString());
-                            }
-                        }
-                    });
-                    // FIXME
-                    // 1. delete all files
-                    // 2. draw a new image---please take a new one!
+				} else {
+					try {
+						JSONArray old_offlineJsonArray;
+						String temp = filesaveread.read(
+								getApplicationContext(), offline_filename);
+						if (temp == null) {
+							old_offlineJsonArray = new JSONArray();
+						} else {
 
-                } else {
-                    try {
-                        JSONArray old_offlineJsonArray;
-                        String temp = filesaveread.read(
-                                getApplicationContext(), offline_filename);
-                        if (temp == null) {
-                            old_offlineJsonArray = new JSONArray();
-                        } else {
+							old_offlineJsonArray = new JSONArray(temp);
 
-                            old_offlineJsonArray = new JSONArray(temp);
+						}
 
-                        }
+						JSONObject toSend_item = jsonData.getJsonObject();
+						old_offlineJsonArray.put(toSend_item);
+						// Using Thread?
+						filesaveread.save(getApplicationContext(),
+								offline_filename,
+								old_offlineJsonArray.toString());
+						String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+						static_global_functions.ShowToast_short(
+								getApplicationContext(), showMessage,
+								R.drawable.success);
+					} catch (JSONException e) {
 
-                        JSONObject toSend_item = jsonData.getJsonObject();
-                        old_offlineJsonArray.put(toSend_item);
-//Using Thread?
-                        filesaveread.save(getApplicationContext(),
-                                offline_filename,
-                                old_offlineJsonArray.toString());
-                        String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-                        static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.success);
-                    } catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				gRectCount = 0;
+				btn_send.setEnabled(false);
+				makeSpinner.setEnabled(false);
+				modelSpinner.setEnabled(false);
+				mImageView.clearRecords();
+				mImageView.clearrect();
+				mImageView.invalidate();
+				global_prevent_reDraw = true;
+				mImageView.setImageDrawable(getResources().getDrawable(
+						R.drawable.buttonfinish));
 
-                        e.printStackTrace();
-                    }
-                }
+				GuideText
+						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 
-                btn_send.setEnabled(false);
-                makeSpinner.setEnabled(false);
-                modelSpinner.setEnabled(false);
-                mImageView.clearRecords();
-                mImageView.clearrect();
-                mImageView.invalidate();
-                global_prevent_reDraw=true;
-                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.buttonfinish));
+			}
 
-                GuideText.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
-
-            }
-
-
-
-
-        });
+		});
 	}
 
 	private void initialize_btn_takeimg() {
-		
+
 		btn_takeimg = (Button) findViewById(R.id.button_take_new);
 		btn_takeimg.setEnabled(true);
 		btn_takeimg.setOnClickListener(new OnClickListener() {
@@ -431,27 +420,18 @@ public class Main_screen extends Activity {
 			}
 		});
 
-	
-
 	}
-
-
 
 	private void check_upload_localData() {
 
 		new UploadFileThread().start();
 	}
 
-
-
-
 	private void setModelSpinnerContent(String string) {
-		
+
 		generateAdapter(modelSpinner, string, modelAdapter);
 
 	}
-
-	
 
 	private void generateAdapter(Spinner spinner, String select_query,
 			ArrayAdapter<String> adapter) {
@@ -502,7 +482,7 @@ public class Main_screen extends Activity {
 
 		while ((line = databaseBufferedReader.readLine()) != null) {
 			String[] all_elements = line.split(",");
-			
+
 			String[] make_model_String = new String[2];
 			for (int i = 0; i < all_elements.length; i++) {
 				StringBuilder sb_insert = new StringBuilder(
@@ -612,10 +592,10 @@ public class Main_screen extends Activity {
 	private File createImageFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(new Date());
-		imageFileName = JPEG_FILE_PREFIX + timeStamp ;
+		imageFileName = JPEG_FILE_PREFIX + timeStamp;
 		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName+"_", JPEG_FILE_SUFFIX,
-				albumF);
+		File imageF = File.createTempFile(imageFileName + "_",
+				JPEG_FILE_SUFFIX, albumF);
 		return imageF;
 	}
 
@@ -626,7 +606,7 @@ public class Main_screen extends Activity {
 	}
 
 	private void setPic() {
-	
+
 		int targetW = mImageView.getWidth();
 		int targetH = mImageView.getHeight();
 		Log.d("width_target", "" + targetW);
@@ -639,7 +619,7 @@ public class Main_screen extends Activity {
 		int photoH = bmOptions.outHeight;
 		Log.d("width", "" + photoW);
 		Log.d("height", "" + photoH);
-		 int scaleFactor = 1;
+		int scaleFactor = 1;
 		if (targetH > 0 || targetW > 0) {
 			scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
@@ -683,27 +663,25 @@ public class Main_screen extends Activity {
 
 	private void handleBigCameraPhoto() {
 		if (mCurrentPhotoPath != null) {
-			
+
 			setPic();
-			galleryAddPic(); 
-			
+			galleryAddPic();
+
 		}
 	}
 
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
 
 		if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
 			Log.d("OnActivityResult", "Called!");
 			handleBigCameraPhoto();
 			Log.d("OnActivityResult", "2");
-			GuideText.setText("Please draw a rectangle that covers the (first)car in the photo");
-			
+			GuideText
+					.setText("Please draw a rectangle that covers the (first)car in the photo");
+
 		}
 	}
-
 
 	@Override
 	protected void onDestroy() {
@@ -712,24 +690,22 @@ public class Main_screen extends Activity {
 		carDatabase.close();
 	}
 
-
 	@Override
 	protected void onResume() {
-	
-		gRectCount=0;
+
+		gRectCount = 0;
 		makeSpinner.setEnabled(false);
 		modelSpinner.setEnabled(false);
 		btn_save.setEnabled(false);
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
 		global_prevent_reDraw = false;
-		
-		annotatorInput=new AnnotatorInput();
+
+		annotatorInput = new AnnotatorInput();
 		annotatorInput.addUsr(usr_name);
 		super.onResume();
 		Log.d("OnResume", "1");
 	}
-
 
 	@Override
 	protected void onPause() {
@@ -738,11 +714,9 @@ public class Main_screen extends Activity {
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
 		}
-		
+
 		super.onPause();
 	}
-
-
 
 	class FileSavingThread extends Thread {
 		private String content;
@@ -752,6 +726,7 @@ public class Main_screen extends Activity {
 			this.fileName = fileName;
 			this.content = content;
 		}
+
 		@Override
 		public void run() {
 			filesaveread.save(getApplicationContext(), fileName, content);
@@ -761,8 +736,9 @@ public class Main_screen extends Activity {
 	class UploadFileThread extends Thread {
 		public UploadFileThread() {
 		}
+
 		@Override
-		public void run() {		
+		public void run() {
 
 			String offline_string = filesaveread.read(getApplicationContext(),
 					offline_filename);
@@ -782,16 +758,19 @@ public class Main_screen extends Activity {
 					try {
 						tem_item = (JSONObject) offline_JsonArray.get(0);
 
-					//	ParseObject pobject = new ParseObject("annotation_info");
-					//	static_global_functions.transfer_Json_Pobject(pobject, tem_item);
-                         ParseObject pobject=new JSONdata(tem_item).formatParseObject();
-						 pobject.saveInBackground(new SaveCallback() {
+						// ParseObject pobject = new
+						// ParseObject("annotation_info");
+						// static_global_functions.transfer_Json_Pobject(pobject,
+						// tem_item);
+						ParseObject pobject = new JSONdata(tem_item)
+								.formatParseObject();
+						pobject.saveInBackground(new SaveCallback() {
 
 							@Override
 							public void done(ParseException arg0) {
-								
 
-								offline_JsonArray =static_global_functions. remove(0, offline_JsonArray);
+								offline_JsonArray = static_global_functions
+										.remove(0, offline_JsonArray);
 								recursive_upload();
 							}
 
@@ -807,6 +786,7 @@ public class Main_screen extends Activity {
 		}
 
 	}
+
 	private void recursive_upload() {
 		if (offline_JsonArray.length() > 0) {
 
@@ -814,15 +794,17 @@ public class Main_screen extends Activity {
 			try {
 				tem_item = (JSONObject) offline_JsonArray.get(0);
 
-//				ParseObject pobject = new ParseObject("annotation_info");
-//				pobject.put("usr", tem_item.getString("usr"));
-//				static_global_functions.transfer_Json_Pobject(pobject, tem_item/*,lati,longti*/);
-				ParseObject pobject=new JSONdata(tem_item).formatParseObject();
+				// ParseObject pobject = new ParseObject("annotation_info");
+				// pobject.put("usr", tem_item.getString("usr"));
+				// static_global_functions.transfer_Json_Pobject(pobject,
+				// tem_item/*,lati,longti*/);
+				ParseObject pobject = new JSONdata(tem_item)
+						.formatParseObject();
 				pobject.saveInBackground(new SaveCallback() {
 
 					@Override
 					public void done(ParseException arg0) {
-						
+
 						offline_JsonArray = static_global_functions.remove(0,
 								offline_JsonArray);
 						recursive_upload();
@@ -839,13 +821,10 @@ public class Main_screen extends Activity {
 			filesaveread.delete(getApplicationContext(), offline_filename);
 		}
 	}
-	
-	
-	
+
 	public void showDialog(String showString) {
 
-		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
-				this);
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 		alertBuilder.setTitle("Warning");
 		alertBuilder.setMessage(showString);
 		alertBuilder.setIcon(R.drawable.caution);
@@ -873,8 +852,6 @@ public class Main_screen extends Activity {
 		warningDialog.show();
 
 	}
-	
 
-	
 }// Ending of whole class!
 
