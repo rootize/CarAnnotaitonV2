@@ -84,8 +84,8 @@ public class JSONdata {
 					jsonObject.put(ParseAtributes.LEFT+i, ParseAtributes.NULL_NUM);
 					jsonObject.put(ParseAtributes.BOTTOM+i, ParseAtributes.NULL_NUM);
 					jsonObject.put(ParseAtributes.RIGHT+i, ParseAtributes.NULL_NUM);
-					jsonObject.put(ParseAtributes.MAKE+i, ParseAtributes.NULL_NUM);
-                    jsonObject.put(ParseAtributes.MODEL+i, ParseAtributes.NULL_NUM);
+					jsonObject.put(ParseAtributes.MAKE+i, ParseAtributes.NULL_STRING);
+                    jsonObject.put(ParseAtributes.MODEL+i, ParseAtributes.NULL_STRING);
 
 				}
 			}
@@ -187,7 +187,7 @@ public class JSONdata {
 			imgFile = new ParseFile(jsonObject.getString(ParseAtributes.IMG_NAME),
 					data);
 			tempObject.put(ParseAtributes.IMG_FILE, imgFile);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

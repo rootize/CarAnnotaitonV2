@@ -2,7 +2,7 @@ package edu.cmu.carannotationv2;
 
 public class ParseAtributes {
     public static final String GPS_OFFLINE="--off";
-	public static final String PARSE_CLASS_NAME = "annotation_info_rev2";
+	public static final String PARSE_CLASS_NAME = "annotation_info_rev3";
 	public static final String USR = "usr";
 	public static final String MAKE = "make_";
 	public static final String MODEL = "model_";
@@ -22,4 +22,5 @@ public class ParseAtributes {
 	public static final String IMG_FILE = "imageFile";
 	public static final String IMG_PATH = "imgAbsPath";
 	public static final int NULL_NUM = 0;
+	public static final String NULL_STRING="NA";
 }

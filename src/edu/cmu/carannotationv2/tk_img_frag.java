@@ -13,6 +13,40 @@ import android.widget.Button;
 public class tk_img_frag extends Fragment {
 	private Button tkImgButton;
     private OnTkImgListener listener;
+	
+	@Override
+	public void onAttach(Activity activity) {
+	
+		super.onAttach(activity);
+		try {
+			listener=(OnTkImgListener)activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()+"must implement XXX");
+		}
+	}
+
+	
+
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+	}
+
+
+
+
+	
+
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		
+		super.onActivityCreated(savedInstanceState);
+	}
+	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -31,37 +65,12 @@ public class tk_img_frag extends Fragment {
 		return view;
 	}
 
-	
-	
-
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-	}
-
-
-
-
-	@Override
-	public void onAttach(Activity activity) {
-	
-		super.onAttach(activity);
-		try {
-			listener=(OnTkImgListener)activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()+"must implement XXX")
-		}
-	}
-
-
 
 	private void communicateMainScreen() {
-
+          listener.onTkImg(true);
 	}
 
 	public interface OnTkImgListener{
-		public void onTkImg(String s);
+		public void onTkImg(Boolean	 s);
 	}
 }

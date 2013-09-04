@@ -72,7 +72,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Main_screen extends Activity {
+public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener {
 
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
@@ -411,6 +411,10 @@ public class Main_screen extends Activity {
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+			
+				mImageView.setImageDrawable(getResources().getDrawable(
+						R.drawable.buttonfinish));
+				mImageView.invalidate();
 				if (gRectCount != 0) {
 					String showMessage = "Abondon all the rectangles and start a new one?";
 					showDialog(showMessage);
@@ -714,7 +718,7 @@ public class Main_screen extends Activity {
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
 		}
-
+       // mCurrentPhotoPath=null;
 		super.onPause();
 	}
 
@@ -851,6 +855,14 @@ public class Main_screen extends Activity {
 		AlertDialog warningDialog = alertBuilder.create();
 		warningDialog.show();
 
+	}
+
+	@Override
+	public void onTkImg(Boolean s) {
+		
+		if (s) {
+			dispathTakePictureIntent();
+		}
 	}
 
 }// Ending of whole class!
