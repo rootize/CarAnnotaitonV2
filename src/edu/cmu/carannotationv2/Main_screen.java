@@ -66,12 +66,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FunctionCallback;
+import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -81,6 +83,9 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
+	//generated form encrpted code:
+	
+	
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
 	private static final int NUM = 20;
@@ -153,6 +158,7 @@ public class Main_screen extends Activity implements
 
 		// *********************************************************
 		if (wifi_connected) {
+			login_global_usr();
 			welcome_name = welcome_name + " (online)";
 			check_upload_localData();
 
@@ -349,8 +355,9 @@ public class Main_screen extends Activity implements
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
 				if (wifi_connected) {
+					//check parse usr:
+				//	login_global_usr();
 					ParseObject pb_send = jsonData.formatParseObject();
-					
 					pb_send.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException arg0) {
@@ -411,6 +418,8 @@ public class Main_screen extends Activity implements
 						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 
 			}
+
+			
 
 		});
 	}
@@ -875,6 +884,21 @@ public class Main_screen extends Activity implements
 			dispathTakePictureIntent();
 		}
 	}
-
+	private void login_global_usr() {
+		ParseUser.logInInBackground(EncryptedData.USR_NAME, EncryptedData.PW	, new LogInCallback() {
+			
+			@Override
+			public void done(ParseUser usr, ParseException e) {
+				if (usr!=null) {
+					Log.d("Login_before","Successfully" );
+				}else {
+					Log.d("error logging in ",e.toString());
+					
+				}
+				
+			}
+		});
+		
+	}
 }// Ending of whole class!
 

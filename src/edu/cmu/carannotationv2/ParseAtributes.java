@@ -2,7 +2,7 @@ package edu.cmu.carannotationv2;
 
 public class ParseAtributes {
     public static final String GPS_OFFLINE="--off";
-	public static final String PARSE_CLASS_NAME = "AnnotationInfo";
+	public static final String PARSE_CLASS_NAME = "carannotationinfolongenough";
 	public static final String USR = "user";
 	public static final String MAKE = "carMake";
 	public static final String MODEL = "carModel";
