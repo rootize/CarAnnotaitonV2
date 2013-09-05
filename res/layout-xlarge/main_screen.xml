@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
@@ -7,6 +7,30 @@
     android:weightSum="5" >
 
     <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="4"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/mainscreen_textview_textguidance"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center_horizontal"
+            android:text="@string/mainscreen_textview_guidance_string"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+        
+        <edu.cmu.carannotationv2.DrawImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|bottom"
+            android:src="@drawable/firstlogin"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -20,136 +44,81 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/mainscreen_textview_sampletextwelcome_string"
-            android:textSize="20dp"
+            android:textSize="25sp"
             android:textStyle="italic"
             android:typeface="serif" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:orientation="vertical"
-            android:weightSum="5" >
-
-            <TextView
-                android:id="@+id/mainscreen_textview_textguidance"
-                android:textColor="@android:color/holo_blue_bright"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4"
-                android:textSize="15dp"
-                android:maxLines="3"
-                android:text="@string/mainscreen_textview_guidance_string" />
-
-         <!--    <ImageView
-                android:id="@+id/mainscreen_imageview_imageguidance"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4"
-                android:contentDescription="@string/desc"
-                 android:src="@drawable/caution"/> -->
-            <!-- <CheckBox 
-                android:id="@+id/mainscreen_checkbox_hideguidance"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp" 
-                android:layout_weight="1"
-                android:text="@string/mainscreen_checkbox_hideguidance_string"
-                android:layout_gravity="right|bottom"
-                android:gravity="right|center_vertical"
-                
-                /> -->
-        </LinearLayout>
-
-        <Button
+              <Button
+                  android:layout_below="@id/mainscreen_welcome_text"
             android:id="@+id/button_take_new"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/take_new_string"
-            android:textSize="20dp" />
+            android:textSize="25sp" />
 
-        <LinearLayout
+        <TextView
+            
+            android:layout_below="@id/button_take_new"
+            android:id="@+id/make_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:weightSum="2" >
+            android:singleLine="true"
+            android:text="@string/make_text_string"
+            android:textSize="15sp" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical" >
+        <Spinner
+            android:layout_below="@id/make_text"
+            android:id="@+id/carmakespinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/make_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="@string/make_text_string"
-                    android:textSize="20dp" />
+        <TextView
+            android:layout_below="@id/carmakespinner"
+            android:id="@+id/model_text"
+            
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_text_string"
+            android:textSize="15sp" />
 
-                <Spinner
-                    android:id="@+id/carmakespinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/model_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/model_text_string"
-                    android:textSize="20dp" />
-
-                <Spinner
-                    android:id="@+id/carmodelspinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1" >
-
-                <Button
-                    android:id="@+id/btn_confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="@string/mainscreen_btn_saveinformation_string" />
-            </RelativeLayout>
-        </LinearLayout>
+        <Spinner
+            android:layout_below="@id/model_text"
+            android:id="@+id/carmodelspinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
+            android:layout_below="@id/carmodelspinner"
+            android:id="@+id/btn_confirm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mainscreen_btn_saveinformation_string"
+            android:textSize="25sp" />
+
+        <Button
+            android:layout_below="@id/btn_confirm"
             android:id="@+id/button_send_server"
+            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:text="@string/finish_annotating"
-            android:textSize="20dp" />
+            android:textSize="25sp" />
+     <ProgressBar
+         android:layout_alignParentBottom="true"
+    android:id="@+id/login_bkuploading_progressbar"
+    style="@android:style/Widget.ProgressBar.Horizontal" 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    />
+    <TextView 
+    android:layout_above="@id/login_bkuploading_progressbar"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/login_progress_bar_string"
+    android:textSize="15sp" 
+    android:textColor="@android:color/white"/>
 
-     <!--    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mainscreen_note" />
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mainscreen_note_extent" /> -->
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="4" >
-
-        <edu.cmu.carannotationv2.DrawImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right|bottom"
-            android:visibility="visible" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

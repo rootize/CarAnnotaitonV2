@@ -15,12 +15,14 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,11 +60,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.FunctionCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -72,7 +78,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener {
+public class Main_screen extends Activity implements
+		tk_img_frag.OnTkImgListener {
 
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
@@ -100,6 +107,8 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 	private boolean global_prevent_reDraw = false;
 	private String selectedMake;
 	private String selectedModel;
+	private ProgressBar progressBar;
+	private ProgressDialog pd_uploadingDialog;
 
 	private int gRectCount = 0;
 	// **************************************************************//
@@ -120,8 +129,8 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 		/* this.requestWindowFeature(Window.FEATURE_NO_TITLE); */
 		setContentView(R.layout.main_screen);
 
-		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
-				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
+		Parse.initialize(this, "GQvxCLxantyoyl2Zo30XIpWyAtbVKa2uCbCSHNry",
+				"g2PktGEOsVOUxp6PS5McI9FLNQrbAspF1xsX2MEz");
 		ParseAnalytics.trackAppOpened(getIntent());
 		// get intent
 		Intent receiver = getIntent();
@@ -154,15 +163,11 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText("Welcome! " + welcome_name);
 
-		// initialization on counting images
-
-		// gRectCount = 0;
-
 		initialize_btn_takeimg();
 		initialize_btn_send();
 		initialize_btn_save();
 		initialize_drawImageView();
-
+		initialize_progbar();
 		try {
 			ReadDataFromRaw(R.raw.car_make_model_revised);
 			FormDatabase();
@@ -231,6 +236,24 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 			}
 		});
 
+		GuideText
+				.setText("Please press \" Take a Photo! \"  to take a picture");
+		// *****************************************//
+	}// end of OnCreate
+
+	private void initialize_progbar() {
+		progressBar = (ProgressBar) findViewById(R.id.login_bkuploading_progressbar);
+
+	}
+
+	private void initialize_drawImageView() {
+		// TODO Auto-generated method stub
+
+		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
+		mImageView.setVisibility(DrawImageView.VISIBLE);
+		mImageView.setImageDrawable(getResources().getDrawable(
+				R.drawable.firstlogin));
+		global_prevent_reDraw = true; // indicator if one could draw on iamge
 		mImageView.setOnTouchListener(new OnTouchListener() {
 
 			@Override
@@ -265,6 +288,12 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 			}
 		});
 
+	}
+
+	private void initialize_btn_save() {
+		// TODO Auto-generated method stub
+		btn_save = (Button) findViewById(R.id.btn_confirm);
+		btn_save.setEnabled(false);
 		btn_save.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -297,27 +326,6 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 
 			}
 		});
-
-		GuideText
-				.setText("Please press \" Take a Photo! \"  to take a picture");
-		// *****************************************//
-	}// end of OnCreate
-
-	private void initialize_drawImageView() {
-		// TODO Auto-generated method stub
-
-		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
-		mImageView.setVisibility(DrawImageView.VISIBLE);
-		mImageView.setImageDrawable(getResources().getDrawable(
-				R.drawable.firstlogin));
-		global_prevent_reDraw = true; // indicator if one could draw on iamge
-
-	}
-
-	private void initialize_btn_save() {
-		// TODO Auto-generated method stub
-		btn_save = (Button) findViewById(R.id.btn_confirm);
-		btn_save.setEnabled(false);
 	}
 
 	private void initialize_btn_send() {
@@ -328,6 +336,8 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 
 			@Override
 			public void onClick(View v) {
+				
+				//setup a uploading dialog
 				annotatorInput.addPath(mCurrentPhotoPath);
 				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
 				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
@@ -340,6 +350,7 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 
 				if (wifi_connected) {
 					ParseObject pb_send = jsonData.formatParseObject();
+					
 					pb_send.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException arg0) {
@@ -411,7 +422,7 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-			
+
 				mImageView.setImageDrawable(getResources().getDrawable(
 						R.drawable.buttonfinish));
 				mImageView.invalidate();
@@ -718,7 +729,7 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
 		}
-       // mCurrentPhotoPath=null;
+		// mCurrentPhotoPath=null;
 		super.onPause();
 	}
 
@@ -859,7 +870,7 @@ public class Main_screen extends Activity implements tk_img_frag.OnTkImgListener
 
 	@Override
 	public void onTkImg(Boolean s) {
-		
+
 		if (s) {
 			dispathTakePictureIntent();
 		}

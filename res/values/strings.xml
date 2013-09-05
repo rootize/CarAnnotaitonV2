@@ -43,5 +43,6 @@
     <string name="login_anonymous_string_onchkbx">I dont want to provide my email</string>
     <string name="login_choice_between_string">- or -</string>
     <string name="longin_setting">Settings</string>
+  <string name="login_progress_bar_string">Uploading:</string>
 
 </resources>
