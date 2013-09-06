@@ -1,5 +1,6 @@
 package edu.cmu.carannotationv2;
 
+import android.R.integer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ public class DrawImageView extends ImageView {
 
 	private static final int arraySize = 5;
 	private Paint currentPaint;
+	private Paint formerPaint;
 	private boolean drawRect = false;
 	private float rect_left;/* Point center; */
 	private float rect_top;
@@ -112,17 +114,23 @@ public class DrawImageView extends ImageView {
 		this.rect_count = rect_count;
 	}
 
+	private void setPaintColor_inDIV(Paint p, int color){
+		p.setDither(true);
+		p.setColor(color);
+		p.setStyle(Paint.Style.STROKE);
+		p.setStrokeCap(Paint.Cap.ROUND);
+		p.setStrokeJoin(Paint.Join.ROUND);
+		p.setStrokeWidth(4);
+	}
 	public DrawImageView(Context context, AttributeSet attrs) {
 		// TODO Auto-generated constructor stub
 
 		super(context, attrs);
 		currentPaint = new Paint();
-		currentPaint.setDither(true);
-		currentPaint.setColor(Color.YELLOW);
-		currentPaint.setStyle(Paint.Style.STROKE);
-		currentPaint.setStrokeCap(Paint.Cap.ROUND);
-		currentPaint.setStrokeJoin(Paint.Join.ROUND);
-		currentPaint.setStrokeWidth(4);
+		formerPaint=new Paint();
+		setPaintColor_inDIV(currentPaint, Color.YELLOW);
+		setPaintColor_inDIV(formerPaint, Color.BLUE);
+
 
 	}
 
@@ -143,9 +151,9 @@ public class DrawImageView extends ImageView {
 		for (int i = 0; i < rect_count; i++) {
 
 			canvas.drawRect(rectArray[i][1], rectArray[i][0], rectArray[i][3],
-					rectArray[i][2], currentPaint);
+					rectArray[i][2], formerPaint);
 		}
-		// }
+		
 	}
 
 	/*

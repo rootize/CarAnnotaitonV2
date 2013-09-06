@@ -161,6 +161,7 @@ public class Main_screen extends Activity implements
 			welcome_name = welcome_name + " (offline)";
 		}
 		// *************************************************************
+		
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText("Welcome! " + welcome_name);
 
@@ -169,6 +170,9 @@ public class Main_screen extends Activity implements
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
+		
+		
+		
 		try {
 			ReadDataFromRaw(R.raw.car_make_model_revised);
 			FormDatabase();
@@ -239,7 +243,7 @@ public class Main_screen extends Activity implements
 
 		GuideText
 				.setText("Please press \" Take a Photo! \"  to take a picture");
-		// *****************************************//
+		
 	}// end of OnCreate
 
 	private void initialize_progbar() {
@@ -261,6 +265,7 @@ public class Main_screen extends Activity implements
 			public boolean onTouch(View v, MotionEvent event) {
 
 				if (!global_prevent_reDraw) {
+
 					DrawImageView drawView = (DrawImageView) v;
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -299,7 +304,8 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-
+//                modelSpinner.setSelection(0);
+//                makeSpinner.setSelection(0);
 				mImageView.addRect();
 				annotatorInput.update(mImageView.getLastRect(), selectedMake,
 						selectedModel);
@@ -313,6 +319,8 @@ public class Main_screen extends Activity implements
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
+			//modelSpinner.setSelection(0, false);
+				
 				btn_save.setEnabled(false);
 				makeSpinner.setEnabled(false);
 				modelSpinner.setEnabled(false);
@@ -764,6 +772,8 @@ public class Main_screen extends Activity implements
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
 		}
+		modelSpinner.setSelection(0);
+        makeSpinner.setSelection(0);
 		// mCurrentPhotoPath=null;
 		super.onPause();
 	}
