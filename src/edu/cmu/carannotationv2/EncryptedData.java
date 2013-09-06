@@ -9,44 +9,20 @@ import java.security.Key;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.security.auth.PrivateCredentialPermission;
-
-import edu.cmu.carannotationv2.R.raw;
-
-import android.R.integer;
 import android.content.Context;
 
 //明文： plaintext
 public class EncryptedData {
-//	public final static String CLASS_NAME = "carannotationinfolongenough";
-//	public final static String APP_ID = "GQvxCLxantyoyl2Zo30XIpWyAtbVKa2uCbCSHNry";
-//	public final static String CLIENT_KEY = "g2PktGEOsVOUxp6PS5McI9FLNQrbAspF1xsX2MEz";
-//	public final static String USR_NAME = "AndroidUserForEncryptionUseLongTime";
-//	public final static String PW = "notdefinedmaybenotexistlongenough";
-//
-//	
+
 	
 	private static final String KEY_ALGORITHM = "AES";  
-    
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding"; 
-	
 	private final static String keyFileName="key.dat";
 	private final static String plaintextFileName="showstring.dat";
 	private File keyFile;
 	private File plaintextFile;
 	
-//	private String classname_plaintext;
-//	private String classname_decrykey;
-//	private String applicationid_plaintext;
-//	private String applicationid_decrykey;
-//	private String clientkey_plaintext;
-//	private String clientkey_decrykey;
-//	private String username_plaintext;
-//	private String username_decrykey;
-//	private String userpassword_plainttext;
-//	private String userpassword_decrykey;
-//	
-	
+
 	
 	private String cipherTextClassName;
 	private String cipherTextApplicationId;
@@ -96,12 +72,11 @@ public class EncryptedData {
 	   keyFileInputStream=getInputStreamFromRaw(context, R.raw.key, keyFile	, keyFileName);
 	   plaintextFileInputStream=getInputStreamFromRaw(context, R.raw.showstring, plaintextFile, plaintextFileName);
 
-		setCipherTextClassName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream, 0, 16, 0, 32));
-		setCipherTextApplicationId(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream, 0, 16, 0, 48));
-		setCipherTextClientKey(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream, 0, 16, 0, 48));
-		setCipherTextUserName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream, 0	, 16, 0, 48));
-		setCipherTextUserPassword(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream, 0, 16, 0, 48));
-		
+		setCipherTextClassName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 32));
+		setCipherTextUserName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,       0, 16, 0, 48));
+		setCipherTextUserPassword(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,   0, 16, 0, 48));
+		setCipherTextApplicationId(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,  0, 16, 0, 48));
+		setCipherTextClientKey(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 48));
 		
 		} catch (Exception e) {
 			// TODO: handle exception

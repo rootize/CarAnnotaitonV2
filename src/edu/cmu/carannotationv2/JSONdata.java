@@ -26,7 +26,7 @@ public class JSONdata {
 	private String mCurrentPhotoPath;
 	private SharedPreferences locSP;
 	private ExifInterface exif;
-
+    
 	public JSONdata() {
 
 	}
@@ -185,9 +185,9 @@ public class JSONdata {
 
 	}
 
-	public ParseObject formatParseObject() {
+	public ParseObject formatParseObject(String parseClassName) {
 		ParseObject tempObject = new ParseObject(
-				ParseAtributes.PARSE_CLASS_NAME);
+				parseClassName);
 		convertToParseObject(tempObject);
 		addImgFile(tempObject);
 

@@ -84,7 +84,7 @@ public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
 	//generated form encrpted code:
-	
+	//private String parseClassName=null;
 	
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
@@ -98,6 +98,9 @@ public class Main_screen extends Activity implements
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+	// data encryption
+	 private EncryptedData ed;
+	
 	private TextView welcomeText;
 	String welcome_name = "";
 	private TextView GuideText;
@@ -134,8 +137,16 @@ public class Main_screen extends Activity implements
 		/* this.requestWindowFeature(Window.FEATURE_NO_TITLE); */
 		setContentView(R.layout.main_screen);
 
-		Parse.initialize(this, "GQvxCLxantyoyl2Zo30XIpWyAtbVKa2uCbCSHNry",
-				"g2PktGEOsVOUxp6PS5McI9FLNQrbAspF1xsX2MEz");
+		 ed=new EncryptedData(getApplicationContext());
+		  Log.d("class", ed.getCipherTextClassName());
+		  Log.d("applicationid", ed.getCipherTextApplicationId());
+		  Log.d("clientkey", ed.getCipherTextClientKey());
+		  Log.d("username", ed.getCipherTextUserName());
+		  Log.d("userpassword", ed.getCipherTextUserPassword());
+		
+		
+		Parse.initialize(this, ed.getCipherTextApplicationId()	,
+				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
 		// get intent
 		Intent receiver = getIntent();
@@ -156,6 +167,13 @@ public class Main_screen extends Activity implements
 			welcome_name = "Dear guest";
 		}
 
+		// Get the encryped data :
+		
+		
+		
+		
+		
+		
 		// *********************************************************
 		if (wifi_connected) {
 			login_global_usr();
@@ -357,7 +375,7 @@ public class Main_screen extends Activity implements
 				if (wifi_connected) {
 					//check parse usr:
 				//	login_global_usr();
-					ParseObject pb_send = jsonData.formatParseObject();
+					ParseObject pb_send = jsonData.formatParseObject(ed.getCipherTextClassName());
 					pb_send.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException arg0) {
@@ -787,7 +805,7 @@ public class Main_screen extends Activity implements
 						// static_global_functions.transfer_Json_Pobject(pobject,
 						// tem_item);
 						ParseObject pobject = new JSONdata(tem_item)
-								.formatParseObject();
+								.formatParseObject(ed.getCipherTextClassName());
 						pobject.saveInBackground(new SaveCallback() {
 
 							@Override
@@ -823,7 +841,7 @@ public class Main_screen extends Activity implements
 				// static_global_functions.transfer_Json_Pobject(pobject,
 				// tem_item/*,lati,longti*/);
 				ParseObject pobject = new JSONdata(tem_item)
-						.formatParseObject();
+						.formatParseObject(ed.getCipherTextClassName());
 				pobject.saveInBackground(new SaveCallback() {
 
 					@Override
@@ -885,7 +903,7 @@ public class Main_screen extends Activity implements
 		}
 	}
 	private void login_global_usr() {
-		ParseUser.logInInBackground(EncryptedData.USR_NAME, EncryptedData.PW	, new LogInCallback() {
+		ParseUser.logInInBackground(ed.getCipherTextUserName()	, ed.getCipherTextUserPassword()	, new LogInCallback() {
 			
 			@Override
 			public void done(ParseUser usr, ParseException e) {

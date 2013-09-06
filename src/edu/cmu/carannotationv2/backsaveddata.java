@@ -5,7 +5,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.media.ExifInterface;
+
 
 public class backsaveddata extends SQLiteOpenHelper {
 
