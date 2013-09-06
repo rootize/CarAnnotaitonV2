@@ -1,5 +1,7 @@
 package edu.cmu.carannotationv2;
 
+
+// also you can define alubmn yourself
 //注释1：
 //原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
 //不知道原因
@@ -17,6 +19,7 @@ import java.util.Date;
 
 import java.util.List;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -67,6 +70,8 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
+	private int scaleFactor;
+	// private int scalefactor_height;
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
 	private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -80,7 +85,6 @@ public class Main_screen extends Activity implements
 
 	// data encryption
 	private EncryptedData ed;
-
 	private TextView welcomeText;
 	private String welcome_name = "";
 	private TextView GuideText;
@@ -110,44 +114,37 @@ public class Main_screen extends Activity implements
 	private JSONdata jsonData;
 
 	// indicate if this is the first time logging in
-	private boolean isFirstTimeLogin=true;
-	
+	private boolean isFirstTimeLogin = true;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	
+		super.onCreate(savedInstanceState);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		setContentView(R.layout.main_screen);
-		
-		
+
 		static_global_functions.setAutoOrientationEnabled(getContentResolver(),
 				true);
-		
-		
+
 		ed = new EncryptedData(getApplicationContext());
-		
+
 		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
-		
-		
+
 		Intent receiver = getIntent();
 		usr_name = receiver.getStringExtra("usr");
 
-		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
 		} else {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
 
-		
-
 		if (static_global_functions.isEmailValid(usr_name)) {
 			welcome_name = usr_name;
 		} else {
 			welcome_name = "Dear guest";
 		}
-
 
 		// *********************************************************
 		wifi_connected = static_global_functions
@@ -161,7 +158,7 @@ public class Main_screen extends Activity implements
 			welcome_name = welcome_name + " (offline)";
 		}
 		// *************************************************************
-		
+
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText("Welcome! " + welcome_name);
 
@@ -170,9 +167,7 @@ public class Main_screen extends Activity implements
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
-		
-		
-		
+
 		try {
 			ReadDataFromRaw(R.raw.car_make_model_revised);
 			FormDatabase();
@@ -243,7 +238,7 @@ public class Main_screen extends Activity implements
 
 		GuideText
 				.setText("Please press \" Take a Photo! \"  to take a picture");
-		
+
 	}// end of OnCreate
 
 	private void initialize_progbar() {
@@ -304,8 +299,8 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-//                modelSpinner.setSelection(0);
-//                makeSpinner.setSelection(0);
+				// modelSpinner.setSelection(0);
+				// makeSpinner.setSelection(0);
 				mImageView.addRect();
 				annotatorInput.update(mImageView.getLastRect(), selectedMake,
 						selectedModel);
@@ -319,8 +314,8 @@ public class Main_screen extends Activity implements
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
-			//modelSpinner.setSelection(0, false);
-				
+				// modelSpinner.setSelection(0, false);
+
 				btn_save.setEnabled(false);
 				makeSpinner.setEnabled(false);
 				modelSpinner.setEnabled(false);
@@ -663,13 +658,13 @@ public class Main_screen extends Activity implements
 		return f;
 	}
 
-	private void setPic() {
-
+	private int setScaleFactor(DrawImageView mImageView2,
+			String mCurrentPhotoPath2) {
 		int targetW = mImageView.getWidth();
 		int targetH = mImageView.getHeight();
 		Log.d("width_target", "" + targetW);
 		Log.d("height_target", "" + targetH);
-		// Size of iamge stored in temp
+
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
@@ -677,16 +672,23 @@ public class Main_screen extends Activity implements
 		int photoH = bmOptions.outHeight;
 		Log.d("width", "" + photoW);
 		Log.d("height", "" + photoH);
-		int scaleFactor = 1;
+		int sf = 1;
 		if (targetH > 0 || targetW > 0) {
-			scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+			sf = Math.min(photoW / targetW, photoH / targetH);
 
 		}
-		Log.d("ScaleFactor:  ", "" + scaleFactor);
+		
+		return sf;
+	}
+
+	private void setPic() {
+		if (isFirstTimeLogin) {
+			scaleFactor = setScaleFactor(mImageView, mCurrentPhotoPath);
+		}
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 		bmOptions.inPurgeable = true;
-
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
 		mImageView.setImageBitmap(bitmap);
 		mImageView.setVisibility(View.VISIBLE);
@@ -773,7 +775,7 @@ public class Main_screen extends Activity implements
 			mImageView.clearRecords();
 		}
 		modelSpinner.setSelection(0);
-        makeSpinner.setSelection(0);
+		makeSpinner.setSelection(0);
 		// mCurrentPhotoPath=null;
 		super.onPause();
 	}
