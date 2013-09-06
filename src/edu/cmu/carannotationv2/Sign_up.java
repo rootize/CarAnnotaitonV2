@@ -2,20 +2,13 @@ package edu.cmu.carannotationv2;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.security.auth.callback.Callback;
-
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -36,13 +29,9 @@ public class Sign_up extends Activity {
 	private String email_from_signin;
 	private boolean withEmail;
 
-	private final static String PASSWORD = "1111";
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -112,7 +101,7 @@ public class Sign_up extends Activity {
 					showToast(showMessage, R.drawable.error);
 				} else if (!isEmailValid(signup_email_EditText.getText()
 						.toString())) {
-					String showMessage = "Invalid email address, please check";
+				//	String showMessage = "Invalid email address, please check";
 					signup_email_EditText.setText("");
 				} else {
 					// check if the current email address is registered or not!

@@ -66,16 +66,18 @@
             android:textColor="@android:color/white"
             />
 
-        <CheckBox
+        <TextView
             android:id="@+id/login_anonymous_checkbox"
             android:layout_height="0dp"
             android:layout_width="wrap_content"
             android:layout_weight="0.6"
             android:text="@string/login_anonymous_string_onchkbx"
             android:textSize="18sp"
+            android:lines="2"
             android:textColor="@android:color/white"
             android:gravity="right|center_vertical"
             android:background="@color/trans_background"
+            android:clickable="true"
             />
         <Button
             android:id="@+id/login_btn"

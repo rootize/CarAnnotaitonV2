@@ -4,10 +4,9 @@ package edu.cmu.carannotationv2;
 //原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
 //不知道原因
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,63 +14,48 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import android.R.integer;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.location.Location;
-import android.location.LocationManager;
-import android.media.ExifInterface;
-import android.net.ConnectivityManager;
+import android.graphics.PixelFormat;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
-import com.parse.ParseCloud;
+
 import com.parse.ParseException;
-import com.parse.ParseFile;
+
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -83,12 +67,8 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
-	//generated form encrpted code:
-	//private String parseClassName=null;
-	
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
-	private static final int NUM = 20;
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
@@ -99,10 +79,10 @@ public class Main_screen extends Activity implements
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
 	// data encryption
-	 private EncryptedData ed;
-	
+	private EncryptedData ed;
+
 	private TextView welcomeText;
-	String welcome_name = "";
+	private String welcome_name = "";
 	private TextView GuideText;
 	private Button btn_takeimg;
 	private Button btn_send;
@@ -117,7 +97,6 @@ public class Main_screen extends Activity implements
 	private String selectedModel;
 	private ProgressBar progressBar;
 	private ProgressDialog pd_uploadingDialog;
-
 	private int gRectCount = 0;
 	// **************************************************************//
 	private File makeModelDataFile;
@@ -130,36 +109,38 @@ public class Main_screen extends Activity implements
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
 
+	// indicate if this is the first time logging in
+	private boolean isFirstTimeLogin=true;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		/* this.requestWindowFeature(Window.FEATURE_NO_TITLE); */
+		super.onCreate(savedInstanceState);	
+		getWindow().setFormat(PixelFormat.RGBA_8888);
 		setContentView(R.layout.main_screen);
-
-		 ed=new EncryptedData(getApplicationContext());
-		  Log.d("class", ed.getCipherTextClassName());
-		  Log.d("applicationid", ed.getCipherTextApplicationId());
-		  Log.d("clientkey", ed.getCipherTextClientKey());
-		  Log.d("username", ed.getCipherTextUserName());
-		  Log.d("userpassword", ed.getCipherTextUserPassword());
 		
 		
-		Parse.initialize(this, ed.getCipherTextApplicationId()	,
+		static_global_functions.setAutoOrientationEnabled(getContentResolver(),
+				true);
+		
+		
+		ed = new EncryptedData(getApplicationContext());
+		
+		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
-		// get intent
+		
+		
 		Intent receiver = getIntent();
 		usr_name = receiver.getStringExtra("usr");
 
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
 		} else {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		}
 
-		wifi_connected = static_global_functions
-				.wifi_connection(getApplicationContext());
+		
 
 		if (static_global_functions.isEmailValid(usr_name)) {
 			welcome_name = usr_name;
@@ -167,14 +148,10 @@ public class Main_screen extends Activity implements
 			welcome_name = "Dear guest";
 		}
 
-		// Get the encryped data :
-		
-		
-		
-		
-		
-		
+
 		// *********************************************************
+		wifi_connected = static_global_functions
+				.wifi_connection(getApplicationContext());
 		if (wifi_connected) {
 			login_global_usr();
 			welcome_name = welcome_name + " (online)";
@@ -360,8 +337,8 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-				
-				//setup a uploading dialog
+
+				// setup a uploading dialog
 				annotatorInput.addPath(mCurrentPhotoPath);
 				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
 				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
@@ -373,9 +350,10 @@ public class Main_screen extends Activity implements
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
 				if (wifi_connected) {
-					//check parse usr:
-				//	login_global_usr();
-					ParseObject pb_send = jsonData.formatParseObject(ed.getCipherTextClassName());
+					// check parse usr:
+					// login_global_usr();
+					ParseObject pb_send = jsonData.formatParseObject(ed
+							.getCipherTextClassName());
 					pb_send.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException arg0) {
@@ -385,7 +363,39 @@ public class Main_screen extends Activity implements
 										getApplicationContext(), send_success,
 										R.drawable.success);
 							} else {
-								Log.d("error", arg0.toString());
+								String send_failuer = "Problem occured while sending, will save and try again next time";
+								static_global_functions.ShowToast_short(
+										getApplicationContext(), send_failuer,
+										R.drawable.error);
+								try {
+									JSONArray old_offlineJsonArray;
+									String temp = filesaveread.read(
+											getApplicationContext(),
+											offline_filename);
+									if (temp == null) {
+										old_offlineJsonArray = new JSONArray();
+									} else {
+
+										old_offlineJsonArray = new JSONArray(
+												temp);
+
+									}
+
+									JSONObject toSend_item = jsonData
+											.getJsonObject();
+									old_offlineJsonArray.put(toSend_item);
+									// Using Thread?
+									filesaveread.save(getApplicationContext(),
+											offline_filename,
+											old_offlineJsonArray.toString());
+									String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+									static_global_functions.ShowToast_short(
+											getApplicationContext(),
+											showMessage, R.drawable.success);
+								} catch (JSONException e) {
+
+									e.printStackTrace();
+								}
 							}
 						}
 					});
@@ -436,8 +446,6 @@ public class Main_screen extends Activity implements
 						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 
 			}
-
-			
 
 		});
 	}
@@ -902,21 +910,23 @@ public class Main_screen extends Activity implements
 			dispathTakePictureIntent();
 		}
 	}
+
 	private void login_global_usr() {
-		ParseUser.logInInBackground(ed.getCipherTextUserName()	, ed.getCipherTextUserPassword()	, new LogInCallback() {
-			
-			@Override
-			public void done(ParseUser usr, ParseException e) {
-				if (usr!=null) {
-					Log.d("Login_before","Successfully" );
-				}else {
-					Log.d("error logging in ",e.toString());
-					
-				}
-				
-			}
-		});
-		
+		ParseUser.logInInBackground(ed.getCipherTextUserName(),
+				ed.getCipherTextUserPassword(), new LogInCallback() {
+
+					@Override
+					public void done(ParseUser usr, ParseException e) {
+						if (usr != null) {
+							Log.d("Login_before", "Successfully");
+						} else {
+							Log.d("error logging in ", e.toString());
+
+						}
+
+					}
+				});
+
 	}
 }// Ending of whole class!
 

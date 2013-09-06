@@ -1,7 +1,6 @@
 package edu.cmu.carannotationv2;
 
 public class db_tosend_item {
-private long id;
 
 private   String COLUMN_LOCATION_LATI;
 private   String COLUMN_LOCATION_LONGTI;

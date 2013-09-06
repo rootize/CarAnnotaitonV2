@@ -29,9 +29,11 @@ public class filesaveread  {
 	 * @return 是否存在
 	 */
 	public static boolean exist( Context context,String fileName){
-		FileInputStream fis;
+
 		try {
-			fis = context.openFileInput(fileName);
+			
+	     FileInputStream	fis = context.openFileInput(fileName);
+	   
 			return true;
 		} catch (FileNotFoundException e) {
 			return false;
@@ -85,8 +87,8 @@ public class filesaveread  {
 	public static boolean save(Context context,String fileName, String content){  
 		FileOutputStream fos;
 		try {
-			//fileName = fileName+"."+extention;
-			fos = context.openFileOutput(fileName, context.MODE_PRIVATE);
+			
+			fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;

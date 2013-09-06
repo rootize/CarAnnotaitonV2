@@ -5,12 +5,8 @@ import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.parse.ParseACL;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-
-import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -21,6 +17,7 @@ import android.media.ExifInterface;
 public class JSONdata {
 	public static final String SP_STRING = "loc_info";
 	private static final int MAX_ELEMETNS = 5;
+	private static final int SAMPLESIZE=4;
 	// private ScaleRatio scaleRatio;
 	private JSONObject jsonObject;
 	private String mCurrentPhotoPath;
@@ -73,15 +70,15 @@ public class JSONdata {
 				if (i < annoNum) {
 
 					jsonObject.put(ParseAtributes.TOP + i, tempRectInfos.get(i)
-							.getRectUpper() * sr.getH_scalefactor());
+							.getRectUpper() * sr.getH_scalefactor()/SAMPLESIZE);
 					jsonObject.put(ParseAtributes.LEFT + i, tempRectInfos
-							.get(i).getRectLeft() * sr.getW_scalefactor());
+							.get(i).getRectLeft() * sr.getW_scalefactor()/SAMPLESIZE);
 					jsonObject.put(ParseAtributes.BOTTOM + i, tempRectInfos
-							.get(i).getRectBottom() * sr.getH_scalefactor());
+							.get(i).getRectBottom() * sr.getH_scalefactor()/SAMPLESIZE);
 					jsonObject.put(
 							ParseAtributes.RIGHT + i,
 							tempRectInfos.get(i).getRectRight()
-									* sr.getW_scalefactor());
+									* sr.getW_scalefactor()/SAMPLESIZE);
 					jsonObject.put(ParseAtributes.MAKE + i, tempMakes.get(i)
 							.toString());
 					jsonObject.put(ParseAtributes.MODEL + i, tempModels.get(i)
@@ -196,8 +193,11 @@ public class JSONdata {
 
 	private void addImgFile(ParseObject tempObject) {
 		try {
+			
+			BitmapFactory.Options options=new BitmapFactory.Options();
+			options.inSampleSize=SAMPLESIZE;
 			Bitmap bm = BitmapFactory.decodeFile(jsonObject
-					.getString(ParseAtributes.IMG_PATH));
+					.getString(ParseAtributes.IMG_PATH),options);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
 			byte[] data = baos.toByteArray();
@@ -226,7 +226,7 @@ public class JSONdata {
 	}
 
 	private void convertToParseObject(ParseObject pobject) {
-		ParseACL defaultACL = new ParseACL();
+		//ParseACL defaultACL = new ParseACL();
 		// defaultACL.setPublicReadAccess(false);
 		// ParseACL.setDefaultACL(defaultACL, true);
 

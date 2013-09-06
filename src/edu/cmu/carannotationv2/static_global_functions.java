@@ -12,15 +12,14 @@ import org.json.JSONObject;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
 import android.net.ConnectivityManager;
-import android.os.Bundle;
+import android.provider.Settings;
+
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -141,7 +140,7 @@ public class static_global_functions {
 	//
 	public static boolean wifi_connection(Context context) {
 		ConnectivityManager manager = (ConnectivityManager) context
-				.getSystemService(context.CONNECTIVITY_SERVICE);
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 //		boolean is3G=false; = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
 //				.isConnectedOrConnecting();
@@ -155,6 +154,9 @@ public class static_global_functions {
 		}
 	}
 
-
+	public static void setAutoOrientationEnabled(ContentResolver resolver, boolean enabled)
+	{
+	  Settings.System.putInt(resolver, Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
+	}
 
 }

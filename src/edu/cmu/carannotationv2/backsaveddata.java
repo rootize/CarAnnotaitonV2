@@ -1,9 +1,7 @@
 package edu.cmu.carannotationv2;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 

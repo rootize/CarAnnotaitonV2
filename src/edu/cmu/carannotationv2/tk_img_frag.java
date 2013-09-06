@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
+
 import android.widget.Button;
 //http://bradipao.blogspot.com/2012/03/fragment-tutorial-part-2.html
 public class tk_img_frag extends Fragment {

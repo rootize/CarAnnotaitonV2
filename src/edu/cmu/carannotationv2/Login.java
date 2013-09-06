@@ -6,14 +6,18 @@ import com.parse.ParseAnalytics;
 
 
 import android.os.Bundle;
+import android.provider.Settings;
 
+import android.R.integer;
 import android.app.Activity;
 
 import android.content.Context;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.PixelFormat;
 
 import android.view.Menu;
 import android.view.View;
@@ -25,13 +29,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
 
 public class Login extends Activity {
 	private static final String ANONYMOUS_USR="anonymous_root";
 	
-private CheckBox anonCheckBox;
+// private CheckBox anonCheckBox;
+	private TextView anonTextView;
 	private Button login_login_btn; // Login button
 //	private Button login_anonymous_btn; // Anonymous access button
 //	private Button ReadMe_btn; // btn for more information
@@ -43,8 +49,12 @@ private CheckBox anonCheckBox;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
+		
+		
+		
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFormat(PixelFormat.RGBA_8888);
 		//this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 		setContentView(R.layout.activity_login);
 		getWindow().setSoftInputMode(
@@ -68,32 +78,57 @@ private CheckBox anonCheckBox;
 		emailEditText.requestFocus();
 		addLisnterOnButton_login();
 		addLisnterOnCheckBox();
-	
+		
 
 	}
 	
+	
+	//set on screen orientation
+
 // Listener on  button
 	
 	private void addLisnterOnCheckBox() {
-		anonCheckBox=(CheckBox)findViewById(R.id.login_anonymous_checkbox);
+		anonTextView=(TextView)findViewById(R.id.login_anonymous_checkbox);
 		
-		
+//		if (android.os.Build.VERSION.SDK_INT<android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//			final float scale = this.getResources().getDisplayMetrics().density;
+//			anonCheckBox.setPadding(anonCheckBox.getPaddingLeft() + (int)(10.0f * scale + 25.0f),
+//					anonCheckBox.getPaddingTop(),
+//					anonCheckBox.getPaddingRight(),
+//					anonCheckBox.getPaddingBottom());
+//		}
 //Todo: First of all check the version, then use the code below to ensure everything
-//		final float scale = this.getResources().getDisplayMetrics().density;
-//		anonCheckBox.setPadding(anonCheckBox.getPaddingLeft() + (int)(10.0f * scale + 0.5f),
-//				anonCheckBox.getPaddingTop(),
-//				anonCheckBox.getPaddingRight(),
-//				anonCheckBox.getPaddingBottom());
+
 		
 		
-		anonCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//		anonCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				if (isChecked) {
+//					isAnonLogin=true;
+//					emailEditText.setEnabled(false);
+//				}else {
+//					isAnonLogin=false;
+//					emailEditText.setEnabled(true);
+//				}
+//				
+//			}
+//		});
+		anonTextView.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
+			public void onClick(View v) {
+				int textColor=anonTextView.getCurrentTextColor();
+				if (textColor==android.graphics.Color.WHITE) {
+					anonTextView.setText("Proceed as Anonymous User");
+					anonTextView.setTextColor(android.graphics.Color.RED);
 					isAnonLogin=true;
-					emailEditText.setEnabled(false);
-				}else {
+					emailEditText.setEnabled(false);	
+				}
+				if (textColor==android.graphics.Color.RED) {
+					anonTextView.setTextColor(android.graphics.Color.WHITE);
+					anonTextView.setText(getResources().getString(R.string.login_anonymous_string_onchkbx));
 					isAnonLogin=false;
 					emailEditText.setEnabled(true);
 				}
