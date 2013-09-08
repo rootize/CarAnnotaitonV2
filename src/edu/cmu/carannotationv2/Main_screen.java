@@ -85,6 +85,7 @@ public class Main_screen extends Activity implements
 
 	// data encryption
 	private EncryptedData ed;
+	
 	private TextView welcomeText;
 	private String welcome_name = "";
 	private TextView GuideText;
@@ -276,13 +277,15 @@ public class Main_screen extends Activity implements
 						Log.d("imageview bottom", drawView.getRect_bottom()
 								+ "");
 
+						makeSpinner.setEnabled(true);
+						btn_save.setEnabled(false);
+						btn_send.setEnabled(true);
+						GuideText.setText("Please set make/model of the car");
 					}
 					drawView.invalidate();
 
-					makeSpinner.setEnabled(true);
-					btn_save.setEnabled(false);
-					btn_send.setEnabled(false);
-					GuideText.setText("Please set make/model of the car");
+					
+					
 				}
 
 				return true;
@@ -687,12 +690,18 @@ public class Main_screen extends Activity implements
 		}
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
+		bmOptions.inSampleSize = 1;
 		bmOptions.inPurgeable = true;
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		mImageView.setImageBitmap(bitmap);
+		//Bitmap sbm=Bitmap.createScaledBitmap(bitmap, mImageView.getWidth(), mImageView.getHeight(), false);
+		//Free last used Bitmap
+		if (mImageBitmap!=null) {
+			mImageBitmap.recycle();
+		}
+		mImageBitmap=Bitmap.createScaledBitmap(bitmap, mImageView.getWidth(), mImageView.getHeight(), false);
+		mImageView.setImageBitmap(mImageBitmap);
 		mImageView.setVisibility(View.VISIBLE);
-
+        bitmap.recycle();
 	}
 
 	// don't know if we need this!
@@ -773,10 +782,17 @@ public class Main_screen extends Activity implements
 		if (null != mImageView) {
 			mImageView.clearrect();// 去除留下的rect
 			mImageView.clearRecords();
+			mImageView.setImageResource(0);
 		}
 		modelSpinner.setSelection(0);
 		makeSpinner.setSelection(0);
 		// mCurrentPhotoPath=null;
+//		if (mImageBitmap!=null) {
+//			mImageBitmap.recycle();
+//		}
+//		if (mCurrentPhotoPath!=null) {
+//			mCurrentPhotoPath=null;
+//		}
 		super.onPause();
 	}
 

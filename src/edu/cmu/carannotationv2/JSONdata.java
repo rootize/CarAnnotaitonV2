@@ -1,6 +1,8 @@
 package edu.cmu.carannotationv2;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -13,17 +15,41 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.util.Log;
 
 public class JSONdata {
+	private double w_sr=1;
+	private double h_sr=1;
+	private static final int SAVED_WIDTH=1920;
+	private static final int SAVED_HEIGHT=1440;
 	public static final String SP_STRING = "loc_info";
 	private static final int MAX_ELEMETNS = 5;
-	private static final int SAMPLESIZE=4;
+	//private static final int SAMPLESIZE=1;
 	// private ScaleRatio scaleRatio;
 	private JSONObject jsonObject;
 	private String mCurrentPhotoPath;
 	private SharedPreferences locSP;
 	private ExifInterface exif;
     
+//	
+	private void setScaleFactor(
+			String mCurrentPhotoPath2) {
+		
+		
+
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		
+		//w_sr=photo
+		w_sr=(double)SAVED_WIDTH/photoW;
+		h_sr=(double)SAVED_HEIGHT/photoH;
+		
+	}
+
+	
 	public JSONdata() {
 
 	}
@@ -40,8 +66,11 @@ public class JSONdata {
 		jsonObject = new JSONObject();
 		locSP = context.getSharedPreferences(SP_STRING, Context.MODE_PRIVATE);
 		// calculateScaleRatio(mImageView,annotatorInput.getImgPath());
-		getInfoFromAnnotatorInput(annotatorInput);
 		mCurrentPhotoPath = annotatorInput.getImgPath();
+		//setScaleFactor(mCurrentPhotoPath);
+		getInfoFromAnnotatorInput(annotatorInput);
+		
+		
 		try {
 			exif = new ExifInterface(mCurrentPhotoPath);
 
@@ -70,15 +99,15 @@ public class JSONdata {
 				if (i < annoNum) {
 
 					jsonObject.put(ParseAtributes.TOP + i, tempRectInfos.get(i)
-							.getRectUpper() * sr.getH_scalefactor()/SAMPLESIZE);
+							.getRectUpper() * sr.getH_scalefactor()*h_sr);
 					jsonObject.put(ParseAtributes.LEFT + i, tempRectInfos
-							.get(i).getRectLeft() * sr.getW_scalefactor()/SAMPLESIZE);
+							.get(i).getRectLeft() * sr.getW_scalefactor()*w_sr);
 					jsonObject.put(ParseAtributes.BOTTOM + i, tempRectInfos
-							.get(i).getRectBottom() * sr.getH_scalefactor()/SAMPLESIZE);
+							.get(i).getRectBottom() * sr.getH_scalefactor()*h_sr);
 					jsonObject.put(
 							ParseAtributes.RIGHT + i,
 							tempRectInfos.get(i).getRectRight()
-									* sr.getW_scalefactor()/SAMPLESIZE);
+									* sr.getW_scalefactor()*w_sr);
 					jsonObject.put(ParseAtributes.MAKE + i, tempMakes.get(i)
 							.toString());
 					jsonObject.put(ParseAtributes.MODEL + i, tempModels.get(i)
@@ -195,14 +224,23 @@ public class JSONdata {
 		try {
 			
 			BitmapFactory.Options options=new BitmapFactory.Options();
-			options.inSampleSize=SAMPLESIZE;
-			Bitmap bm = BitmapFactory.decodeFile(jsonObject
-					.getString(ParseAtributes.IMG_PATH),options);
+			//options.inSampleSize=SAMPLESIZE;
+			options.outHeight=SAVED_HEIGHT;
+			options.outWidth=SAVED_WIDTH;
+			/*Bitmap bm = BitmapFactory.decodeFile(jsonObject
+					.getString(ParseAtributes.IMG_PATH),options);*/
+			options.inSampleSize=2;
+			FileInputStream isf=new FileInputStream(new File(jsonObject.getString(ParseAtributes.IMG_PATH)));
+			Bitmap bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
+			isf.close();
+			
+			//Bitmap sbm=Bitmap.createScaledBitmap(bm, SAVED_WIDTH, SAVED_HEIGHT, false);
+			//bm.recycle();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+			bm.recycle();
 			byte[] data = baos.toByteArray();
-			// ParseFile imgFile = new ParseFile(imageFileName
-			// + JPEG_FILE_SUFFIX, data);
+			
 			ParseFile imgFile;
 
 			imgFile = new ParseFile(
