@@ -66,27 +66,36 @@ public class EncryptedData {
 		
 	}
 	
-	//constructor: everytime try to generate this.
+	//constructor1: with default file name for encryption data
 	public EncryptedData(Context context){
-		try {
-	   keyFileInputStream=getInputStreamFromRaw(context, R.raw.key, keyFile	, keyFileName);
-	   plaintextFileInputStream=getInputStreamFromRaw(context, R.raw.showstring, plaintextFile, plaintextFileName);
-
-		setCipherTextClassName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 32));
-		setCipherTextUserName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,       0, 16, 0, 48));
-		setCipherTextUserPassword(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,   0, 16, 0, 48));
-		setCipherTextApplicationId(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,  0, 16, 0, 48));
-		setCipherTextClientKey(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 48));
-		
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
+		CreateEncryptedData(context,R.raw.key,R.raw.plaintext);
 		
 	}
+	//constructor2: with raw data identified
+	public EncryptedData(Context context, int key, int plaintext) {
+		CreateEncryptedData( context,  key,  plaintext);
+	}
+
+	private void CreateEncryptedData(Context context, int key, int plaintext) {
+		try {
+ 		   keyFileInputStream=getInputStreamFromRaw(context, key, keyFile	, keyFileName);
+ 		   plaintextFileInputStream=getInputStreamFromRaw(context, plaintext, plaintextFile, plaintextFileName);
+
+ 			setCipherTextClassName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 32));
+ 			setCipherTextUserName(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,       0, 16, 0, 48));
+ 			setCipherTextUserPassword(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,   0, 16, 0, 48));
+ 			setCipherTextApplicationId(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,  0, 16, 0, 48));
+ 			setCipherTextClientKey(decryptFromPlainKey(keyFileInputStream, plaintextFileInputStream,      0, 16, 0, 48));
+ 			
+ 			} catch (Exception e) {
+ 				// TODO: handle exception
+ 			}
+		
+	}
+
 	
-	
-    /** 
+
+	/** 
      * 解密 
      *  
      * @param data  待解密数据 

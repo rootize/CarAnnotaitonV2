@@ -34,6 +34,13 @@ import android.widget.TextView;
 
 
 public class Login extends Activity {
+	
+	
+	public  static final String USR_TOMAIN_INTENT="usrname";
+	
+	
+	
+	
 	private static final String ANONYMOUS_USR="anonymous_root";
 	
 // private CheckBox anonCheckBox;
@@ -189,7 +196,7 @@ public class Login extends Activity {
 	
 	private  void dispathIntenttoMainScreen(String e){
 		Intent toMain = new Intent(Login.this, Main_screen.class);
-		toMain.putExtra("usr", e);
+		toMain.putExtra(USR_TOMAIN_INTENT, e);
 		startActivity(toMain);
 		finish();
 	}

@@ -38,6 +38,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -78,8 +79,10 @@ public class Main_screen extends Activity implements
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
+	private static final String IMG_PATH_KEY="imgpath";
 	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
+	private File imgFile;
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
@@ -87,7 +90,7 @@ public class Main_screen extends Activity implements
 	private EncryptedData ed;
 	
 	private TextView welcomeText;
-	private String welcome_name = "";
+	//private String welcome_name = "";
 	private TextView GuideText;
 	private Button btn_takeimg;
 	private Button btn_send;
@@ -113,8 +116,6 @@ public class Main_screen extends Activity implements
 
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
-
-	// indicate if this is the first time logging in
 	private boolean isFirstTimeLogin = true;
 
 	@Override
@@ -126,64 +127,50 @@ public class Main_screen extends Activity implements
 		// Change Screen Rotation to Enabled
 		static_global_functions.setAutoOrientationEnabled(getContentResolver(),
 				true);
+		mAlbumStorageDirFactory=static_global_functions.setmAlbumStorageDirFactory();
+		wifi_connected = static_global_functions
+				.wifi_connection(getApplicationContext());
+		
+		
+		
+		
+		
          // get EncryptionData from Raw
 		 // two files:  key, and plain text
-		ed = new EncryptedData(getApplicationContext());
-
-		
-		
+		ed = new EncryptedData(getApplicationContext(),R.raw.key,R.raw.plaintext);
 		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
 
-		Intent receiver = getIntent();
-		usr_name = receiver.getStringExtra("usr");
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-		} else {
-			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-		}
-
-		if (static_global_functions.isEmailValid(usr_name)) {
-			welcome_name = usr_name;
-		} else {
-			welcome_name = "Dear guest";
-		}
-
-		// *********************************************************
-		wifi_connected = static_global_functions
-				.wifi_connection(getApplicationContext());
+		
+		
 		if (wifi_connected) {
 			login_global_usr();
-			welcome_name = welcome_name + " (online)";
-			check_upload_localData();
-
-		} else {
-			welcome_name = welcome_name + " (offline)";
+         	check_upload_localData();
 		}
-		// *************************************************************
-
-		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
-		welcomeText.setText("Welcome! " + welcome_name);
-
+        
+		usr_name=getUsrFromIntent();
+		setWelcomeword(usr_name,wifi_connected);
 		initialize_btn_takeimg();
 		initialize_btn_send();
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
-
+		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
+		
 		try {
-			ReadDataFromRaw(R.raw.car_make_model_revised);
+			makeModelDataFile=FileOperation.transferRawtoFile(getApplicationContext(), R.raw.car_make_model_revised, "makemodel", "car.csv");
 			FormDatabase();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		
+		
 		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
 		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
 
-		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
+
 
 		// take a new image, if the current number of annotated rects is not 0,
 		// reminds user if they want to give up
@@ -191,18 +178,15 @@ public class Main_screen extends Activity implements
 		// 注释： 为了使第一次的两个spinner 都变成 disabled， 添加了第一行为空白行
 		generateAdapter(makeSpinner, database.SELECT_MAKE, makeAdapter);
 		makeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
+              
+			
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				global_prevent_reDraw = true;
 				selectedMake = arg0.getItemAtPosition(arg2).toString();
-				if (selectedMake.equals(database.NONE_EXISTING)) {
-					selectedModel = database.NONE_EXISTING;
-					btn_save.setEnabled(true);
-					btn_send.setEnabled(false);
-					modelSpinner.setEnabled(false);
-				} else if (selectedMake.equals(database.BLANK_FISRT_ITEM)) {
+				Log.d("selectedmake", selectedMake);
+		 if (selectedMake.equals(database.BLANK_FISRT_ITEM)) {
 					modelSpinner.setEnabled(false);
 					btn_save.setEnabled(false);
 					btn_send.setEnabled(false);
@@ -219,6 +203,9 @@ public class Main_screen extends Activity implements
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// Do nothing
+				setModelSpinnerContent(database.SELECT_ONE_MODEL_PREFIX
+						+ selectedMake + database.SELECT_ONE_MODEL_SUFFIX);
+				modelSpinner.setEnabled(true);
 			}
 		});
 
@@ -233,6 +220,8 @@ public class Main_screen extends Activity implements
 				GuideText
 						.setText("If everything is correct, press \"Save Information\"  button to save");
 
+				
+				
 			}
 
 			@Override
@@ -245,6 +234,29 @@ public class Main_screen extends Activity implements
 				.setText("Please press \" Take a Photo! \"  to take a picture");
 
 	}// end of OnCreate
+
+	private String getUsrFromIntent() {
+		return getIntent().getStringExtra(Login.USR_TOMAIN_INTENT);
+	}
+
+	private void setWelcomeword(String usrname, boolean isWifi) {
+		String welcome_words_string;
+		if (static_global_functions.isEmailValid(usr_name)) {
+			welcome_words_string = usr_name;
+		} else {
+			welcome_words_string = "Dear guest";
+		}
+		if (isWifi) {
+			welcome_words_string+=" (Online)";
+		}else {
+			welcome_words_string+=" (Offline)";
+		}
+		
+		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
+		welcomeText.setText("Welcome! " + welcome_words_string);
+			
+		
+	}
 
 	private void initialize_progbar() {
 		progressBar = (ProgressBar) findViewById(R.id.login_bkuploading_progressbar);
@@ -271,17 +283,21 @@ public class Main_screen extends Activity implements
 
 						drawView.setRect_left(event.getX());
 						drawView.setRect_top(event.getY());
-						Log.d("imageview left", drawView.getRect_left() + "");
-						Log.d("imageview top", drawView.getRect_top() + "");
+/*						Log.d("imageview left", drawView.getRect_left() + "");
+						Log.d("imageview top", drawView.getRect_top() + "");*/
 					} else {
 
 						drawView.setRect_right(event.getX());
 						drawView.setRect_bottom(event.getY());
-						Log.d("imageview right", drawView.getRect_right() + "");
+						drawView.adjustCortex();
+						
+						
+					/*	Log.d("imageview right", drawView.getRect_right() + "");
 						Log.d("imageview bottom", drawView.getRect_bottom()
 								+ "");
-
+                        */
 						makeSpinner.setEnabled(true);
+						modelSpinner.setEnabled(true);
 						btn_save.setEnabled(false);
 						btn_send.setEnabled(true);
 						GuideText.setText("Please set make/model of the car");
@@ -335,6 +351,10 @@ public class Main_screen extends Activity implements
 
 				}
 
+//				makeSpinner.setSelected(false);
+//				modelSpinner.setSelected(false);
+//				makeSpinner.setSelection(0, false);
+//				modelSpinner.setSelection(0, false);
 			}
 		});
 	}
@@ -342,7 +362,7 @@ public class Main_screen extends Activity implements
 	private void initialize_btn_send() {
 		// TODO Auto-generated method stub
 		btn_send = (Button) findViewById(R.id.button_send_server);
-		btn_send.setEnabled(false);
+		//btn_send.setEnabled(false);
 		btn_send.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -379,7 +399,7 @@ public class Main_screen extends Activity implements
 										R.drawable.error);
 								try {
 									JSONArray old_offlineJsonArray;
-									String temp = filesaveread.read(
+									String temp = FileOperation.read(
 											getApplicationContext(),
 											offline_filename);
 									if (temp == null) {
@@ -395,7 +415,7 @@ public class Main_screen extends Activity implements
 											.getJsonObject();
 									old_offlineJsonArray.put(toSend_item);
 									// Using Thread?
-									filesaveread.save(getApplicationContext(),
+									FileOperation.save(getApplicationContext(),
 											offline_filename,
 											old_offlineJsonArray.toString());
 									String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
@@ -416,7 +436,7 @@ public class Main_screen extends Activity implements
 				} else {
 					try {
 						JSONArray old_offlineJsonArray;
-						String temp = filesaveread.read(
+						String temp = FileOperation.read(
 								getApplicationContext(), offline_filename);
 						if (temp == null) {
 							old_offlineJsonArray = new JSONArray();
@@ -429,7 +449,7 @@ public class Main_screen extends Activity implements
 						JSONObject toSend_item = jsonData.getJsonObject();
 						old_offlineJsonArray.put(toSend_item);
 						// Using Thread?
-						filesaveread.save(getApplicationContext(),
+						FileOperation.save(getApplicationContext(),
 								offline_filename,
 								old_offlineJsonArray.toString());
 						String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
@@ -489,6 +509,7 @@ public class Main_screen extends Activity implements
 
 	private void setModelSpinnerContent(String string) {
 
+		
 		generateAdapter(modelSpinner, string, modelAdapter);
 
 	}
@@ -568,24 +589,7 @@ public class Main_screen extends Activity implements
 		Log.d("Done DATABASE ", "Initialization");
 	}
 
-	private void ReadDataFromRaw(int csvID) throws IOException {
-		// TODO Auto-generated method stub
-		InputStream isInputStream = getResources().openRawResource(csvID);
-		File make_model_file_dir = getDir("make_model", Context.MODE_PRIVATE);
-		makeModelDataFile = new File(make_model_file_dir, "car.csv");
-		FileOutputStream osFileOutputStream = new FileOutputStream(
-				makeModelDataFile);
-		byte[] buffer = new byte[4096];
-		int bytesRead;
-		while ((bytesRead = isInputStream.read(buffer)) != -1) {
-			osFileOutputStream.write(buffer, 0, bytesRead);
-
-		}
-		osFileOutputStream.close();
-		isInputStream.close();
-
-	}
-
+	
 	// Some lifecycle callbacks so that the image can survive orientation change
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -593,8 +597,7 @@ public class Main_screen extends Activity implements
 		// outState.putParcelable(VIDEO_STORAGE_KEY, mVideoUri);
 		outState.putBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY,
 				(mImageBitmap != null));
-		// outState.putBoolean(VIDEOVIEW_VISIBILITY_STORAGE_KEY, (mVideoUri !=
-		// null) );
+		outState.putString(IMG_PATH_KEY	, mCurrentPhotoPath);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -608,6 +611,7 @@ public class Main_screen extends Activity implements
 				.setVisibility(savedInstanceState
 						.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
 						: ImageView.INVISIBLE);
+		mCurrentPhotoPath=savedInstanceState.getString(BITMAP_STORAGE_KEY);
 
 	}
 
@@ -694,11 +698,9 @@ public class Main_screen extends Activity implements
 		}
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = 1;
+		bmOptions.inSampleSize = scaleFactor;
 		bmOptions.inPurgeable = true;
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		//Bitmap sbm=Bitmap.createScaledBitmap(bitmap, mImageView.getWidth(), mImageView.getHeight(), false);
-		//Free last used Bitmap
 		if (mImageBitmap!=null) {
 			mImageBitmap.recycle();
 		}
@@ -712,23 +714,23 @@ public class Main_screen extends Activity implements
 	private void galleryAddPic() {
 		Intent mediaScanIntent = new Intent(
 				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-		File f = new File(mCurrentPhotoPath);
-		Uri contentUri = Uri.fromFile(f);
+		//File f = new File(mCurrentPhotoPath);
+		Uri contentUri = Uri.fromFile(imgFile);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
 	}
 
 	private void dispathTakePictureIntent() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File f = null;
+		imgFile = null;
 		try {
-			f = setUpPhotoFile();
-			mCurrentPhotoPath = f.getAbsolutePath();
+			imgFile = setUpPhotoFile();
+			mCurrentPhotoPath = imgFile.getAbsolutePath();
 			takePictureIntent
-					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imgFile));
 		} catch (Exception e) {
 			e.printStackTrace();
-			f = null;
+			imgFile = null;
 			mCurrentPhotoPath = null;
 		}
 		startActivityForResult(takePictureIntent, CAMERA_REQUEST);
@@ -788,8 +790,8 @@ public class Main_screen extends Activity implements
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
-		modelSpinner.setSelection(0);
-		makeSpinner.setSelection(0);
+//		modelSpinner.setSelection(0);
+//		makeSpinner.setSelection(0);
 		// mCurrentPhotoPath=null;
 //		if (mImageBitmap!=null) {
 //			mImageBitmap.recycle();
@@ -811,7 +813,7 @@ public class Main_screen extends Activity implements
 
 		@Override
 		public void run() {
-			filesaveread.save(getApplicationContext(), fileName, content);
+			FileOperation.save(getApplicationContext(), fileName, content);
 		}
 	}
 
@@ -822,7 +824,7 @@ public class Main_screen extends Activity implements
 		@Override
 		public void run() {
 
-			String offline_string = filesaveread.read(getApplicationContext(),
+			String offline_string = FileOperation.read(getApplicationContext(),
 					offline_filename);
 			if (offline_string == null) {
 				// do nothing
@@ -900,7 +902,7 @@ public class Main_screen extends Activity implements
 			}
 
 		} else {
-			filesaveread.delete(getApplicationContext(), offline_filename);
+			FileOperation.delete(getApplicationContext(), offline_filename);
 		}
 	}
 

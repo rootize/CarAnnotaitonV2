@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.provider.Settings;
 
 import android.view.Gravity;
@@ -157,6 +158,17 @@ public class static_global_functions {
 	public static void setAutoOrientationEnabled(ContentResolver resolver, boolean enabled)
 	{
 	  Settings.System.putInt(resolver, Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
+	}
+
+	public static AlbumStorageDirFactory setmAlbumStorageDirFactory(
+			) {
+		AlbumStorageDirFactory mAlbumStorageDirFactory;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+		} else {
+			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+		}
+		return mAlbumStorageDirFactory;
 	}
 
 }

@@ -20,6 +20,7 @@ import android.util.Log;
 public class JSONdata {
 	private double w_sr=1;
 	private double h_sr=1;
+	
 	private static final int SAVED_WIDTH=1920;
 	private static final int SAVED_HEIGHT=1440;
 	public static final String SP_STRING = "loc_info";
@@ -229,7 +230,7 @@ public class JSONdata {
 			options.outWidth=SAVED_WIDTH;
 			/*Bitmap bm = BitmapFactory.decodeFile(jsonObject
 					.getString(ParseAtributes.IMG_PATH),options);*/
-			options.inSampleSize=2;
+			options.inSampleSize=1;
 			FileInputStream isf=new FileInputStream(new File(jsonObject.getString(ParseAtributes.IMG_PATH)));
 			Bitmap bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
 			isf.close();

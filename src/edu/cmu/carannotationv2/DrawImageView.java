@@ -201,4 +201,18 @@ public class DrawImageView extends ImageView {
 		//return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
 		return new RectInfo((int)rect_top,(int) rect_left,(int) rect_bottom,(int) rect_right);
 	}
+//to adjust the rectangle
+	public void adjustCortex() {
+
+		float temp_top=this.rect_top;
+		float temp_bottom=this.rect_bottom;
+		float temp_right=this.rect_right;
+		float temp_left=this.rect_left;
+		
+		this.rect_top=Math.min(temp_top, temp_bottom);
+		this.rect_left=Math.min(temp_left, temp_right);
+		this.rect_bottom=Math.max(temp_bottom, temp_top);
+		this.rect_right=Math.max(temp_left, temp_right);
+		
+	}
 }
