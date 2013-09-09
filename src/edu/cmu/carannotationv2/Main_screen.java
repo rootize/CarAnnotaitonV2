@@ -122,12 +122,16 @@ public class Main_screen extends Activity implements
 		super.onCreate(savedInstanceState);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		setContentView(R.layout.main_screen);
-
+		
+		// Change Screen Rotation to Enabled
 		static_global_functions.setAutoOrientationEnabled(getContentResolver(),
 				true);
-
+         // get EncryptionData from Raw
+		 // two files:  key, and plain text
 		ed = new EncryptedData(getApplicationContext());
 
+		
+		
 		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
