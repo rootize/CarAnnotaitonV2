@@ -20,6 +20,15 @@ public class DrawImageView extends ImageView {
 	private float rect_top;
 	private float rect_right;
 	private float rect_bottom;
+	
+	
+	
+	private float fix_x;
+	private float fix_y;
+	private float sliding_x;
+	private float sliding_y;
+	
+	
 	public int[][] rectArray = new int[arraySize][4];
 	// private Bitmap orgBitmap;
 	private int rect_count;
@@ -144,8 +153,16 @@ public class DrawImageView extends ImageView {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 
-		// if (drawRect) {
-		// canvas.drawCircle(center.x, center.y, c_radius, currentPaint);
+		/*
+		float temp_top=this.rect_top;
+		float temp_bottom=this.rect_bottom;
+		float temp_right=this.rect_right;
+		float temp_left=this.rect_left;
+		
+		this.rect_top=Math.min(temp_top, temp_bottom);
+		this.rect_left=Math.min(temp_left, temp_right);
+		this.rect_bottom=Math.max(temp_bottom, temp_top);
+		this.rect_right=Math.max(temp_left, temp_right);*/
 		canvas.drawRect(rect_left, rect_top, rect_right, rect_bottom,
 				currentPaint);
 		for (int i = 0; i < rect_count; i++) {
@@ -203,16 +220,63 @@ public class DrawImageView extends ImageView {
 	}
 //to adjust the rectangle
 	public void adjustCortex() {
+         // top_left -> right_bottom
+		if ((fix_x<=sliding_x)&&(fix_y<=sliding_y)) {
+			rect_left=fix_x;
+			rect_top=fix_y;
+			rect_right=sliding_x;
+			rect_bottom=sliding_y;
+		}
+		// bottom_left ->top_right
+		if ((fix_x<sliding_x)&&(fix_y>sliding_y)) {
+			rect_left=fix_x;
+			rect_right=sliding_x;
+			rect_top=sliding_y;
+			rect_bottom=fix_y;
+		}
+		//top_right  -> bottom_left
+		 if ((fix_x>sliding_x)&&(fix_y<sliding_y)) {
+			
+			 rect_top=fix_y;
+			 rect_bottom=sliding_y;
+			 rect_left=sliding_x;
+			 rect_right=fix_x;
+		}
+		 //bottom_right->topleft
+		 if ((fix_x>sliding_x)&&(fix_y>sliding_y)) {
+			rect_bottom=fix_y;
+			rect_right=fix_x;
+			rect_left=sliding_x;
+			rect_top=sliding_y;
+		}
+		 
+//		this.rect_top=Math.min(temp_top, temp_bottom);
+//		this.rect_left=Math.min(temp_left, temp_right);
+//		this.rect_bottom=Math.max(temp_bottom, temp_top);
+//		this.rect_right=Math.max(temp_left, temp_right);
+//		//drawing from bottom_left to upper_right 
+//		if (this.rect_bottom<this.rect_top && this.rect_right>this.rect_left) {
+//			this.rect_bottom=temp_top;
+//			this.rect_top=temp_bottom;
+//		}
+		
+	}
 
-		float temp_top=this.rect_top;
-		float temp_bottom=this.rect_bottom;
-		float temp_right=this.rect_right;
-		float temp_left=this.rect_left;
-		
-		this.rect_top=Math.min(temp_top, temp_bottom);
-		this.rect_left=Math.min(temp_left, temp_right);
-		this.rect_bottom=Math.max(temp_bottom, temp_top);
-		this.rect_right=Math.max(temp_left, temp_right);
-		
+	public void setFix_x(float x) {
+		fix_x=x;
+		sliding_x=x;
+	}
+
+	public void setFix_y(float y) {
+		fix_y=y;
+		sliding_y=y;
+	}
+
+	public void setSliding_x(float x) {
+		sliding_x=x;
+	}
+
+	public void setSliding_y(float y) {
+		sliding_y=y;
 	}
 }

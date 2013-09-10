@@ -96,8 +96,10 @@ public class Main_screen extends Activity implements
 	private Button btn_send;
 	private Button btn_save;
 	private DrawImageView mImageView;
-	private Spinner makeSpinner;
-	private Spinner modelSpinner;
+	private CustomizedSpinner makeSpinner;
+	private CustomizedSpinner modelSpinner;
+	/*private Spinner makeSpinner;
+	private Spinner modelSpinner;*/
 	private ArrayAdapter<String> makeAdapter;
 	private ArrayAdapter<String> modelAdapter;
 	private boolean global_prevent_reDraw = false;
@@ -167,8 +169,8 @@ public class Main_screen extends Activity implements
 
 		
 		
-		makeSpinner = (Spinner) findViewById(R.id.carmakespinner);
-		modelSpinner = (Spinner) findViewById(R.id.carmodelspinner);
+		makeSpinner = (CustomizedSpinner) findViewById(R.id.carmakespinner);
+		modelSpinner = (CustomizedSpinner) findViewById(R.id.carmodelspinner);
 
 
 
@@ -281,14 +283,15 @@ public class Main_screen extends Activity implements
 					DrawImageView drawView = (DrawImageView) v;
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-						drawView.setRect_left(event.getX());
-						drawView.setRect_top(event.getY());
-/*						Log.d("imageview left", drawView.getRect_left() + "");
-						Log.d("imageview top", drawView.getRect_top() + "");*/
-					} else {
+						
+						
+						drawView.setFix_x(event.getX());
+						
+						drawView.setFix_y(event.getY());
 
-						drawView.setRect_right(event.getX());
-						drawView.setRect_bottom(event.getY());
+					} else {
+						drawView.setSliding_x(event.getX());
+						drawView.setSliding_y(event.getY());
 						drawView.adjustCortex();
 						
 						

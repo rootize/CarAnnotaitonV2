@@ -62,7 +62,7 @@
             android:text="@string/make_text_string"
             android:textSize="10dp" />
 
-        <Spinner
+        <edu.cmu.carannotationv2.CustomizedSpinner
             android:id="@+id/carmakespinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -74,7 +74,7 @@
             android:text="@string/model_text_string"
             android:textSize="10dp" />
 
-        <Spinner
+        <edu.cmu.carannotationv2.CustomizedSpinner
             android:id="@+id/carmodelspinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
