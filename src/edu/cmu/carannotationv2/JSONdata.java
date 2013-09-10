@@ -232,11 +232,15 @@ public class JSONdata {
 					.getString(ParseAtributes.IMG_PATH),options);*/
 			options.inSampleSize=1;
 			FileInputStream isf=new FileInputStream(new File(jsonObject.getString(ParseAtributes.IMG_PATH)));
-			Bitmap bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
-			isf.close();
+			Bitmap bm;
+			try {
+				bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
+			} catch (Exception e) {
+				System.gc();
+				bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
+			}
 			
-			//Bitmap sbm=Bitmap.createScaledBitmap(bm, SAVED_WIDTH, SAVED_HEIGHT, false);
-			//bm.recycle();
+			isf.close();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
 			bm.recycle();

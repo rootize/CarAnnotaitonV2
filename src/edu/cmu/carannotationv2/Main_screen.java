@@ -9,17 +9,16 @@ import java.io.BufferedReader;
 
 import java.io.File;
 
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
 
-import android.R.integer;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -354,10 +353,7 @@ public class Main_screen extends Activity implements
 
 				}
 
-//				makeSpinner.setSelected(false);
-//				modelSpinner.setSelected(false);
-//				makeSpinner.setSelection(0, false);
-//				modelSpinner.setSelection(0, false);
+
 			}
 		});
 	}
@@ -494,12 +490,15 @@ public class Main_screen extends Activity implements
 				mImageView.setImageDrawable(getResources().getDrawable(
 						R.drawable.buttonfinish));
 				mImageView.invalidate();
+				
 				if (gRectCount != 0) {
 					String showMessage = "Abondon all the rectangles and start a new one?";
 					showDialog(showMessage);
 				} else {
 					dispathTakePictureIntent();
 				}
+				
+				
 			}
 		});
 
@@ -523,9 +522,13 @@ public class Main_screen extends Activity implements
 		List<String> labels = getLabels(select_query);
 		adapter = new ArrayAdapter<String>(getApplicationContext(),
 				R.layout.simple_spinner_item, labels);
+		
 		adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+		//adapter.
+		//adapter.getView(position, convertView, parent)
+		//spinner.set
 		spinner.setAdapter(adapter);
-
+        
 	}
 
 	private List<String> getLabels(String select_query) {
@@ -596,10 +599,12 @@ public class Main_screen extends Activity implements
 	// Some lifecycle callbacks so that the image can survive orientation change
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable(BITMAP_STORAGE_KEY, mImageBitmap);
-		// outState.putParcelable(VIDEO_STORAGE_KEY, mVideoUri);
 		outState.putBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY,
 				(mImageBitmap != null));
+		//if (mImageView!=null) {
+			outState.putParcelable(BITMAP_STORAGE_KEY, mImageBitmap);
+		//}
+		
 		outState.putString(IMG_PATH_KEY	, mCurrentPhotoPath);
 		super.onSaveInstanceState(outState);
 	}
@@ -607,13 +612,17 @@ public class Main_screen extends Activity implements
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
-		// mVideoUri = savedInstanceState.getParcelable(VIDEO_STORAGE_KEY);
-		mImageView.setImageBitmap(mImageBitmap);
+		
 		mImageView
 				.setVisibility(savedInstanceState
 						.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
 						: ImageView.INVISIBLE);
+	//	if (savedInstanceState.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY)) {
+			mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
+			
+			mImageView.setImageBitmap(mImageBitmap);
+		//}
+		
 		mCurrentPhotoPath=savedInstanceState.getString(BITMAP_STORAGE_KEY);
 
 	}
@@ -703,7 +712,15 @@ public class Main_screen extends Activity implements
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 		bmOptions.inPurgeable = true;
-		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+		Bitmap bitmap;
+		try {
+			 bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+		} catch (Exception e) {
+			 System.gc();
+			 bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+		}
+		
 		if (mImageBitmap!=null) {
 			mImageBitmap.recycle();
 		}
@@ -726,6 +743,7 @@ public class Main_screen extends Activity implements
 	private void dispathTakePictureIntent() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		imgFile = null;
+		mCurrentPhotoPath=null;
 		try {
 			imgFile = setUpPhotoFile();
 			mCurrentPhotoPath = imgFile.getAbsolutePath();
@@ -923,6 +941,9 @@ public class Main_screen extends Activity implements
 					public void onClick(DialogInterface dialog, int which) {
 
 						dispathTakePictureIntent();
+//						if (mImageBitmap!=null) {
+//							mImageBitmap.recycle();
+//						}
 
 					}
 				});
