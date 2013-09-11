@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import android.R.integer;
@@ -36,7 +37,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 		 alphaIndexer = new HashMap<String, Integer>();
 	        for (int i = 0; i < group.size(); i++)
 	        {
-	            String s = group.get(i).substring(0, 1).toUpperCase();
+	            String s = group.get(i).substring(0, 1).toUpperCase(Locale.getDefault());
 	            if (!alphaIndexer.containsKey(s))
 	                alphaIndexer.put(s, i);
 	        }
@@ -133,18 +134,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	 public TextView getGenericView(String s) { 
 	        // Layout parameters for the ExpandableListView 
 	        AbsListView.LayoutParams lp = new AbsListView.LayoutParams( 
-	                ViewGroup.LayoutParams.FILL_PARENT, 64); 
+	                ViewGroup.LayoutParams.MATCH_PARENT, 64); 
 
-	        lp.height=36; 
+	        lp.height=50; 
 	        TextView text = new TextView(activity); 
 	        text.setLayoutParams(lp); 
 	        // Center the text vertically 
 	        text.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT); 
 	        // Set the text starting position 
-	        text.setPadding(36, 0, 0, 0); 
+	        text.setPadding(80, 0, 0, 0); 
 	        text.setTextColor(Color.BLACK);       
 	        text.setText(s); 
-	               
+	        text.setTextSize(20);       
 	        return text; 
 	    }
 	@Override
@@ -155,12 +156,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	@Override
 	public int getSectionForPosition(int position) {
 		// TODO Auto-generated method stub
-		return 1;
+		return 0;
 	}
 	@Override
 	public Object[] getSections() {
 		// TODO Auto-generated method stub
-		return "ABCDFHIJKLMNOPRSTV".split("");
+		return "A B C D F H I J K L M N O P R S T V Z".split(" ");
+		
 	} 
 	
 	

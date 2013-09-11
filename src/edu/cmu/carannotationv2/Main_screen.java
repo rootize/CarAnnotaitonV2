@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -74,8 +75,8 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
-	private int scaleFactor;
-	// private int scalefactor_height;
+	private int scaleFactor=0;
+	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
 	private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -107,14 +108,15 @@ public class Main_screen extends Activity implements
 	private Dialog make_model_Dialog;
 	private View viewlist;
 	private View viewListLastSelected;
+	private int lastGroupPosition=-1;
 	List<String> makeGroup = new ArrayList<String>();
 	List<List<String>> makemodelGroup = new ArrayList<List<String>>();
 
 	/*
 	 * private Spinner makeSpinner; private Spinner modelSpinner;
 	 */
-	private ArrayAdapter<String> makeAdapter;
-	private ArrayAdapter<String> modelAdapter;
+//	private ArrayAdapter<String> makeAdapter;
+//	private ArrayAdapter<String> modelAdapter;
 	private boolean global_prevent_reDraw = false;
 	private String selectedMake;
 	private String selectedModel;
@@ -137,12 +139,19 @@ public class Main_screen extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
 		// Change Screen Rotation to Enabled
-		static_global_functions.setAutoOrientationEnabled(getContentResolver(),
-				true);
+		if (android.provider.Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION,0)==1) {
+			isScreenRotationLocked=true;
+		}else {
+			static_global_functions.setAutoOrientationEnabled(getContentResolver(),
+					true);
+			isScreenRotationLocked=false;
+		}
+		
 		mAlbumStorageDirFactory = static_global_functions
 				.setmAlbumStorageDirFactory();
 		wifi_connected = static_global_functions
@@ -173,7 +182,6 @@ public class Main_screen extends Activity implements
 		initialize_drawImageView();
 		initialize_progbar();
 		
-
 	}
 
 	private void pre_initialize_mm_selection_dialog() {
@@ -230,7 +238,7 @@ public class Main_screen extends Activity implements
 		make_model_Dialog.setTitle("Select make and model");
 		make_model_listView = (ExpandableListView) viewlist
 				.findViewById(R.id.elvForDialog);
-       make_model_listView.setFastScrollEnabled(true);
+        make_model_listView.setFastScrollEnabled(true);
 		MyExpandableListAdapter mAdapter = new MyExpandableListAdapter(this,
 				makeGroup, makemodelGroup);
 		make_model_listView.setAdapter(mAdapter);
@@ -243,15 +251,16 @@ public class Main_screen extends Activity implements
 				try {
 					// 将上一个选中项的背景清空
 					// viewListLastSelected.setBackgroundDrawable(null);
-					Log.v("LH", "@setOnGroupClickListener");
+					/*Log.v("LH", "@setOnGroupClickListener");
 					Log.v("LH", "" + viewListLastSelected.toString());
 					Log.v("LH",
-							"" + ((TextView) viewListLastSelected).getText());
+							"" + ((TextView) viewListLastSelected).getText());*/
 					// viewListLastSelected.setBackgroundResource(R.drawable.bg_toolbar);
 					// ((TextView)viewListLastSelected).setTextColor(Color.BLUE);
 					// Generic.selectedTextViewID =
 					// ((TextView)viewListLastSelected).getId();
 
+					lastGroupPosition=groupPosition;
 				} catch (Exception e) {
 					Log.v("LH", "ERROR@onCreate: " + e.toString());
 				}
@@ -265,18 +274,18 @@ public class Main_screen extends Activity implements
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id)
 					throws RuntimeException {
-				make_model_listView.clearChildFocus(viewListLastSelected);
+			//	make_model_listView.clearChildFocus(viewListLastSelected);
 
-				try {
+			/*	try {
 					// 将上一个选中项的背景清空
-					Log.v("LH", "@setOnChildClickListener");
+					//Log.v("LH", "@setOnChildClickListener");
 					// viewListLastSelected.setBackgroundDrawable(null);
 					((TextView) viewListLastSelected).setTextColor(Color.BLACK);
 					// elvForDialog.getSelectedView().setBackgroundDrawable(null);
 				} catch (Exception e) {
-				}
+				}*/
 
-				if (viewListLastSelected!=null) {
+		/*		if (viewListLastSelected!=null) {
 					v.setBackgroundResource(R.drawable.bg_toolbar);
 					((TextView) viewListLastSelected).setTextColor(Color.WHITE);
 
@@ -285,14 +294,14 @@ public class Main_screen extends Activity implements
 				}
 				
 			
-
+*/
 				// Put value to main UI's control
 				selectedMake = makeGroup.get(groupPosition).toString();
-				selectedMake = makemodelGroup.get(groupPosition)
+				selectedModel = makemodelGroup.get(groupPosition)
 						.get(childPosition).toString();
 				makemodelshowTextView.setText(makeGroup.get(groupPosition)
 						.toString()
-						+ " "
+						+ " & "
 						+ makemodelGroup.get(groupPosition).get(childPosition)
 								.toString());
 
@@ -315,7 +324,11 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
+				if (lastGroupPosition!=-1) {
+					make_model_listView.collapseGroup(lastGroupPosition);
+				}
 				make_model_Dialog.show();
+				btn_save.setEnabled(true);
 			}
 		});
 	}
@@ -372,17 +385,9 @@ public class Main_screen extends Activity implements
 						drawView.setSliding_x(event.getX());
 						drawView.setSliding_y(event.getY());
 						drawView.adjustCortex();
-
-						/*
-						 * Log.d("imageview right", drawView.getRect_right() +
-						 * ""); Log.d("imageview bottom",
-						 * drawView.getRect_bottom() + "");
-						 */
-						// makeSpinner.setEnabled(true);
-						// modelSpinner.setEnabled(true);
-						btn_save.setEnabled(false);
-						btn_send.setEnabled(true);
-						GuideText.setText("Please set make/model of the car");
+                        btn_selectmm.setEnabled(true);
+				        //btn_save.setEnabled(false);
+						GuideText.setText("Press \" Make&Model\" to annotate");
 					}
 					drawView.invalidate();
 
@@ -401,8 +406,6 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-				// modelSpinner.setSelection(0);
-				// makeSpinner.setSelection(0);
 				mImageView.addRect();
 				annotatorInput.update(mImageView.getLastRect(), selectedMake,
 						selectedModel);
@@ -416,17 +419,16 @@ public class Main_screen extends Activity implements
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
-				// modelSpinner.setSelection(0, false);
+				
 
 				btn_save.setEnabled(false);
-				// makeSpinner.setEnabled(false);
-				// modelSpinner.setEnabled(false);
 				btn_send.setEnabled(true);
+				mImageView.invalidate();
 				if (global_prevent_reDraw == true) {
 					GuideText.setText("Press \"Done!\" to finish");
 				} else {
 					GuideText
-							.setText("Press \"Done!\" to finish or start annotating another image by drawing on the image");
+							.setText("Press \"Done!\" if no other cars in the image");
 
 				}
 
@@ -537,14 +539,15 @@ public class Main_screen extends Activity implements
 				}
 				gRectCount = 0;
 				btn_send.setEnabled(false);
-				// makeSpinner.setEnabled(false);
-				// modelSpinner.setEnabled(false);
+				btn_save.setEnabled(false);
+				btn_selectmm.setEnabled(false);
+				mImageView.setImageDrawable(getResources().getDrawable(
+						R.drawable.buttonfinish));
 				mImageView.clearRecords();
 				mImageView.clearrect();
 				mImageView.invalidate();
 				global_prevent_reDraw = true;
-				mImageView.setImageDrawable(getResources().getDrawable(
-						R.drawable.buttonfinish));
+				
 
 				GuideText
 						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
@@ -597,7 +600,7 @@ public class Main_screen extends Activity implements
 			}
 		}
 		cursor.close();
-		labelsList.add(new String(database.NONE_EXISTING));
+		labelsList.add(new String("Z"+database.NONE_EXISTING));
 		return labelsList;
 
 	}
@@ -757,7 +760,7 @@ public class Main_screen extends Activity implements
 	}
 
 	private void setPic() {
-		if (isFirstTimeLogin) {
+	if (scaleFactor==0) {
 			scaleFactor = setScaleFactor(mImageView, mCurrentPhotoPath);
 		}
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -835,21 +838,29 @@ public class Main_screen extends Activity implements
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		super.onDestroy();
 		carDatabase.close();
+		if (isScreenRotationLocked==false) {
+			static_global_functions.setAutoOrientationEnabled(getContentResolver(), false);
+		}
+		super.onDestroy();
+		
 	}
 
 	@Override
 	protected void onResume() {
 
 		gRectCount = 0;
-		// makeSpinner.setEnabled(false);
-		// modelSpinner.setEnabled(false);
+		btn_selectmm.setEnabled(false);
 		btn_save.setEnabled(false);
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
-		global_prevent_reDraw = false;
-
+		if (isFirstTimeLogin) {
+			global_prevent_reDraw=true;
+			isFirstTimeLogin=false;
+		}else {
+			global_prevent_reDraw = false;
+		}
+		
 		annotatorInput = new AnnotatorInput();
 		annotatorInput.addUsr(usr_name);
 		super.onResume();
@@ -1023,5 +1034,8 @@ public class Main_screen extends Activity implements
 				});
 
 	}
+	
+	
+	
 }// Ending of whole class!
 
