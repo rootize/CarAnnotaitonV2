@@ -27,7 +27,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	private int _posChild=0;
 	private HashMap<String, Integer>alphaIndexer;
 	private String[]sections;
-	
+	private int lastSelectedGroup=-1;
 	public MyExpandableListAdapter(Activity a, List<String> group, List<List<String>> children ){
 		super();
 		activity=a;
@@ -68,8 +68,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 			boolean isLastChild, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 	    String string = listChild.get(groupPosition).get(childPosition); 
-	       
-        //Log.v("LH","@getChildView: " + string);       
+	   
+             
         View view = getGenericView(string); 
                
         TextView text = (TextView) view; 
@@ -80,10 +80,21 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     text.setTextColor(Color.WHITE); 
                     text.setBackgroundResource(R.drawable.bg_toolbar); 
                 } 
-       
+       lastSelectedGroup=groupPosition;
 		return view;
 	}
 
+	
+	
+	
+	@Override
+	public void onGroupExpanded(int groupPosition) {
+		// TODO Auto-generated method stub
+		/*if (groupPosition!=lastSelectedGroup&&lastSelectedGroup!=-1) {
+			
+		}*/
+		super.onGroupExpanded(groupPosition);
+	}
 	@Override
 	public int getChildrenCount(int groupPosition) {
 		// TODO Auto-generated method stub

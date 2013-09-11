@@ -112,11 +112,7 @@ public class Main_screen extends Activity implements
 	List<String> makeGroup = new ArrayList<String>();
 	List<List<String>> makemodelGroup = new ArrayList<List<String>>();
 
-	/*
-	 * private Spinner makeSpinner; private Spinner modelSpinner;
-	 */
-//	private ArrayAdapter<String> makeAdapter;
-//	private ArrayAdapter<String> modelAdapter;
+	
 	private boolean global_prevent_reDraw = false;
 	private String selectedMake;
 	private String selectedModel;
@@ -140,9 +136,10 @@ public class Main_screen extends Activity implements
 		super.onCreate(savedInstanceState);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
-
+   
 		// Change Screen Rotation to Enabled
 		if (android.provider.Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION,0)==1) {
 			isScreenRotationLocked=true;
@@ -249,16 +246,9 @@ public class Main_screen extends Activity implements
 					int groupPosition, long id) throws RuntimeException {
 
 				try {
-					// 将上一个选中项的背景清空
-					// viewListLastSelected.setBackgroundDrawable(null);
-					/*Log.v("LH", "@setOnGroupClickListener");
-					Log.v("LH", "" + viewListLastSelected.toString());
-					Log.v("LH",
-							"" + ((TextView) viewListLastSelected).getText());*/
-					// viewListLastSelected.setBackgroundResource(R.drawable.bg_toolbar);
-					// ((TextView)viewListLastSelected).setTextColor(Color.BLUE);
-					// Generic.selectedTextViewID =
-					// ((TextView)viewListLastSelected).getId();
+					if (lastGroupPosition!=-1 && lastGroupPosition!=groupPosition) {
+						make_model_listView.collapseGroup(lastGroupPosition);
+					}
 
 					lastGroupPosition=groupPosition;
 				} catch (Exception e) {
@@ -274,6 +264,8 @@ public class Main_screen extends Activity implements
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id)
 					throws RuntimeException {
+				
+				lastGroupPosition=groupPosition;
 			//	make_model_listView.clearChildFocus(viewListLastSelected);
 
 			/*	try {
@@ -324,6 +316,7 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
+			
 				if (lastGroupPosition!=-1) {
 					make_model_listView.collapseGroup(lastGroupPosition);
 				}
@@ -356,8 +349,10 @@ public class Main_screen extends Activity implements
 	}
 
 	private void initialize_progbar() {
-		progressBar = (ProgressBar) findViewById(R.id.login_bkuploading_progressbar);
-
+		progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
+      setProgressBarIndeterminate(true);
+      setProgressBarVisibility(true);
+      setProgress(3500);
 	}
 
 	private void initialize_drawImageView() {

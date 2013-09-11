@@ -89,7 +89,15 @@
             android:singleLine="true"
             android:text="@string/finish_annotating"
             android:textSize="15sp" />
-     
+     <ProgressBar 
+         android:id="@+id/single_upload_progressbar"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:max="100"
+            android:progress="20"
+   />
 
     </LinearLayout>
 
