@@ -305,7 +305,8 @@ public class JSONdata {
 			convertSingleJsonItem(ParseAtributes.CAM_MODEL, pobject, jsonObject);
 			convertSingleJsonItem(ParseAtributes.WH_BLN, pobject, jsonObject);
 			convertSingleJsonItem(ParseAtributes.IMG_NAME, pobject, jsonObject);
-
+            convertSingleJsonItem(ParseAtributes.IMAGE_HEIGHT, pobject, jsonObject);
+            convertSingleJsonItem(ParseAtributes.IMAGE_WIDTH,pobject, jsonObject);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

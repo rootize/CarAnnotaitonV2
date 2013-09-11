@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
@@ -28,12 +29,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	private HashMap<String, Integer>alphaIndexer;
 	private String[]sections;
 	private int lastSelectedGroup=-1;
-	public MyExpandableListAdapter(Activity a, List<String> group, List<List<String>> children ){
+	private ExpandableListView listview;
+	public MyExpandableListAdapter(Activity a, List<String> group, List<List<String>> children, ExpandableListView listView ){
 		super();
 		activity=a;
 		listGroup=group;
 		listChild=children;
-		
+		listview=listView;
+		//listview=a.getLayoutInflater().inflate(resource, root)
 		 alphaIndexer = new HashMap<String, Integer>();
 	        for (int i = 0; i < group.size(); i++)
 	        {
@@ -48,6 +51,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	        sections = new String[sectionList.size()];
 	        for (int i = 0; i < sectionList.size(); i++)
 	            sections[i] = sectionList.get(i);   
+	        
+	        
+	        //li
+	        
 	}
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
@@ -87,14 +94,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	
 	
 	
-	@Override
-	public void onGroupExpanded(int groupPosition) {
-		// TODO Auto-generated method stub
-		/*if (groupPosition!=lastSelectedGroup&&lastSelectedGroup!=-1) {
-			
-		}*/
-		super.onGroupExpanded(groupPosition);
-	}
+	
 	@Override
 	public int getChildrenCount(int groupPosition) {
 		// TODO Auto-generated method stub
@@ -162,6 +162,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	@Override
 	public int getPositionForSection(int section) {
 		// TODO Auto-generated method stub
+		if (section>this.sections.length) {
+			return getGroupCount()-1;
+		}
 		return alphaIndexer.get(sections[section]);
 	}
 	@Override
@@ -177,4 +180,33 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	} 
 	
 	
+	@Override
+    public void onGroupExpanded(int groupPosition){
+        //collapse the old expanded group, if not the same
+        //as new group to expand
+        if(groupPosition != lastSelectedGroup&&lastSelectedGroup!=-1){
+            listview.collapseGroup(lastSelectedGroup);
+        }
+
+        super.onGroupExpanded(groupPosition);           
+        lastSelectedGroup = groupPosition;
+    }
+	
+	
+//	public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition,
+//	        long id) {
+//	    // Implement this method to scroll to the correct position as this doesn't
+//	    // happen automatically if we override onGroupExpand() as above
+//	    parent.smoothScrollToPosition(groupPosition);
+//
+//	    // Need default behaviour here otherwise group does not get expanded/collapsed
+//	    // on click
+//	    if (parent.isGroupExpanded(groupPosition)) {
+//	        parent.collapseGroup(groupPosition);
+//	    } else {
+//	        parent.expandGroup(groupPosition);
+//	    }
+//
+//	    return true;
+//	}
 }

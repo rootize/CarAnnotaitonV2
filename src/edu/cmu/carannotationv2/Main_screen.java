@@ -235,9 +235,11 @@ public class Main_screen extends Activity implements
 		make_model_Dialog.setTitle("Select make and model");
 		make_model_listView = (ExpandableListView) viewlist
 				.findViewById(R.id.elvForDialog);
+		make_model_listView.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
+		
         make_model_listView.setFastScrollEnabled(true);
 		MyExpandableListAdapter mAdapter = new MyExpandableListAdapter(this,
-				makeGroup, makemodelGroup);
+				makeGroup, makemodelGroup,make_model_listView);
 		make_model_listView.setAdapter(mAdapter);
 		make_model_listView.setOnGroupClickListener(new OnGroupClickListener() {
 
@@ -245,16 +247,23 @@ public class Main_screen extends Activity implements
 			public boolean onGroupClick(ExpandableListView parent, View v,
 					int groupPosition, long id) throws RuntimeException {
 
-				try {
-					if (lastGroupPosition!=-1 && lastGroupPosition!=groupPosition) {
-						make_model_listView.collapseGroup(lastGroupPosition);
-					}
+//				try {
+//					/*if (lastGroupPosition!=-1 && lastGroupPosition!=groupPosition) {
+//						make_model_listView.collapseGroup(lastGroupPosition);
+//					}
+//                                            
+//					lastGroupPosition=groupPosition;*/
+//				} catch (Exception e) {
+//					Log.v("LH", "ERROR@onCreate: " + e.toString());
+//				}
+//				return false;
+				if (parent.isGroupExpanded(groupPosition)) {
+			        parent.collapseGroup(groupPosition);
+			    } else {
+			        parent.expandGroup(groupPosition);
+			    }
 
-					lastGroupPosition=groupPosition;
-				} catch (Exception e) {
-					Log.v("LH", "ERROR@onCreate: " + e.toString());
-				}
-				return false;
+			    return true;
 			}
 		});
 
@@ -264,30 +273,14 @@ public class Main_screen extends Activity implements
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id)
 					throws RuntimeException {
-				
-				lastGroupPosition=groupPosition;
-			//	make_model_listView.clearChildFocus(viewListLastSelected);
-
-			/*	try {
-					// 将上一个选中项的背景清空
-					//Log.v("LH", "@setOnChildClickListener");
-					// viewListLastSelected.setBackgroundDrawable(null);
-					((TextView) viewListLastSelected).setTextColor(Color.BLACK);
-					// elvForDialog.getSelectedView().setBackgroundDrawable(null);
-				} catch (Exception e) {
-				}*/
-
-		/*		if (viewListLastSelected!=null) {
-					v.setBackgroundResource(R.drawable.bg_toolbar);
-					((TextView) viewListLastSelected).setTextColor(Color.WHITE);
-
-					// 缓存当前选中项至上一个选中项
-					viewListLastSelected = v;
+				if (lastGroupPosition!=-1&&lastGroupPosition!=groupPosition) {
+					 //make_model_listView.collapseGroup(lastGroupPosition) ;
+					make_model_listView.collapseGroup(lastGroupPosition);
 				}
 				
+				
+				lastGroupPosition=groupPosition;
 			
-*/
-				// Put value to main UI's control
 				selectedMake = makeGroup.get(groupPosition).toString();
 				selectedModel = makemodelGroup.get(groupPosition)
 						.get(childPosition).toString();
@@ -845,7 +838,7 @@ public class Main_screen extends Activity implements
 	protected void onResume() {
 
 		gRectCount = 0;
-		btn_selectmm.setEnabled(false);
+		//btn_selectmm.setEnabled(false);
 		btn_save.setEnabled(false);
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
