@@ -45,5 +45,6 @@
     <string name="login_choice_between_string">- or -</string>
     <string name="longin_setting">Settings</string>
     <string name="login_progress_bar_string">Uploading:</string>
+    <string name="mainscreen_select_makemodel_btn_string">Make and Model</string>
 
 </resources>
