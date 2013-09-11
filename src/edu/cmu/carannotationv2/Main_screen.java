@@ -838,7 +838,7 @@ public class Main_screen extends Activity implements
 	protected void onResume() {
 
 		gRectCount = 0;
-		//btn_selectmm.setEnabled(false);
+		btn_selectmm.setEnabled(false);
 		btn_save.setEnabled(false);
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
@@ -977,9 +977,7 @@ public class Main_screen extends Activity implements
 					public void onClick(DialogInterface dialog, int which) {
 
 						dispathTakePictureIntent();
-						// if (mImageBitmap!=null) {
-						// mImageBitmap.recycle();
-						// }
+					
 
 					}
 				});
