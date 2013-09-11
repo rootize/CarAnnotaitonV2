@@ -243,6 +243,8 @@ public class JSONdata {
 			isf.close();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+			tempObject.put(ParseAtributes.IMAGE_WIDTH, bm.getWidth());
+			tempObject.put(ParseAtributes.IMAGE_HEIGHT, bm.getHeight());
 			bm.recycle();
 			byte[] data = baos.toByteArray();
 			

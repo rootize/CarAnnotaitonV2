@@ -22,5 +22,7 @@ public class ParseAtributes {
 	public static final String IMG_FILE = "imageFile";
 	public static final String IMG_PATH = "imgPath";
 	public static final int NULL_NUM = 0;
+	public static final String IMAGE_WIDTH="imageWidth";
+    public static final String IMAGE_HEIGHT="imageHeight";
 	public static final String NULL_STRING="NA";
 }
