@@ -28,7 +28,7 @@
     <string name="mainscreen_note">Note:</string>
     <string name="mainscreen_note_extent">Please draw rectangle first then select the make and model in the dropdown list</string>
     <string name="mainscreen_btn_saveinformation_string">Save Information</string>
-    <string name="mainscreen_textview_guidance_string">Please press "take a new picture to start"</string>
+    <string name="mainscreen_textview_guidance_string">Press \"take a Photo!\" to start </string>
     <string name="mainscreen_textview_sampletextwelcome_string">Welcome XXX</string>
     <string name="mainscreen_checkbox_hideguidance_string">Hide guidance</string>
     <string name="readme_title_string">Frequently Asked Questions about AnnoCar</string>

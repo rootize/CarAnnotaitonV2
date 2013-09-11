@@ -154,6 +154,9 @@ public class Main_screen extends Activity implements
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
 
+		
+		
+		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		if (wifi_connected) {
 			login_global_usr();
 			check_upload_localData();
@@ -169,7 +172,7 @@ public class Main_screen extends Activity implements
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
-		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
+		
 
 	}
 
@@ -335,7 +338,7 @@ public class Main_screen extends Activity implements
 		}
 
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
-		welcomeText.setText("Welcome! " + welcome_words_string);
+		welcomeText.setText( welcome_words_string);
 
 	}
 

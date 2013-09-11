@@ -10,21 +10,24 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="4"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:weightSum="10" >
 
         <TextView
             android:id="@+id/mainscreen_textview_textguidance"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|center_horizontal"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom|left"
             android:text="@string/mainscreen_textview_guidance_string"
-            android:textColor="#00ffff00"
-            android:textSize="18sp" />
+            android:textColor="#FFFFFF00"
+            android:textSize="20sp" />
         
         <edu.cmu.carannotationv2.DrawImageView
             android:id="@+id/imageView1"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
             android:layout_gravity="right|bottom"
             android:src="@drawable/firstlogin"
             android:visibility="visible" />
@@ -40,53 +43,53 @@
 
         <TextView
             android:id="@+id/mainscreen_welcome_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1.5"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             android:text="@string/mainscreen_textview_sampletextwelcome_string"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="italic"
             android:typeface="serif" />
               <Button
             android:id="@+id/button_take_new"
-            android:layout_width="match_parent"
-            android:layout_height="31dp"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:text="@string/take_new_string"
-            android:textSize="10dp" />
+            android:textSize="15sp" />
        <Button 
            android:id="@+id/btn_select_mm"
            android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
+           android:layout_height="0dp" 
+           android:layout_weight="1.5"
            android:text="@string/mainscreen_select_makemodel_btn_string"  
-           android:textSize="10dp"   
+           android:textSize="15sp"   
            /> 
         <TextView 
             android:id="@+id/mainscreen_makemodel_tv"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10dp" 
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
+            android:textSize="15sp" 
             />
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:text="@string/mainscreen_btn_saveinformation_string"
-            android:textSize="10dp" />
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/button_send_server"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:singleLine="true"
             android:text="@string/finish_annotating"
-            android:textSize="10dp" />
-      <!--   <FrameLayout 
-            android:id="@+id/frag_control"
-            android:visibility="gone" 
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-        </FrameLayout> -->
-
+            android:textSize="15sp" />
+     
 
     </LinearLayout>
 
