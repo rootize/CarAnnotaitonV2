@@ -75,7 +75,7 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
-	private int scaleFactor=0;
+	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
 	private static final String offline_filename = "offline";
@@ -94,7 +94,7 @@ public class Main_screen extends Activity implements
 	private EncryptedData ed;
 
 	private TextView welcomeText;
-	// private String welcome_name = "";
+
 	private TextView GuideText;
 	private Button btn_takeimg;
 	private Button btn_selectmm;
@@ -107,12 +107,11 @@ public class Main_screen extends Activity implements
 	private ExpandableListView make_model_listView;
 	private Dialog make_model_Dialog;
 	private View viewlist;
-	private View viewListLastSelected;
-	private int lastGroupPosition=-1;
+	// private View viewListLastSelected;
+	private int lastGroupPosition = -1;
 	List<String> makeGroup = new ArrayList<String>();
 	List<List<String>> makemodelGroup = new ArrayList<List<String>>();
 
-	
 	private boolean global_prevent_reDraw = false;
 	private String selectedMake;
 	private String selectedModel;
@@ -126,7 +125,7 @@ public class Main_screen extends Activity implements
 	private String usr_name;
 	private JSONArray offline_JsonArray;
 	private boolean wifi_connected;
-
+	private boolean isLoggedin = false;
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
@@ -139,16 +138,17 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
-   
+
 		// Change Screen Rotation to Enabled
-		if (android.provider.Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION,0)==1) {
-			isScreenRotationLocked=true;
-		}else {
-			static_global_functions.setAutoOrientationEnabled(getContentResolver(),
-					true);
-			isScreenRotationLocked=false;
+		if (android.provider.Settings.System.getInt(getContentResolver(),
+				Settings.System.ACCELEROMETER_ROTATION, 0) == 1) {
+			isScreenRotationLocked = false;
+		} else {
+			static_global_functions.setAutoOrientationEnabled(
+					getContentResolver(), true);
+			isScreenRotationLocked = true;
 		}
-		
+
 		mAlbumStorageDirFactory = static_global_functions
 				.setmAlbumStorageDirFactory();
 		wifi_connected = static_global_functions
@@ -160,8 +160,6 @@ public class Main_screen extends Activity implements
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
 
-		
-		
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		if (wifi_connected) {
 			login_global_usr();
@@ -178,7 +176,7 @@ public class Main_screen extends Activity implements
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
-		
+
 	}
 
 	private void pre_initialize_mm_selection_dialog() {
@@ -198,33 +196,33 @@ public class Main_screen extends Activity implements
 			List<String> individual_model = new ArrayList<String>();
 			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
 					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX);
-			removeMake(individual_model,temp_make);
+			removeMake(individual_model, temp_make);
 			makemodelGroup.add(individual_model);
 		}
 
 	}
 
-	private void removeMake(List<String> individual_model,String temp_make) {
+	private void removeMake(List<String> individual_model, String temp_make) {
 		String temp_model;
-		String new_model="";
+		String new_model = "";
 		for (int i = 0; i < individual_model.size(); i++) {
-			temp_model=individual_model.get(i);
-			
-			String[] splited_temp=temp_model.split("\\s+");
-	
-			
-			if (splited_temp[1].equalsIgnoreCase(temp_make)&& splited_temp.length>2) {
+			temp_model = individual_model.get(i);
+
+			String[] splited_temp = temp_model.split("\\s+");
+
+			if (splited_temp[1].equalsIgnoreCase(temp_make)
+					&& splited_temp.length > 2) {
 				for (int j = 2; j < splited_temp.length; j++) {
-					new_model=new_model +splited_temp[j];
+					new_model = new_model + splited_temp[j];
 				}
-				
-			}else {
-				new_model=temp_model;
+
+			} else {
+				new_model = temp_model;
 			}
 			individual_model.set(i, new_model);
-			new_model="";
+			new_model = "";
 		}
-		
+
 	}
 
 	private void initialize_mm_selection_dialog() {
@@ -235,11 +233,12 @@ public class Main_screen extends Activity implements
 		make_model_Dialog.setTitle("Select make and model");
 		make_model_listView = (ExpandableListView) viewlist
 				.findViewById(R.id.elvForDialog);
-		make_model_listView.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
-		
-        make_model_listView.setFastScrollEnabled(true);
+		make_model_listView
+				.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
+
+		make_model_listView.setFastScrollEnabled(true);
 		MyExpandableListAdapter mAdapter = new MyExpandableListAdapter(this,
-				makeGroup, makemodelGroup,make_model_listView);
+				makeGroup, makemodelGroup, make_model_listView);
 		make_model_listView.setAdapter(mAdapter);
 		make_model_listView.setOnGroupClickListener(new OnGroupClickListener() {
 
@@ -247,23 +246,24 @@ public class Main_screen extends Activity implements
 			public boolean onGroupClick(ExpandableListView parent, View v,
 					int groupPosition, long id) throws RuntimeException {
 
-//				try {
-//					/*if (lastGroupPosition!=-1 && lastGroupPosition!=groupPosition) {
-//						make_model_listView.collapseGroup(lastGroupPosition);
-//					}
-//                                            
-//					lastGroupPosition=groupPosition;*/
-//				} catch (Exception e) {
-//					Log.v("LH", "ERROR@onCreate: " + e.toString());
-//				}
-//				return false;
+				// try {
+				// /*if (lastGroupPosition!=-1 &&
+				// lastGroupPosition!=groupPosition) {
+				// make_model_listView.collapseGroup(lastGroupPosition);
+				// }
+				//
+				// lastGroupPosition=groupPosition;*/
+				// } catch (Exception e) {
+				// Log.v("LH", "ERROR@onCreate: " + e.toString());
+				// }
+				// return false;
 				if (parent.isGroupExpanded(groupPosition)) {
-			        parent.collapseGroup(groupPosition);
-			    } else {
-			        parent.expandGroup(groupPosition);
-			    }
+					parent.collapseGroup(groupPosition);
+				} else {
+					parent.expandGroup(groupPosition);
+				}
 
-			    return true;
+				return true;
 			}
 		});
 
@@ -273,14 +273,14 @@ public class Main_screen extends Activity implements
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id)
 					throws RuntimeException {
-				if (lastGroupPosition!=-1&&lastGroupPosition!=groupPosition) {
-					 //make_model_listView.collapseGroup(lastGroupPosition) ;
+				if (lastGroupPosition != -1
+						&& lastGroupPosition != groupPosition) {
+					// make_model_listView.collapseGroup(lastGroupPosition) ;
 					make_model_listView.collapseGroup(lastGroupPosition);
 				}
-				
-				
-				lastGroupPosition=groupPosition;
-			
+
+				lastGroupPosition = groupPosition;
+
 				selectedMake = makeGroup.get(groupPosition).toString();
 				selectedModel = makemodelGroup.get(groupPosition)
 						.get(childPosition).toString();
@@ -309,8 +309,8 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-			
-				if (lastGroupPosition!=-1) {
+
+				if (lastGroupPosition != -1) {
 					make_model_listView.collapseGroup(lastGroupPosition);
 				}
 				make_model_Dialog.show();
@@ -337,15 +337,16 @@ public class Main_screen extends Activity implements
 		}
 
 		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
-		welcomeText.setText( welcome_words_string);
+		welcomeText.setText(welcome_words_string);
 
 	}
 
 	private void initialize_progbar() {
 		progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
-      setProgressBarIndeterminate(true);
-      setProgressBarVisibility(true);
-      setProgress(3500);
+	    progressBar.setVisibility(View.INVISIBLE);
+		setProgressBarIndeterminate(true);
+		setProgressBarVisibility(false);
+		setProgress(3500);
 	}
 
 	private void initialize_drawImageView() {
@@ -373,8 +374,8 @@ public class Main_screen extends Activity implements
 						drawView.setSliding_x(event.getX());
 						drawView.setSliding_y(event.getY());
 						drawView.adjustCortex();
-                        btn_selectmm.setEnabled(true);
-				        //btn_save.setEnabled(false);
+						btn_selectmm.setEnabled(true);
+						// btn_save.setEnabled(false);
 						GuideText.setText("Press \" Make&Model\" to annotate");
 					}
 					drawView.invalidate();
@@ -407,7 +408,6 @@ public class Main_screen extends Activity implements
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
-				
 
 				btn_save.setEnabled(false);
 				btn_send.setEnabled(true);
@@ -443,7 +443,7 @@ public class Main_screen extends Activity implements
 				annotatorInput.addWifiStatus(wifi_connected);
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
-				if (wifi_connected) {
+				if (wifi_connected && isLoggedin) {
 					// check parse usr:
 					// login_global_usr();
 					ParseObject pb_send = jsonData.formatParseObject(ed
@@ -456,6 +456,7 @@ public class Main_screen extends Activity implements
 								static_global_functions.ShowToast_short(
 										getApplicationContext(), send_success,
 										R.drawable.success);
+								
 							} else {
 								String send_failuer = "Problem occured while sending, will save and try again next time";
 								static_global_functions.ShowToast_short(
@@ -491,11 +492,11 @@ public class Main_screen extends Activity implements
 									e.printStackTrace();
 								}
 							}
+							mImageView.setImageDrawable(getResources().getDrawable(
+									R.drawable.buttonfinish));
 						}
 					});
-					// FIXME
-					// 1. delete all files
-					// 2. draw a new image---please take a new one!
+					
 
 				} else {
 					try {
@@ -524,18 +525,24 @@ public class Main_screen extends Activity implements
 
 						e.printStackTrace();
 					}
+
 				}
 				gRectCount = 0;
 				btn_send.setEnabled(false);
 				btn_save.setEnabled(false);
 				btn_selectmm.setEnabled(false);
-				mImageView.setImageDrawable(getResources().getDrawable(
-						R.drawable.buttonfinish));
+				if (!wifi_connected) {
+					mImageView.setImageDrawable(getResources().getDrawable(
+							R.drawable.buttonfinish));
+				}else {
+					mImageView.setImageDrawable(getResources().getDrawable(
+							R.drawable.processing));
+				}
+				
 				mImageView.clearRecords();
 				mImageView.clearrect();
 				mImageView.invalidate();
 				global_prevent_reDraw = true;
-				
 
 				GuideText
 						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
@@ -554,7 +561,7 @@ public class Main_screen extends Activity implements
 			public void onClick(View v) {
 
 				mImageView.setImageDrawable(getResources().getDrawable(
-						R.drawable.buttonfinish));
+						R.drawable.processing));
 				mImageView.invalidate();
 
 				if (gRectCount != 0) {
@@ -570,13 +577,15 @@ public class Main_screen extends Activity implements
 	}
 
 	private void check_upload_localData() {
+		//if (isLoggedin) {
+			new UploadFileThread().start();
+		//}
 
-		new UploadFileThread().start();
 	}
 
-	private List<String> getLabels(String select_query ) {
+	private List<String> getLabels(String select_query) {
 		// TODO Auto-generated method stub
-		//String DataBaseQuery=
+		// String DataBaseQuery=
 		List<String> labelsList = new ArrayList<String>();
 		Cursor cursor = carDatabase.rawQuery(select_query, null);
 		if (cursor.moveToFirst()) {
@@ -588,7 +597,7 @@ public class Main_screen extends Activity implements
 			}
 		}
 		cursor.close();
-		labelsList.add(new String("Z"+database.NONE_EXISTING));
+		labelsList.add(new String("Z" + database.NONE_EXISTING));
 		return labelsList;
 
 	}
@@ -748,7 +757,7 @@ public class Main_screen extends Activity implements
 	}
 
 	private void setPic() {
-	if (scaleFactor==0) {
+		if (scaleFactor == 0) {
 			scaleFactor = setScaleFactor(mImageView, mCurrentPhotoPath);
 		}
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -764,9 +773,7 @@ public class Main_screen extends Activity implements
 
 		}
 
-		if (mImageBitmap != null) {
-			mImageBitmap.recycle();
-		}
+		
 		mImageBitmap = Bitmap.createScaledBitmap(bitmap, mImageView.getWidth(),
 				mImageView.getHeight(), false);
 		mImageView.setImageBitmap(mImageBitmap);
@@ -815,10 +822,16 @@ public class Main_screen extends Activity implements
 
 		if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
 			Log.d("OnActivityResult", "Called!");
+			if (mImageBitmap != null) {
+				mImageBitmap.recycle();
+				mImageBitmap=null;
+				System.gc();
+			}
 			handleBigCameraPhoto();
 			Log.d("OnActivityResult", "2");
 			GuideText
-					.setText("Please draw a rectangle that covers the (first)car in the photo");
+					.setText("Swipe to draw image:");
+			makemodelshowTextView.setText("");
 
 		}
 	}
@@ -827,11 +840,18 @@ public class Main_screen extends Activity implements
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		carDatabase.close();
-		if (isScreenRotationLocked==false) {
-			static_global_functions.setAutoOrientationEnabled(getContentResolver(), false);
+		if (isScreenRotationLocked == false) {
+			static_global_functions.setAutoOrientationEnabled(
+					getContentResolver(), false);
 		}
 		super.onDestroy();
-		
+
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
 	}
 
 	@Override
@@ -843,12 +863,12 @@ public class Main_screen extends Activity implements
 		btn_send.setEnabled(false);
 		btn_takeimg.setEnabled(true);
 		if (isFirstTimeLogin) {
-			global_prevent_reDraw=true;
-			isFirstTimeLogin=false;
-		}else {
+			global_prevent_reDraw = true;
+			isFirstTimeLogin = false;
+		} else {
 			global_prevent_reDraw = false;
 		}
-		
+
 		annotatorInput = new AnnotatorInput();
 		annotatorInput.addUsr(usr_name);
 		super.onResume();
@@ -897,7 +917,7 @@ public class Main_screen extends Activity implements
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				int item_num = offline_JsonArray.length();
+/*				int item_num = offline_JsonArray.length();
 
 				if (item_num > 0) {
 
@@ -910,16 +930,20 @@ public class Main_screen extends Activity implements
 
 							@Override
 							public void done(ParseException arg0) {
-
-								offline_JsonArray = static_global_functions
-										.remove(0, offline_JsonArray);
+                            if (arg0==null) {
+                            	offline_JsonArray = static_global_functions
+										.remove(0, offline_JsonArray);*/
 								recursive_upload();
+				/*			}
+                            else {
+								static_global_functions.ShowToast_short(getApplicationContext(), "Unable to connect to server, will try later", R.drawable.caution);
+							}
 							}
 
-						});
-					} catch (JSONException e) {
+						});*/
+					/*} catch (JSONException e) {
 						e.printStackTrace();
-					}
+					}*/
 
 				}
 
@@ -927,7 +951,7 @@ public class Main_screen extends Activity implements
 
 		}
 
-	}
+	//}
 
 	private void recursive_upload() {
 		if (offline_JsonArray.length() > 0) {
@@ -936,20 +960,20 @@ public class Main_screen extends Activity implements
 			try {
 				tem_item = (JSONObject) offline_JsonArray.get(0);
 
-				// ParseObject pobject = new ParseObject("annotation_info");
-				// pobject.put("usr", tem_item.getString("usr"));
-				// static_global_functions.transfer_Json_Pobject(pobject,
-				// tem_item/*,lati,longti*/);
 				ParseObject pobject = new JSONdata(tem_item)
 						.formatParseObject(ed.getCipherTextClassName());
 				pobject.saveInBackground(new SaveCallback() {
 
 					@Override
 					public void done(ParseException arg0) {
-
-						offline_JsonArray = static_global_functions.remove(0,
+                    if (arg0==null) {
+                    	offline_JsonArray = static_global_functions.remove(0,
 								offline_JsonArray);
 						recursive_upload();
+					}else {
+						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, will try later", R.drawable.caution);
+					}
+						
 					}
 
 				});
@@ -959,6 +983,9 @@ public class Main_screen extends Activity implements
 			}
 
 		} else {
+			static_global_functions.ShowToast_short(getApplicationContext(),
+					"Previous data uploaded!", R.drawable.success);
+			Log.d("All files", "Send successfully");
 			FileOperation.delete(getApplicationContext(), offline_filename);
 		}
 	}
@@ -977,7 +1004,6 @@ public class Main_screen extends Activity implements
 					public void onClick(DialogInterface dialog, int which) {
 
 						dispathTakePictureIntent();
-					
 
 					}
 				});
@@ -1010,18 +1036,24 @@ public class Main_screen extends Activity implements
 					@Override
 					public void done(ParseUser usr, ParseException e) {
 						if (usr != null) {
-							Log.d("Login_before", "Successfully");
+							//Log.d("Login_before", "Successfully");
+							isLoggedin = true;
 						} else {
-							Log.d("error logging in ", e.toString());
-
+							//Log.d("error logging in ", e.toString());
+							isLoggedin = false;
+							static_global_functions.ShowToast_short(getApplicationContext(), "Remote server not responding, save to local memory", R.drawable.caution);
 						}
 
 					}
 				});
 
 	}
-	
-	
-	
-}// Ending of whole class!
 
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		this.finish();
+	}
+
+}

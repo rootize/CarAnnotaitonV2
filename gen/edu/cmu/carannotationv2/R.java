@@ -40,9 +40,10 @@ public final class R {
         public static final int list_highlight_inactive=0x7f02000d;
         public static final int login=0x7f02000e;
         public static final int login_back_ground=0x7f02000f;
-        public static final int question=0x7f020010;
-        public static final int success=0x7f020011;
-        public static final int takepic=0x7f020012;
+        public static final int processing=0x7f020010;
+        public static final int question=0x7f020011;
+        public static final int success=0x7f020012;
+        public static final int takepic=0x7f020013;
     }
     public static final class id {
         public static final int LinearLayoutGetMarketList=0x7f0a0007;
@@ -58,20 +59,20 @@ public final class R {
         public static final int elvForDialog=0x7f0a0008;
         public static final int facebookaccounthint=0x7f0a0025;
         public static final int imageView1=0x7f0a000d;
-        public static final int logging_cancel_btn=0x7f0a000b;
         public static final int logging_textview=0x7f0a000a;
         public static final int login_account=0x7f0a0001;
         public static final int login_anonymous_btn=0x7f0a0005;
         public static final int login_anonymous_checkbox=0x7f0a0002;
         public static final int login_btn=0x7f0a0003;
         public static final int login_login_btn=0x7f0a0004;
+        public static final int login_waiting_pgBar=0x7f0a0009;
         public static final int mainscreen_checkbox_hideguidance=0x7f0a0015;
         public static final int mainscreen_makemodel_tv=0x7f0a0011;
         public static final int mainscreen_textview_textguidance=0x7f0a000c;
         public static final int mainscreen_welcome_text=0x7f0a000e;
         public static final int make_text=0x7f0a0016;
         public static final int model_text=0x7f0a0018;
-        public static final int pgBar=0x7f0a0009;
+        public static final int pgBar=0x7f0a000b;
         public static final int readme_answer1=0x7f0a001d;
         public static final int readme_answer2=0x7f0a001f;
         public static final int readme_answer3=0x7f0a0021;

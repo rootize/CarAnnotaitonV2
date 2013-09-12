@@ -171,6 +171,9 @@ public class JSONdata {
 					exif.getAttribute(ExifInterface.TAG_MODEL));
 			jsonObject.put(ParseAtributes.WH_BLN,
 					exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE));
+			jsonObject.put(ParseAtributes.IMAGE_WIDTH, exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH,0));
+			jsonObject.put(ParseAtributes.IMAGE_HEIGHT, exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0));
+//			
 		} catch (JSONException e) {
 
 			e.printStackTrace();
@@ -228,31 +231,25 @@ public class JSONdata {
 			//options.inSampleSize=SAMPLESIZE;
 			options.outHeight=SAVED_HEIGHT;
 			options.outWidth=SAVED_WIDTH;
-			/*Bitmap bm = BitmapFactory.decodeFile(jsonObject
-					.getString(ParseAtributes.IMG_PATH),options);*/
+			
 			options.inSampleSize=1;
 			FileInputStream isf=new FileInputStream(new File(jsonObject.getString(ParseAtributes.IMG_PATH)));
-			Bitmap bm;
-			try {
-				bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
-			} catch (Exception e) {
-				System.gc();
-				bm=BitmapFactory.decodeFileDescriptor(isf.getFD(), null, options);
-			}
-			
-			isf.close();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-			tempObject.put(ParseAtributes.IMAGE_WIDTH, bm.getWidth());
-			tempObject.put(ParseAtributes.IMAGE_HEIGHT, bm.getHeight());
-			bm.recycle();
+			byte[] b=new byte[1024];
+			int bytesRead;
+			while (( bytesRead=isf.read(b))!=-1) {
+				baos.write(b,0,bytesRead);
+				
+			}
 			byte[] data = baos.toByteArray();
-			
+			isf.close();
 			ParseFile imgFile;
 
 			imgFile = new ParseFile(
 					jsonObject.getString(ParseAtributes.IMG_NAME), data);
 			tempObject.put(ParseAtributes.IMG_FILE, imgFile);
+			data=null;
+			System.gc();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -143,8 +143,7 @@ public class static_global_functions {
 		ConnectivityManager manager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-//		boolean is3G=false; = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-//				.isConnectedOrConnecting();
+
 		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
 				.isConnectedOrConnecting();
 		if (isWifi) {

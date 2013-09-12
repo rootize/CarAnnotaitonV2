@@ -155,10 +155,12 @@ public class Login extends Activity {
 
 				
 				if (isAnonLogin) {
+					anonTextView.setText("     Logging in ...     ");
 					dispathIntenttoMainScreen(ANONYMOUS_USR);
 				}else {
 					email = emailEditText.getText().toString();
 					if (static_global_functions.isEmailValid(email)) {
+						anonTextView.setText("     Logging in ...     ");
 						String showMessage = "Logged in successfully!";
 						static_global_functions.ShowToast_short(
 								getApplicationContext(), showMessage,
@@ -170,7 +172,7 @@ public class Login extends Activity {
 							editor.putString("usrEmail", email);
 							editor.commit();
 						}
-
+						
 						dispathIntenttoMainScreen(email);
 					} else {
 						emailEditText.setText("");
@@ -195,9 +197,11 @@ public class Login extends Activity {
 	
 	
 	private  void dispathIntenttoMainScreen(String e){
+		
 		Intent toMain = new Intent(Login.this, Main_screen.class);
 		toMain.putExtra(USR_TOMAIN_INTENT, e);
 		startActivity(toMain);
+	 //   
 		finish();
 	}
 //	private void addLisntersOnButton_ReadMe() {

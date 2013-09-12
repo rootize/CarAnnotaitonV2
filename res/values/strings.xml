@@ -20,7 +20,7 @@
     <string name="login_anonymous_string_onbtn">Shit</string>
     <string name="readme_string_onbtn">Fisrt time use?</string>
     <string name="whyemail">Why Email?</string>
-    <string name="logging_string">Logging in, please wait</string>
+    <string name="logging_string">Logging in &#8230;</string>
     <string name="cancel_btn">Cancel</string>
     <string name="signup_nickname_string">Nickname</string>
     <string name="savecurrentrect">Save Information</string>
