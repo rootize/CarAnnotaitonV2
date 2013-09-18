@@ -210,8 +210,8 @@ public class Main_screen extends Activity implements
 
 			String[] splited_temp = temp_model.split("\\s+");
 
-			if (splited_temp[1].equalsIgnoreCase(temp_make)
-					&& splited_temp.length > 2) {
+			if (splited_temp.length > 2&&splited_temp[1].equalsIgnoreCase(temp_make)
+					) {
 				for (int j = 2; j < splited_temp.length; j++) {
 					new_model = new_model + splited_temp[j];
 				}
