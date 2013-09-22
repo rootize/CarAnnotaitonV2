@@ -13,13 +13,16 @@ import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -90,6 +93,9 @@ public class Main_screen extends Activity implements
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+	
+	private String parseClassNameString;
+	
 	// data encryption
 	private EncryptedData ed;
 
@@ -160,11 +166,27 @@ public class Main_screen extends Activity implements
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
 
+		parseClassNameString=ed.getCipherTextClassName();
+		
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		if (wifi_connected) {
-			login_global_usr();
-			check_upload_localData();
-		}
+		
+		
+		
+		//if (wifi_connected) {
+		//Calendar cal=Calendar.getInstance();
+		Intent startUploading=new Intent(this.getApplicationContext(), BackgroundUploading.class);
+		startService(startUploading);
+		//Log.d("", msg)
+		//PendingIntent pintent = PendingIntent.getService(this, 0, startUploading, 0);
+
+		//AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		// Start every 30 minutes
+		//alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30*60*1000, pintent);
+		//getApplicationContext().startService(startUploading);
+			
+//			login_global_usr();
+//			check_upload_localData();
+	//	}
 		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
 		setWelcomeword(usr_name, wifi_connected);
@@ -816,7 +838,43 @@ public class Main_screen extends Activity implements
 
 		}
 	}
+	private void recursive_upload() {
+		if (offline_JsonArray.length() > 0) {
 
+			JSONObject tem_item;
+			try {
+				tem_item = (JSONObject) offline_JsonArray.get(0);
+
+				ParseObject pobject = new JSONdata(tem_item)
+						.formatParseObject(parseClassNameString);
+				pobject.saveInBackground(new SaveCallback() {
+
+					@Override
+					public void done(ParseException arg0) {
+                    if (arg0==null) {
+                    	offline_JsonArray = static_global_functions.remove(0,
+								offline_JsonArray);
+						recursive_upload();
+					}else {
+						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, will try later", R.drawable.caution);
+					}
+						
+					}
+
+				});
+			} catch (JSONException e) {
+				e.printStackTrace();
+				Log.d("Main_Screen", "JSON array null");
+			}
+
+		} else {
+			static_global_functions.ShowToast_short(getApplicationContext(),
+					"Previous data uploaded!", R.drawable.success);
+			Log.d("All files", "Send successfully");
+			FileOperation.delete(getApplicationContext(), offline_filename);
+		}
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -953,42 +1011,7 @@ public class Main_screen extends Activity implements
 
 	//}
 
-	private void recursive_upload() {
-		if (offline_JsonArray.length() > 0) {
-
-			JSONObject tem_item;
-			try {
-				tem_item = (JSONObject) offline_JsonArray.get(0);
-
-				ParseObject pobject = new JSONdata(tem_item)
-						.formatParseObject(ed.getCipherTextClassName());
-				pobject.saveInBackground(new SaveCallback() {
-
-					@Override
-					public void done(ParseException arg0) {
-                    if (arg0==null) {
-                    	offline_JsonArray = static_global_functions.remove(0,
-								offline_JsonArray);
-						recursive_upload();
-					}else {
-						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, will try later", R.drawable.caution);
-					}
-						
-					}
-
-				});
-			} catch (JSONException e) {
-				e.printStackTrace();
-				Log.d("Main_Screen", "JSON array null");
-			}
-
-		} else {
-			static_global_functions.ShowToast_short(getApplicationContext(),
-					"Previous data uploaded!", R.drawable.success);
-			Log.d("All files", "Send successfully");
-			FileOperation.delete(getApplicationContext(), offline_filename);
-		}
-	}
+	
 
 	public void showDialog(String showString) {
 
