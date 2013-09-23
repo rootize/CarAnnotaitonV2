@@ -42,7 +42,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	        {
 	            String s = group.get(i).substring(0, 1).toUpperCase(Locale.getDefault());
 	            if (!alphaIndexer.containsKey(s))
-	                alphaIndexer.put(s, i);
+	            	if (!s.equals(" ")) {
+	            		alphaIndexer.put(s, i);
+					}else {
+						alphaIndexer.put("Z", i);
+					}
+	                
+	           
 	        }
 
 	        Set<String> sectionLetters = alphaIndexer.keySet();
@@ -175,7 +181,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 	@Override
 	public Object[] getSections() {
 		// TODO Auto-generated method stub
-		return "A B C D F H I J K L M N O P R S T V Z".split(" ");
+		return "A-B-C-D-F-H-I-J-K-L-M-N-O-P-R-S-T-V-  ".split("-");
 		
 	} 
 	

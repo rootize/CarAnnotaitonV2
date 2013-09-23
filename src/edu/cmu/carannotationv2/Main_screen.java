@@ -352,6 +352,22 @@ public class Main_screen extends Activity implements
 				// Log.v("LH", "ERROR@onCreate: " + e.toString());
 				// }
 				// return false;
+				
+				if (makeGroup.get(groupPosition).toString().equals(database.NONE_EXISTING)) {
+					
+					selectedMake = "unknown";
+					selectedModel = "unknown";
+					make_model_Dialog.dismiss();
+					makemodelshowTextView.setText(makeGroup.get(groupPosition)
+							.toString()
+							+ " & "
+							+ makeGroup.get(groupPosition)
+									.toString());
+					return true;
+				}
+				else {
+					
+				
 				if (parent.isGroupExpanded(groupPosition)) {
 					parent.collapseGroup(groupPosition);
 				} else {
@@ -359,6 +375,7 @@ public class Main_screen extends Activity implements
 				}
 
 				return true;
+				}
 			}
 		});
 
@@ -385,6 +402,14 @@ public class Main_screen extends Activity implements
 						+ makemodelGroup.get(groupPosition).get(childPosition)
 								.toString());
 
+				if (selectedMake.equals(database.NONE_EXISTING)) {
+					selectedMake="unknown";
+				}
+				if (selectedModel.equals(database.NONE_EXISTING)) {
+					selectedModel="unknown";
+				}
+				
+				
 				// Close the dialog
 				make_model_Dialog.dismiss();
 				return false;
@@ -537,7 +562,10 @@ public class Main_screen extends Activity implements
 						mCurrentPhotoPath));
 				wifi_connected = static_global_functions
 						.wifi_connection(getApplicationContext());
-
+				if (wifi_connected) {
+					 login_global_usr();
+				}
+              
 				annotatorInput.addWifiStatus(wifi_connected);
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
@@ -763,7 +791,7 @@ public class Main_screen extends Activity implements
 			}
 		}
 		cursor.close();
-		labelsList.add(new String("Z" + database.NONE_EXISTING));
+		labelsList.add(new String(database.NONE_EXISTING));
 		return labelsList;
 
 	}
