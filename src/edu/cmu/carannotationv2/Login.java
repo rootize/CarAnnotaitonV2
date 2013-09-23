@@ -142,20 +142,10 @@ public class Login extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				
-			//	if (isAnonLogin) {
-			//		anonTextView.setText("      ...     ");
-			//		dispathIntenttoMainScreen(ANONYMOUS_USR);
-			//	}else
 				{
 					email = emailEditText.getText().toString();
 					if (static_global_functions.isEmailValid(email)) {
-						//anonTextView.setText("     Initializing ...     ");
-						//String showMessage = "Logged in successfully!";
-						//static_global_functions.ShowToast_short(
-						//		getApplicationContext(), showMessage,
-						//		R.drawable.success);
-						// Remember me when changes made 
+						
 						
 						
 						setInitializingShow();

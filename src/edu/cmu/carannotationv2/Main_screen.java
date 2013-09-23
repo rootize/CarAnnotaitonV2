@@ -17,6 +17,7 @@ import java.util.Date;
 
 import java.util.List;
 
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,6 +33,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,6 +57,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -94,6 +98,9 @@ public class Main_screen extends Activity implements
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+	
+	private boolean take_valide_img=true;
+	
 	// data encryption
 	private EncryptedData ed;
 
@@ -135,6 +142,11 @@ public class Main_screen extends Activity implements
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
 
+	
+	//Popupwindow
+	
+	private PopupWindow mPopupWindow;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -227,7 +239,7 @@ public class Main_screen extends Activity implements
 		}else {
 			if (static_global_functions.wifi_connection(getApplicationContext())) {
 				btn_upload.setVisibility(View.VISIBLE);
-				btn_upload.setEnabled(true);
+				//btn_upload.setEnabled(true);
 			}
 		}
 	}
@@ -611,20 +623,71 @@ public class Main_screen extends Activity implements
 
 		btn_takeimg = (Button) findViewById(R.id.button_take_new);
 		btn_takeimg.setEnabled(true);
+		
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				mImageView.setImageDrawable(getResources().getDrawable(
-						R.drawable.processing));
-				mImageView.invalidate();
-
-				if (gRectCount != 0) {
-					String showMessage = "Abondon all the rectangles and start a new one?";
-					showDialog(showMessage);
-				} else {
-					dispathTakePictureIntent();
+				View popupView=getLayoutInflater().inflate(R.layout.popup, null);
+				/*mPopupWindow=new PopupWindow(popupView, , 100, , true);*/
+				mPopupWindow=new PopupWindow(popupView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,true);
+				mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+				Rect btn_takeimg_location=static_global_functions.locateView(btn_takeimg);
+				if (btn_takeimg_location==null) {
+					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM|Gravity.LEFT, 0, 0);
+				}else {
+					mPopupWindow.showAtLocation(popupView, Gravity.LEFT|Gravity.TOP, btn_takeimg_location.left	, btn_takeimg_location.bottom);
 				}
+			
+				
+				Button btnfromCamera=(Button)popupView.findViewById(R.id.btntakefromcamera);
+				if (btnfromCamera==null) {
+					Log.d(MAINSTRING, "btn is null");
+				}
+				btnfromCamera.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mImageView.clearrect();
+						mImageView.setImageDrawable(getResources().getDrawable(
+								R.drawable.processing));
+						mImageView.invalidate();
+
+						if (gRectCount != 0) {
+							String showMessage = "Abondon all the rectangles and start a new one?";
+							showDialog(showMessage);
+						} else {
+							dispathTakePictureIntent();
+							mPopupWindow.dismiss();
+						}
+						
+					}
+				});
+				
+				Button btnfromGallery=(Button)popupView.findViewById(R.id.btntakefromgallery);
+				btnfromGallery.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mPopupWindow.dismiss();
+						
+					}
+				});
+						
+						
+				
+				Button btnforcancel=(Button)popupView.findViewById(R.id.btncancellfrompopup);
+				btnforcancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						mPopupWindow.dismiss();
+						
+					}
+				});
+			
+				
+				
 
 			}
 		});
@@ -874,7 +937,7 @@ public class Main_screen extends Activity implements
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+		Log.d("OnActivityResult", "2");
 		if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
 			Log.d("OnActivityResult", "Called!");
 			if (mImageBitmap != null) {
@@ -883,11 +946,15 @@ public class Main_screen extends Activity implements
 				System.gc();
 			}
 			handleBigCameraPhoto();
-			Log.d("OnActivityResult", "2");
+			
 			GuideText
 					.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
-
+            take_valide_img=true;
+		}
+		if (resultCode==RESULT_CANCELED&&requestCode==CAMERA_REQUEST) {
+			mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
+			take_valide_img=false;
 		}
 	}
 
@@ -921,7 +988,12 @@ public class Main_screen extends Activity implements
 			global_prevent_reDraw = true;
 			isFirstTimeLogin = false;
 		} else {
-			global_prevent_reDraw = false;
+			if (take_valide_img) {
+				global_prevent_reDraw = false;
+			}
+			else {
+				global_prevent_reDraw=true;
+			}
 		}
 
 		annotatorInput = new AnnotatorInput();
@@ -937,6 +1009,7 @@ public class Main_screen extends Activity implements
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
+		take_valide_img=false;
 		super.onPause();
 	}
 
