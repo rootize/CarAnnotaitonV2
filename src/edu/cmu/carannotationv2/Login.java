@@ -42,12 +42,10 @@ public class Login extends Activity {
 	
 	
 	private static final String ANONYMOUS_USR="anonymous_root";
-	
-// private CheckBox anonCheckBox;
+    private TextView emailTextView;
+    private TextView orTextView;
 	private TextView anonTextView;
 	private Button login_login_btn; // Login button
-//	private Button login_anonymous_btn; // Anonymous access button
-//	private Button ReadMe_btn; // btn for more information
 	private EditText emailEditText; // edit text for input email
 	private String email; // email string
     private boolean isAnonLogin=false;
@@ -56,7 +54,6 @@ public class Login extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
-		
 		
 		
 		super.onCreate(savedInstanceState);
@@ -70,9 +67,9 @@ public class Login extends Activity {
 		sp = this.getSharedPreferences("usrInfo", Context.MODE_PRIVATE);
 
 		// ***************initialize parse****************//
-		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
-				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
-		ParseAnalytics.trackAppOpened(getIntent());
+//		Parse.initialize(this, "hR5F7PLUvr2vkKTo8gfEQRKXgOqdvc6kehlYJREq",
+//				"b0Fks95H8U5pE62QPWTUipzZaiRyp8iZxqCSdey0");
+//		ParseAnalytics.trackAppOpened(getIntent());
 		// *************************************************//
 
 		
@@ -85,7 +82,8 @@ public class Login extends Activity {
 		emailEditText.requestFocus();
 		addLisnterOnButton_login();
 		addLisnterOnCheckBox();
-		
+		emailTextView=(TextView)findViewById(R.id.emialtextview);
+		orTextView=(TextView)findViewById(R.id.textviewor);
 
 	}
 	
@@ -96,55 +94,46 @@ public class Login extends Activity {
 	
 	private void addLisnterOnCheckBox() {
 		anonTextView=(TextView)findViewById(R.id.login_anonymous_checkbox);
-		
-//		if (android.os.Build.VERSION.SDK_INT<android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//			final float scale = this.getResources().getDisplayMetrics().density;
-//			anonCheckBox.setPadding(anonCheckBox.getPaddingLeft() + (int)(10.0f * scale + 25.0f),
-//					anonCheckBox.getPaddingTop(),
-//					anonCheckBox.getPaddingRight(),
-//					anonCheckBox.getPaddingBottom());
-//		}
-//Todo: First of all check the version, then use the code below to ensure everything
-
-		
-		
-//		anonCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//			
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//				if (isChecked) {
-//					isAnonLogin=true;
-//					emailEditText.setEnabled(false);
-//				}else {
-//					isAnonLogin=false;
-//					emailEditText.setEnabled(true);
-//				}
-//				
-//			}
-//		});
 		anonTextView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				int textColor=anonTextView.getCurrentTextColor();
-				if (textColor==android.graphics.Color.WHITE) {
-					anonTextView.setText("Proceed as Anonymous User");
-					anonTextView.setTextColor(android.graphics.Color.RED);
-					isAnonLogin=true;
-					emailEditText.setEnabled(false);	
-				}
-				if (textColor==android.graphics.Color.RED) {
-					anonTextView.setTextColor(android.graphics.Color.WHITE);
-					anonTextView.setText(getResources().getString(R.string.login_anonymous_string_onchkbx));
-					isAnonLogin=false;
-					emailEditText.setEnabled(true);
-				}
+//				int textColor=anonTextView.getCurrentTextColor();
+//				if (textColor==android.graphics.Color.WHITE) {
+//					anonTextView.setText("Proceed as Anonymous User");
+//					anonTextView.setTextColor(android.graphics.Color.RED);
+//					isAnonLogin=true;
+//					emailEditText.setEnabled(false);	
+//				}
+//				if (textColor==android.graphics.Color.RED) {
+//					anonTextView.setTextColor(android.graphics.Color.WHITE);
+//					anonTextView.setText(getResources().getString(R.string.login_anonymous_string_onchkbx));
+//					isAnonLogin=false;
+//					emailEditText.setEnabled(true);
+//				}
 				
+				setInitializingShow();
+				//anonTextView.setText("Initializing ...");
+				dispathIntenttoMainScreen(ANONYMOUS_USR);
 			}
+
+			
 		});
 		
 	}
 
+	
+	
+	private void setInitializingShow() {
+		login_login_btn.setVisibility(View.INVISIBLE);
+		emailEditText.setVisibility(View.INVISIBLE);
+		orTextView.setVisibility(View.INVISIBLE);
+		emailTextView.setVisibility(View.INVISIBLE);
+		anonTextView.setText("Initializing ...please wait");
+		anonTextView.setTextColor(android.graphics.Color.RED);
+		
+		
+	}
 	private void addLisnterOnButton_login() {
 
 		login_login_btn=(Button)findViewById(R.id.login_btn);
@@ -154,18 +143,22 @@ public class Login extends Activity {
 			public void onClick(View v) {
 
 				
-				if (isAnonLogin) {
-					anonTextView.setText("     Logging in ...     ");
-					dispathIntenttoMainScreen(ANONYMOUS_USR);
-				}else {
+			//	if (isAnonLogin) {
+			//		anonTextView.setText("      ...     ");
+			//		dispathIntenttoMainScreen(ANONYMOUS_USR);
+			//	}else
+				{
 					email = emailEditText.getText().toString();
 					if (static_global_functions.isEmailValid(email)) {
-						anonTextView.setText("     Logging in ...     ");
-						String showMessage = "Logged in successfully!";
-						static_global_functions.ShowToast_short(
-								getApplicationContext(), showMessage,
-								R.drawable.success);
+						//anonTextView.setText("     Initializing ...     ");
+						//String showMessage = "Logged in successfully!";
+						//static_global_functions.ShowToast_short(
+						//		getApplicationContext(), showMessage,
+						//		R.drawable.success);
 						// Remember me when changes made 
+						
+						
+						setInitializingShow();
 						if (!sp.getString("usrEmail", "").equals(
 								email)) {
 							Editor editor = sp.edit();
@@ -201,38 +194,10 @@ public class Login extends Activity {
 		Intent toMain = new Intent(Login.this, Main_screen.class);
 		toMain.putExtra(USR_TOMAIN_INTENT, e);
 		startActivity(toMain);
-	 //   
+	
 		finish();
 	}
-//	private void addLisntersOnButton_ReadMe() {
-//		// TODO Auto-generated method stub
-//
-//		ReadMe_btn.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Intent toReadMeActivity = new Intent(Login.this, readme.class);
-//				startActivity(toReadMeActivity);
-//			}
-//		});
-//
-//	}
-//// Listener on anonymous button
-//	private void addLisntersOnButton_anony() {
-//		// TODO Auto-generated method stub
-//		login_anonymous_btn.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				String anonymoususrName = "anonymous_root";
-//				Intent toMainActivity = new Intent(Login.this, Main_screen.class);
-//				toMainActivity.putExtra("usr", anonymoususrName);
-//				startActivity(toMainActivity);
-//				finish();
-//
-//			}
-//		});
-//	}
+
 
 
 }

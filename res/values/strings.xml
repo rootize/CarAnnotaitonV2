@@ -4,7 +4,7 @@
     <string name="appname">CarSpotting</string>
     <string name="app_name">CarSpotting</string>
     <string name="action_settings">Settings</string>
-    <string name="Email">Email:</string>
+    <string name="Email">Email:                      </string>
     <string name="welcome_words_string">Thanks for using CarSpotting!</string>
     <string name="take_new_string">Take a Photo!</string>
     <string name="album_name">CarSpottingImage</string>
