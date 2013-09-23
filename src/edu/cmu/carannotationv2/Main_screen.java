@@ -86,6 +86,7 @@ public class Main_screen extends Activity implements
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
+	private static final int LOAD_IMG_FROM_G=1666;
 	private static final String offline_filename = "offline";
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
@@ -669,9 +670,17 @@ public class Main_screen extends Activity implements
 					
 					@Override
 					public void onClick(View v) {
+						mImageView.clearrect();
+						mImageView.setImageDrawable(getResources().getDrawable(
+								R.drawable.processing));
+						mImageView.invalidate();
+						
+						dispatchSelectFromGalleryIntent();
 						mPopupWindow.dismiss();
 						
 					}
+
+					
 				});
 						
 						
@@ -694,6 +703,14 @@ public class Main_screen extends Activity implements
 
 	}
 
+	
+	
+	private void dispatchSelectFromGalleryIntent() {
+		Intent toGallery=new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(toGallery, LOAD_IMG_FROM_G);
+		
+	}
+	
 	private void check_upload_localData() {
 		//if (isLoggedin) {
 			new UploadFileThread().start();
@@ -952,9 +969,25 @@ public class Main_screen extends Activity implements
 			makemodelshowTextView.setText("");
             take_valide_img=true;
 		}
-		if (resultCode==RESULT_CANCELED&&requestCode==CAMERA_REQUEST) {
+		if (resultCode==RESULT_CANCELED&&(requestCode==CAMERA_REQUEST||requestCode==LOAD_IMG_FROM_G)) {
 			mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
 			take_valide_img=false;
+		}
+		if (resultCode==RESULT_OK&&requestCode==LOAD_IMG_FROM_G) {
+			if (mImageBitmap != null) {
+				mImageBitmap.recycle();
+				mImageBitmap=null;
+				System.gc();
+			}
+			Uri selectedImgUri=data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(selectedImgUri,filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            mCurrentPhotoPath= cursor.getString(columnIndex);
+            cursor.close();
+			setPic();
+			take_valide_img=true;
 		}
 	}
 
