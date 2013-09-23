@@ -47,8 +47,17 @@ public class AnnotatorInput {
 	
 	public void  update(RectInfo ri,String sMake, String sModel) {
 		rectTosend.add(ri);
-		make.add(sMake);
-		model.add(sModel);
+		if (sMake==null) {
+			make.add("null");
+		}else {
+			make.add(sMake);
+		}
+		if (sModel==null) {
+			model.add("null");
+		}else {
+			model.add(sModel);
+		}
+		
 	}
 
 	public void addPath(String mCurrentPhotoPath) {

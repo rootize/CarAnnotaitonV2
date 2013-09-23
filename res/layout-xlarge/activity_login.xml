@@ -34,6 +34,7 @@
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/emialtextview"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="0.6"
@@ -55,6 +56,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/textviewor"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="0.6"

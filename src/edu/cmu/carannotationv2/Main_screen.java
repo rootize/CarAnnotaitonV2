@@ -181,10 +181,10 @@ public class Main_screen extends Activity implements
 		ParseAnalytics.trackAppOpened(getIntent());
 
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		if (wifi_connected) {
-			login_global_usr();
-			check_upload_localData();
-		}
+//		if (wifi_connected) {
+//			login_global_usr();
+//			check_upload_localData();
+//		}
 		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
 		setWelcomeword(usr_name, wifi_connected);
@@ -197,11 +197,35 @@ public class Main_screen extends Activity implements
 		initialize_drawImageView();
 		initialize_progbar();
         initialize_btn_upload();
-        
+        showReminder();
 	}
 
 	
 	
+	private void showReminder() {
+		String fileContent = FileOperation.read(getApplicationContext(),
+				offline_filename);
+		if (fileContent==null) {
+			
+		}else {
+			AlertDialog.Builder ad=new AlertDialog.Builder(this);
+			ad.setTitle("Caution")
+		    .setMessage("There are unuploaded images on your phone, please upload them when wifi are available.")
+	        .setCancelable(false)
+	        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//Do nothing;
+					
+				}
+			}).show();
+		}
+		
+	}
+
+
+
 	private void initialize_btn_upload() {
 		btn_upload=(Button)findViewById(R.id.btn_upload);
 		btn_upload.setVisibility(View.INVISIBLE);
@@ -241,6 +265,9 @@ public class Main_screen extends Activity implements
 			if (static_global_functions.wifi_connection(getApplicationContext())) {
 				btn_upload.setVisibility(View.VISIBLE);
 				//btn_upload.setEnabled(true);
+			}else {
+				btn_upload.setVisibility(View.VISIBLE);
+				btn_upload.setEnabled(false);
 			}
 		}
 	}
@@ -443,7 +470,7 @@ public class Main_screen extends Activity implements
 						drawView.setSliding_y(event.getY());
 						drawView.adjustCortex();
 						btn_selectmm.setEnabled(true);
-						// btn_save.setEnabled(false);
+						 btn_save.setEnabled(true);
 						GuideText.setText("Press \" Make&Model\" to annotate");
 					}
 					drawView.invalidate();
@@ -487,6 +514,9 @@ public class Main_screen extends Activity implements
 							.setText("Press \"Done!\" if no other cars in the image");
 
 				}
+				//After each selection, make them null
+				selectedMake=null;
+				selectedModel=null;
 
 			}
 		});
@@ -589,6 +619,7 @@ public class Main_screen extends Activity implements
 						static_global_functions.ShowToast_short(
 								getApplicationContext(), showMessage,
 								R.drawable.success);
+						//showReminder();
 					} catch (JSONException e) {
 
 						e.printStackTrace();
@@ -1020,6 +1051,7 @@ public class Main_screen extends Activity implements
 		if (isFirstTimeLogin) {
 			global_prevent_reDraw = true;
 			isFirstTimeLogin = false;
+			
 		} else {
 			if (take_valide_img) {
 				global_prevent_reDraw = false;
