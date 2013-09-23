@@ -75,6 +75,10 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
+	
+	//Used for Debugging
+	private static final String MAINSTRING="MainScreen";
+	
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
@@ -100,6 +104,7 @@ public class Main_screen extends Activity implements
 	private Button btn_selectmm;
 	private Button btn_send;
 	private Button btn_save;
+	private Button btn_upload;
 	private DrawImageView mImageView;
 	private TextView makemodelshowTextView;
 	// 为了弹出的make model
@@ -139,6 +144,8 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
+		
+		Log.d(MAINSTRING, "onCreateCalled");
 		// Change Screen Rotation to Enabled
 		if (android.provider.Settings.System.getInt(getContentResolver(),
 				Settings.System.ACCELEROMETER_ROTATION, 0) == 1) {
@@ -176,8 +183,56 @@ public class Main_screen extends Activity implements
 		initialize_btn_save();
 		initialize_drawImageView();
 		initialize_progbar();
-
+        initialize_btn_upload();
+        
 	}
+
+	
+	
+	private void initialize_btn_upload() {
+		btn_upload=(Button)findViewById(R.id.btn_upload);
+		btn_upload.setVisibility(View.INVISIBLE);
+		btn_upload.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//Set image view to something like uploading
+				mImageView.setImageDrawable(getResources().getDrawable(R.drawable.uploading));
+				login_global_usr();
+				check_upload_localData();
+				
+			}
+		});
+		
+	}
+
+
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		Log.d(MAINSTRING, "onStartCalled");
+		SetBtnUploading();
+	}
+
+
+
+	private void SetBtnUploading() {
+		
+		String fileContent = FileOperation.read(getApplicationContext(),
+				offline_filename);
+		if (fileContent==null) {
+			
+		}else {
+			if (static_global_functions.wifi_connection(getApplicationContext())) {
+				btn_upload.setVisibility(View.VISIBLE);
+				btn_upload.setEnabled(true);
+			}
+		}
+	}
+
+
 
 	private void pre_initialize_mm_selection_dialog() {
 
@@ -971,7 +1026,9 @@ public class Main_screen extends Activity implements
 								offline_JsonArray);
 						recursive_upload();
 					}else {
-						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, will try later", R.drawable.caution);
+						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, please try later", R.drawable.caution);
+						mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
+						btn_upload.setText("Retry");
 					}
 						
 					}
@@ -986,7 +1043,11 @@ public class Main_screen extends Activity implements
 			static_global_functions.ShowToast_short(getApplicationContext(),
 					"Previous data uploaded!", R.drawable.success);
 			Log.d("All files", "Send successfully");
+			
 			FileOperation.delete(getApplicationContext(), offline_filename);
+			btn_upload.setVisibility(View.INVISIBLE);
+			mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
+			
 		}
 	}
 
@@ -1053,7 +1114,7 @@ public class Main_screen extends Activity implements
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		this.finish();
+		//this.finish();
 	}
 
 }

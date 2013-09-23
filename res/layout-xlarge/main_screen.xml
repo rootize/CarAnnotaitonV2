@@ -13,15 +13,28 @@
         android:orientation="vertical"
         android:weightSum="10" >
 
-        <TextView
-            android:id="@+id/mainscreen_textview_textguidance"
+       <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:gravity="bottom|left"
-            android:text="@string/mainscreen_textview_guidance_string"
-            android:textColor="#FFFFFF00"
-            android:textSize="30sp" />
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/mainscreen_textview_textguidance"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:text="@string/mainscreen_textview_guidance_string"
+                android:textColor="#FFFFFF00"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:text="@string/btn_upload_text" 
+                android:textSize="20sp"/>
+        </RelativeLayout>
         
         <edu.cmu.carannotationv2.DrawImageView
             android:id="@+id/imageView1"

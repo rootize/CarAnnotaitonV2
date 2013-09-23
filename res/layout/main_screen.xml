@@ -13,15 +13,28 @@
         android:orientation="vertical"
         android:weightSum="10" >
 
-        <TextView
-            android:id="@+id/mainscreen_textview_textguidance"
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="bottom|left"
-            android:text="@string/mainscreen_textview_guidance_string"
-            android:textColor="#FFFFFF00"
-            android:textSize="20sp" />
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/mainscreen_textview_textguidance"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:text="@string/mainscreen_textview_guidance_string"
+                android:textColor="#FFFFFF00"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:text="@string/btn_upload_text" 
+                android:textSize="12sp"/>
+        </RelativeLayout>
 
         <edu.cmu.carannotationv2.DrawImageView
             android:id="@+id/imageView1"
@@ -44,64 +57,61 @@
             android:id="@+id/mainscreen_welcome_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:text="@string/mainscreen_textview_sampletextwelcome_string"
             android:textSize="15sp"
             android:textStyle="italic"
-            android:typeface="serif" 
-            android:layout_alignParentTop="true"/>
+            android:typeface="serif" />
 
         <Button
             android:id="@+id/button_take_new"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/mainscreen_welcome_text"
             android:text="@string/take_new_string"
-            android:textSize="15sp" 
-            android:layout_below="@id/mainscreen_welcome_text"/>
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/btn_select_mm"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/button_take_new"
             android:text="@string/mainscreen_select_makemodel_btn_string"
-            android:textSize="15sp" 
-            android:layout_below="@id/button_take_new"/>
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/mainscreen_makemodel_tv"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp" 
-            android:layout_below="@id/btn_select_mm"/>
+            android:layout_below="@id/btn_select_mm"
+            android:textSize="15sp" />
 
-        
-         <Button
+        <Button
             android:id="@+id/button_send_server"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:singleLine="true"
             android:text="@string/finish_annotating"
-            android:textSize="15sp"
-            android:layout_alignParentBottom="true" />
+            android:textSize="15sp" />
+
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/mainscreen_btn_saveinformation_string"
-            android:textSize="15sp" 
             android:layout_above="@id/button_send_server"
-            />
-
-       
+            android:text="@string/mainscreen_btn_saveinformation_string"
+            android:textSize="15sp" />
 
         <ProgressBar
             android:id="@+id/single_upload_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:max="100"
-            android:progress="20" 
-            android:layout_alignParentBottom="true"/>
+            android:progress="20" />
     </RelativeLayout>
 
 </LinearLayout>

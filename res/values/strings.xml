@@ -46,5 +46,5 @@
     <string name="longin_setting">Settings</string>
     <string name="login_progress_bar_string">Uploading:</string>
     <string name="mainscreen_select_makemodel_btn_string">Make and Model</string>
-
+    <string name="btn_upload_text" >Upload Local Info</string>
 </resources>
