@@ -65,7 +65,7 @@
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
-        <CheckBox
+        <TextView
             android:id="@+id/login_anonymous_checkbox"
             android:checked="false"
             android:layout_width="wrap_content"

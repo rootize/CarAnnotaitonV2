@@ -285,12 +285,12 @@ public class Main_screen extends Activity implements
 			e.printStackTrace();
 		}
 
-		makeGroup = getLabels(database.SELECT_MAKE);
+		makeGroup = getLabels(database.SELECT_MAKE,true);
 		for (int i = 0; i < makeGroup.size(); i++) {
 			String temp_make = makeGroup.get(i);
 			List<String> individual_model = new ArrayList<String>();
 			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
-					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX);
+					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX,false);
 			removeMake(individual_model, temp_make);
 			makemodelGroup.add(individual_model);
 		}
@@ -358,11 +358,9 @@ public class Main_screen extends Activity implements
 					selectedMake = "unknown";
 					selectedModel = "unknown";
 					make_model_Dialog.dismiss();
-					makemodelshowTextView.setText(makeGroup.get(groupPosition)
-							.toString()
+					makemodelshowTextView.setText("I don't know the make"
 							+ " & "
-							+ makeGroup.get(groupPosition)
-									.toString());
+							+ "I don't know the model");
 					return true;
 				}
 				else {
@@ -404,9 +402,17 @@ public class Main_screen extends Activity implements
 
 				if (selectedMake.equals(database.NONE_EXISTING)) {
 					selectedMake="unknown";
+					makemodelshowTextView.setText("I don't know the make"
+							+ " & "
+							+ makemodelGroup.get(groupPosition).get(childPosition)
+									.toString());
 				}
-				if (selectedModel.equals(database.NONE_EXISTING)) {
+				if (selectedModel.equals(database.NONE_EXISTING_MODEL)) {
 					selectedModel="unknown";
+					makemodelshowTextView.setText(makeGroup.get(groupPosition)
+							.toString()
+							+ " & "
+							+ "I don't know the model");
 				}
 				
 				
@@ -482,7 +488,7 @@ public class Main_screen extends Activity implements
 			public boolean onTouch(View v, MotionEvent event) {
 
 				if (!global_prevent_reDraw) {
-
+                    makemodelshowTextView.setText(" ");
 					DrawImageView drawView = (DrawImageView) v;
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -570,8 +576,7 @@ public class Main_screen extends Activity implements
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
 				if (wifi_connected && isLoggedin) {
-					// check parse usr:
-					// login_global_usr();
+					
 					ParseObject pb_send = jsonData.formatParseObject(ed
 							.getCipherTextClassName());
 					pb_send.saveInBackground(new SaveCallback() {
@@ -584,6 +589,8 @@ public class Main_screen extends Activity implements
 										R.drawable.success);
 								
 							} else {
+								
+								
 								String send_failuer = "Problem occured while sending, will save and try again next time";
 								static_global_functions.ShowToast_short(
 										getApplicationContext(), send_failuer,
@@ -777,7 +784,7 @@ public class Main_screen extends Activity implements
 
 	}
 
-	private List<String> getLabels(String select_query) {
+	private List<String> getLabels(String select_query,boolean isMake) {
 		// TODO Auto-generated method stub
 		// String DataBaseQuery=
 		List<String> labelsList = new ArrayList<String>();
@@ -791,7 +798,12 @@ public class Main_screen extends Activity implements
 			}
 		}
 		cursor.close();
-		labelsList.add(new String(database.NONE_EXISTING));
+		if (isMake) {
+			labelsList.add(new String(database.NONE_EXISTING));
+		}else {
+			labelsList.add(new String(database.NONE_EXISTING_MODEL));
+		}
+		
 		return labelsList;
 
 	}

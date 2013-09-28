@@ -26,6 +26,7 @@ public class database {
 			+ " where " + CAR_MAKE + " = '";
 	public static final String SELECT_ONE_MODEL_SUFFIX = "';";
 	public static final String NONE_EXISTING = "  I dont know this car";
+	public static final String NONE_EXISTING_MODEL="  I dont know this model";
 	public static final String BLANK_FISRT_ITEM = "";
 
 }

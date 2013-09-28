@@ -35,6 +35,7 @@
         android:background="@color/trans_background">
 
         <TextView
+            android:id="@+id/emialtextview"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="0.6"
@@ -56,6 +57,7 @@
             android:textColor="@android:color/holo_blue_bright"/>
 
         <TextView
+            android:id="@+id/textviewor"
             android:layout_height="0dp"
             android:layout_width="fill_parent"
             android:layout_weight="0.6"
@@ -65,7 +67,7 @@
             android:textColor="@android:color/white"
             />
 
-        <CheckBox
+        <TextView
             android:id="@+id/login_anonymous_checkbox"
             android:layout_height="0dp"
             android:layout_width="wrap_content"
