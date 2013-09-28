@@ -31,6 +31,7 @@ public class JSONdata {
 	private String mCurrentPhotoPath;
 	private SharedPreferences locSP;
 	private ExifInterface exif;
+	private String lati_longti;
     
 //	
 	private void setScaleFactor(
@@ -68,6 +69,7 @@ public class JSONdata {
 		locSP = context.getSharedPreferences(SP_STRING, Context.MODE_PRIVATE);
 		// calculateScaleRatio(mImageView,annotatorInput.getImgPath());
 		mCurrentPhotoPath = annotatorInput.getImgPath();
+		lati_longti=annotatorInput.getLocationinfo();
 		//setScaleFactor(mCurrentPhotoPath);
 		getInfoFromAnnotatorInput(annotatorInput);
 		
@@ -197,10 +199,20 @@ public class JSONdata {
 	}
 
 	private void getInfo_online() {
-		String lati = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
-				+ exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-		String longti = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
-				+ exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+		String lati ;
+		String longti;
+		
+		String []lati_longti_array=lati_longti.split(" ");
+		Log.d("Longti_lati", lati_longti);
+		//Log.d(longti_l, msg)
+		if (lati_longti_array.length==2) {
+			lati=lati_longti_array[0];
+			longti=lati_longti_array[1];
+		}else {
+			lati=" ";
+			longti=" ";
+		}
+		
 		try {
 			jsonObject.put(ParseAtributes.LATI_LOCATION, lati);
 			jsonObject.put(ParseAtributes.LONGTI_LOCATION, longti);

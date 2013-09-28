@@ -13,6 +13,7 @@ public class AnnotatorInput {
 	private String mImageFileName;
 	private String usr;
 	private ScaleRatio mScaleRatio;
+	private String locationinfo;
 	private boolean wifiStatus;
 	public AnnotatorInput(){
 		this.setRectTosend(new ArrayList<RectInfo>(CAP));
@@ -114,6 +115,14 @@ public class AnnotatorInput {
 
 	public void setWifiStatus(boolean wifiStatus) {
 		this.wifiStatus = wifiStatus;
+	}
+
+	public String getLocationinfo() {
+		return locationinfo;
+	}
+
+	public void setLocationinfo(String locationinfo) {
+		this.locationinfo = locationinfo;
 	}
 
 	

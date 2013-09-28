@@ -34,6 +34,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,6 +81,9 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
+	public  String locationinfo_string;
+	 private LocationManager locationMangaer=null;  
+	 private LocationListener locationListener=null;
 	
 	//Used for Debugging
 	private static final String MAINSTRING="MainScreen";
@@ -142,7 +147,10 @@ public class Main_screen extends Activity implements
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
-
+    
+	
+	
+	private LocationInfo locationInfo;
 	
 	//Popupwindow
 	
@@ -169,6 +177,12 @@ public class Main_screen extends Activity implements
 			isScreenRotationLocked = true;
 		}
 
+		
+		
+		locationInfo= new LocationInfo(getApplicationContext());
+		locationinfo_string=locationInfo.getLoation();
+		
+		
 		mAlbumStorageDirFactory = static_global_functions
 				.setmAlbumStorageDirFactory();
 		wifi_connected = static_global_functions
@@ -1103,6 +1117,7 @@ public class Main_screen extends Activity implements
 
 		annotatorInput = new AnnotatorInput();
 		annotatorInput.addUsr(usr_name);
+		annotatorInput.setLocationinfo(locationinfo_string);
 		super.onResume();
 		Log.d("OnResume", "1");
 	}
