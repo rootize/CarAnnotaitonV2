@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.parse.ParseFile;
@@ -161,6 +162,18 @@ public class JSONdata {
 
 	private void getNonLocInfoFromExif() {
 		try {
+			
+			if (exif.getLatLong(null)!=false) {
+			float[] b=new float[2];
+			exif.getLatLong(b);
+			jsonObject.put(ParseAtributes.LATI_LOCATION,
+					(b[0]+""));
+			jsonObject.put(ParseAtributes.LONGTI_LOCATION,
+					(b[1]+""));
+			
+			
+			}
+			
 			jsonObject.put(ParseAtributes.FOCAL_LENGTH,
 				(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)));
 			jsonObject.put(ParseAtributes.FLASH,
@@ -213,6 +226,9 @@ public class JSONdata {
 			longti=" ";
 		}
 		
+//		if () {
+//			
+//		}
 		try {
 			jsonObject.put(ParseAtributes.LATI_LOCATION, lati);
 			jsonObject.put(ParseAtributes.LONGTI_LOCATION, longti);

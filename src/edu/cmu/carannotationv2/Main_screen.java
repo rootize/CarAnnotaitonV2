@@ -82,12 +82,11 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
-	public  String locationinfo_string;
+	private static final String MAINSTRING="MainScreen";
+	
+	 public  String locationinfo_string;
 	 private LocationManager locationMangaer=null;  
 	 private LocationListener locationListener=null;
-	
-	//Used for Debugging
-	private static final String MAINSTRING="MainScreen";
 	
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
@@ -110,9 +109,8 @@ public class Main_screen extends Activity implements
 	
 	// data encryption
 	private EncryptedData ed;
-
+	
 	private TextView welcomeText;
-
 	private TextView GuideText;
 	private Button btn_takeimg;
 	private Button btn_selectmm;
@@ -150,12 +148,14 @@ public class Main_screen extends Activity implements
 	private boolean isFirstTimeLogin = true;
     
 	
-	
 	private LocationInfo locationInfo;
-	
-	//Popupwindow
-	
 	private PopupWindow mPopupWindow;
+	
+	private ScreenOrientationDetector soDetector;
+	
+	private GPSTracker gpsLocation;
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,25 +168,37 @@ public class Main_screen extends Activity implements
 
 		
 		Log.d(MAINSTRING, "onCreateCalled");
-		// Change Screen Rotation to Enabled
-		if (android.provider.Settings.System.getInt(getContentResolver(),
-				Settings.System.ACCELEROMETER_ROTATION, 0) == 1) {
-			isScreenRotationLocked = false;
-		} else {
-			static_global_functions.setAutoOrientationEnabled(
-					getContentResolver(), true);
-			isScreenRotationLocked = true;
+		 soDetector=new ScreenOrientationDetector(this);
+		isScreenRotationLocked=soDetector.isLocked();
+		if (isScreenRotationLocked) {
+			soDetector.unLockScreen();
 		}
+		
 
+		gpsLocation=new GPSTracker(this);
+//		if (gpsLocation.canGetLocation()) {
+//			locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
+//			
+//		}else {
+//			gpsLocation.showSettingsAlert();
+//			if (gpsLocation.canGetLocation()) {
+//				locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
+//			}else {
+//				locationinfo_string="Not Available"+" "+"Not Available";
+//			}
+//			Log.d("GPS LOCATION:", locationinfo_string);
+//			
+//		}
 		
 		
-		locationInfo= new LocationInfo(getApplicationContext());
-		locationinfo_string=locationInfo.getLoation();
+		
+		//locationInfo= new LocationInfo(getApplicationContext());
+		//locationinfo_string=locationInfo.getLoation();
 		
 		
-		mAlbumStorageDirFactory = static_global_functions
+		mAlbumStorageDirFactory = StaticGlobalFunctions
 				.setmAlbumStorageDirFactory();
-		wifi_connected = static_global_functions
+		wifi_connected = StaticGlobalFunctions
 				.wifi_connection(getApplicationContext());
 
 		ed = new EncryptedData(getApplicationContext(), R.raw.key,
@@ -196,10 +208,6 @@ public class Main_screen extends Activity implements
 		ParseAnalytics.trackAppOpened(getIntent());
 
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-//		if (wifi_connected) {
-//			login_global_usr();
-//			check_upload_localData();
-//		}
 		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
 		setWelcomeword(usr_name, wifi_connected);
@@ -277,7 +285,7 @@ public class Main_screen extends Activity implements
 		if (fileContent==null) {
 			
 		}else {
-			if (static_global_functions.wifi_connection(getApplicationContext())) {
+			if (StaticGlobalFunctions.wifi_connection(getApplicationContext())) {
 				btn_upload.setVisibility(View.VISIBLE);
 				//btn_upload.setEnabled(true);
 			}else {
@@ -466,7 +474,7 @@ public class Main_screen extends Activity implements
 
 	private void setWelcomeword(String usrname, boolean isWifi) {
 		String welcome_words_string;
-		if (static_global_functions.isEmailValid(usr_name)) {
+		if (StaticGlobalFunctions.isEmailValid(usr_name)) {
 			welcome_words_string = usr_name;
 		} else {
 			welcome_words_string = "Dear guest";
@@ -545,7 +553,7 @@ public class Main_screen extends Activity implements
 				if (gRectCount == 5) {
 					global_prevent_reDraw = true;
 					String showMessage = "You have annotated 5 cars,click Done! ";
-					static_global_functions.ShowToast_short(
+					StaticGlobalFunctions.ShowToast_short(
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
@@ -577,11 +585,26 @@ public class Main_screen extends Activity implements
 			public void onClick(View v) {
 
 				// setup a uploading dialog
+				//annotatorInput.setLocationinfo(locationinfo_string);
+				if (gpsLocation.canGetLocation()) {
+				locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
+				
+			}else {
+				gpsLocation.showSettingsAlert();
+				if (gpsLocation.canGetLocation()) {
+					locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
+				}else {
+					locationinfo_string="Not Available"+" "+"Not Available";
+				}
+				Log.d("GPS LOCATION:", locationinfo_string);
+				
+			}
+				annotatorInput.setLocationinfo(locationinfo_string);
 				annotatorInput.addPath(mCurrentPhotoPath);
 				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
 				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
 						mCurrentPhotoPath));
-				wifi_connected = static_global_functions
+				wifi_connected = StaticGlobalFunctions
 						.wifi_connection(getApplicationContext());
 				if (wifi_connected) {
 					 login_global_usr();
@@ -599,7 +622,7 @@ public class Main_screen extends Activity implements
 						public void done(ParseException arg0) {
 							if (arg0 == null) {
 								String send_success = "Send to server successfully!";
-								static_global_functions.ShowToast_short(
+								StaticGlobalFunctions.ShowToast_short(
 										getApplicationContext(), send_success,
 										R.drawable.success);
 								
@@ -607,7 +630,7 @@ public class Main_screen extends Activity implements
 								
 								
 								String send_failuer = "Problem occured while sending, will save and try again next time";
-								static_global_functions.ShowToast_short(
+								StaticGlobalFunctions.ShowToast_short(
 										getApplicationContext(), send_failuer,
 										R.drawable.error);
 								try {
@@ -632,7 +655,7 @@ public class Main_screen extends Activity implements
 											offline_filename,
 											old_offlineJsonArray.toString());
 									String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-									static_global_functions.ShowToast_short(
+									StaticGlobalFunctions.ShowToast_short(
 											getApplicationContext(),
 											showMessage, R.drawable.success);
 								} catch (JSONException e) {
@@ -666,7 +689,7 @@ public class Main_screen extends Activity implements
 								offline_filename,
 								old_offlineJsonArray.toString());
 						String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-						static_global_functions.ShowToast_short(
+						StaticGlobalFunctions.ShowToast_short(
 								getApplicationContext(), showMessage,
 								R.drawable.success);
 						//showReminder();
@@ -714,7 +737,7 @@ public class Main_screen extends Activity implements
 				/*mPopupWindow=new PopupWindow(popupView, , 100, , true);*/
 				mPopupWindow=new PopupWindow(popupView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,true);
 				mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-				Rect btn_takeimg_location=static_global_functions.locateView(btn_takeimg);
+				Rect btn_takeimg_location=StaticGlobalFunctions.locateView(btn_takeimg);
 				if (btn_takeimg_location==null) {
 					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM|Gravity.LEFT, 0, 0);
 				}else {
@@ -1082,9 +1105,8 @@ public class Main_screen extends Activity implements
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		carDatabase.close();
-		if (isScreenRotationLocked == false) {
-			static_global_functions.setAutoOrientationEnabled(
-					getContentResolver(), false);
+		if (isScreenRotationLocked == true) {
+			soDetector.LockScreen();
 		}
 		super.onDestroy();
 
@@ -1217,11 +1239,11 @@ public class Main_screen extends Activity implements
 					@Override
 					public void done(ParseException arg0) {
                     if (arg0==null) {
-                    	offline_JsonArray = static_global_functions.remove(0,
+                    	offline_JsonArray = StaticGlobalFunctions.remove(0,
 								offline_JsonArray);
 						recursive_upload();
 					}else {
-						static_global_functions.ShowToast_short(getApplicationContext(), "Error occured during uploading, please try later", R.drawable.caution);
+						StaticGlobalFunctions.ShowToast_short(getApplicationContext(), "Error occured during uploading, please try later", R.drawable.caution);
 						mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
 						btn_upload.setText("Retry");
 					}
@@ -1235,7 +1257,7 @@ public class Main_screen extends Activity implements
 			}
 
 		} else {
-			static_global_functions.ShowToast_short(getApplicationContext(),
+			StaticGlobalFunctions.ShowToast_short(getApplicationContext(),
 					"Previous data uploaded!", R.drawable.success);
 			Log.d("All files", "Send successfully");
 			
@@ -1297,7 +1319,7 @@ public class Main_screen extends Activity implements
 						} else {
 							//Log.d("error logging in ", e.toString());
 							isLoggedin = false;
-							static_global_functions.ShowToast_short(getApplicationContext(), "Remote server not responding, save to local memory", R.drawable.caution);
+							StaticGlobalFunctions.ShowToast_short(getApplicationContext(), "Remote server not responding, save to local memory", R.drawable.caution);
 						}
 
 					}

@@ -144,7 +144,7 @@ public class Login extends Activity {
 
 				{
 					email = emailEditText.getText().toString();
-					if (static_global_functions.isEmailValid(email)) {
+					if (StaticGlobalFunctions.isEmailValid(email)) {
 						
 						
 						
@@ -161,7 +161,7 @@ public class Login extends Activity {
 						emailEditText.setText("");
 						emailEditText.requestFocus();
 						String showMessage = "Please input valid email address!";
-						static_global_functions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.caution);
+						StaticGlobalFunctions.ShowToast_short(getApplicationContext(), showMessage, R.drawable.caution);
 					}
 
 				}

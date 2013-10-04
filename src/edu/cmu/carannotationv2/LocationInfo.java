@@ -49,7 +49,13 @@ public  String getLoation(){
 	    }
 	  }
 	}
-	return bestResult.getLatitude()+" "+bestResult.getLongitude();
+	if (bestResult!=null) {
+		return bestResult.getLatitude()+" "+bestResult.getLongitude();
+	}else {
+		return "Not Available"+" "+"No Available";
+			
+	}
+	
 }
 private Boolean displayGpsStatus() {  
 	  ContentResolver contentResolver =   context.getContentResolver();
