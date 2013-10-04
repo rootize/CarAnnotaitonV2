@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import java.util.List;
 
@@ -938,7 +939,8 @@ public class Main_screen extends Activity implements
 	}
 
 	private File createImageFile() throws IOException {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+	
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",Locale.US)
 				.format(new Date());
 		imageFileName = JPEG_FILE_PREFIX + timeStamp;
 		File albumF = getAlbumDir();
