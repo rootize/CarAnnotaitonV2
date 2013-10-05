@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
+//import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.parse.ParseFile;
