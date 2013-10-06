@@ -1,9 +1,9 @@
 package edu.cmu.carannotationv2;
 
 // also you can define alubmn yourself
-//注释1：
-//原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
-//不知道原因
+//������1���
+//������ ������nullpointer ���warning���imageview ��������������� ���������������onCreate���������������������������������������
+//���������������
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -85,8 +85,9 @@ public class Main_screen extends Activity implements
 	private static final String MAINSTRING="MainScreen";
 	
 	 public  String locationinfo_string;
-	 private LocationManager locationMangaer=null;  
-	 private LocationListener locationListener=null;
+//	 private LocationManager locationMangaer=null;  
+//	 private LocationListener locationListener=null;
+	
 	
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
@@ -119,7 +120,7 @@ public class Main_screen extends Activity implements
 	private Button btn_upload;
 	private DrawImageView mImageView;
 	private TextView makemodelshowTextView;
-	// 为了弹出的make model
+	
 
 	private ExpandableListView make_model_listView;
 	private Dialog make_model_Dialog;
@@ -176,25 +177,7 @@ public class Main_screen extends Activity implements
 		
 
 		gpsLocation=new GPSTracker(this);
-//		if (gpsLocation.canGetLocation()) {
-//			locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
-//			
-//		}else {
-//			gpsLocation.showSettingsAlert();
-//			if (gpsLocation.canGetLocation()) {
-//				locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
-//			}else {
-//				locationinfo_string="Not Available"+" "+"Not Available";
-//			}
-//			Log.d("GPS LOCATION:", locationinfo_string);
-//			
-//		}
-		
-		
-		
-		//locationInfo= new LocationInfo(getApplicationContext());
-		//locationinfo_string=locationInfo.getLoation();
-		
+
 		
 		mAlbumStorageDirFactory = StaticGlobalFunctions
 				.setmAlbumStorageDirFactory();
@@ -210,7 +193,7 @@ public class Main_screen extends Activity implements
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
-		setWelcomeword(usr_name, wifi_connected);
+		setWelcomeword(usr_name, StaticGlobalFunctions.wifi_connection(this));
 		initialize_mm_textView();
 		initialize_btn_takeimg();
 		initialize_mm_selection_dialog();
@@ -218,7 +201,7 @@ public class Main_screen extends Activity implements
 		initialize_btn_send();
 		initialize_btn_save();
 		initialize_drawImageView();
-		initialize_progbar();
+//		initialize_progbar();
         initialize_btn_upload();
         showReminder();
 	}
@@ -301,7 +284,7 @@ public class Main_screen extends Activity implements
 
 		try {
 			makeModelDataFile = FileOperation.transferRawtoFile(
-					getApplicationContext(), R.raw.car_make_model_revised,
+					this, R.raw.car_make_model_revised,
 					"makemodel", "car.csv");
 			FormDatabase();
 		} catch (Exception e) {
@@ -484,19 +467,19 @@ public class Main_screen extends Activity implements
 		} else {
 			welcome_words_string += " (Offline)";
 		}
-
-		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
+  //Activity activity
+		welcomeText = (TextView)  findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText(welcome_words_string);
 
 	}
 
-	private void initialize_progbar() {
-		progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
-	    progressBar.setVisibility(View.INVISIBLE);
-		setProgressBarIndeterminate(true);
-		setProgressBarVisibility(false);
-		setProgress(3500);
-	}
+//	private void initialize_progbar() {
+//		progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
+//	    progressBar.setVisibility(View.INVISIBLE);
+//		setProgressBarIndeterminate(true);
+//		setProgressBarVisibility(false);
+//		setProgress(3500);
+//	}
 
 	private void initialize_drawImageView() {
 
@@ -932,7 +915,7 @@ public class Main_screen extends Activity implements
 	/* moved from sample: Photo album for this application */
 	private String getAlbumName() {
 
-		// TODO 稍后再改动名称
+		// TODO ���������������������
 		return getString(R.string.album_name);
 
 	}
@@ -1149,7 +1132,7 @@ public class Main_screen extends Activity implements
 	@Override
 	protected void onPause() {
 		if (null != mImageView) {
-			mImageView.clearrect();// 去除留下的rect
+			mImageView.clearrect();// ���������������rect
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
