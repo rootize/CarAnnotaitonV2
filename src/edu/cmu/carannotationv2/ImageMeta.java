@@ -3,6 +3,7 @@ package edu.cmu.carannotationv2;
 import java.util.Date;
 
 import android.media.ExifInterface;
+import android.util.Log;
 
 public class ImageMeta {
 	private static final String POBJECTNAME = "ImageInfo";
@@ -50,7 +51,7 @@ public class ImageMeta {
             longti=exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)+exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			Log.d("ImageData", "Exif not found");
 		}
 		
 		
