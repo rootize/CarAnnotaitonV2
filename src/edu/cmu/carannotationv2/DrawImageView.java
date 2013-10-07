@@ -283,4 +283,9 @@ public class DrawImageView extends ImageView {
 	public void setSliding_y(float y) {
 		sliding_y=y;
 	}
+
+	public Object getRectSize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

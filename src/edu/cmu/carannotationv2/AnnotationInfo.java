@@ -40,4 +40,15 @@ public void setModel(String modelString){
 	// do some hash mapping here !
 	
 }
+public void setRectRatio(Object rectSize) {
+	// TODO Auto-generated method stub
+	
+}
+public void setRect(Rect lastRect, ScaleRatio mScaleRatio) {
+	this.rectLeft=lastRect.left*mScaleRatio.getW_scalefactor();
+	this.rectRight=lastRect.right*mScaleRatio.getW_scalefactor();
+	this.rectTop= lastRect.top*mScaleRatio.getH_scalefactor();
+	this.rectBottom=lastRect.bottom*mScaleRatio.getH_scalefactor();
+	
+}
 }

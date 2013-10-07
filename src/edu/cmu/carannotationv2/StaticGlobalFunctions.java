@@ -1,8 +1,11 @@
 package edu.cmu.carannotationv2;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.json.JSONArray;
@@ -29,6 +32,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class StaticGlobalFunctions {
+
+	public static final String JPEG_FILE_PREFIX = "IMG_";
+	public static final String JPEG_FILE_SUFFIX = ".jpg";
 
 	public static void ShowToast_short(Context context, String showString,
 			int icon) {
@@ -83,7 +89,7 @@ public class StaticGlobalFunctions {
 	}
 
 	public static void transfer_Json_Pobject(ParseObject pobject,
-			JSONObject tem_item /*,String lati, String longti*/) {
+			JSONObject tem_item /* ,String lati, String longti */) {
 		// TODO Auto-generated method stub
 		// pobject = new ParseObject("annotation_info");
 		try {
@@ -107,8 +113,6 @@ public class StaticGlobalFunctions {
 			pobject.put("Location_Lati", tem_item.getString("Location_Lati"));
 			pobject.put("Location_Longti",
 					tem_item.getString("Location_Longti"));
-			
-			
 
 			pobject.put("focalLength", tem_item.getString("focalLength"));
 			pobject.put("flash", tem_item.getString("flash"));
@@ -144,7 +148,6 @@ public class StaticGlobalFunctions {
 	public static boolean wifi_connection(Context context) {
 		ConnectivityManager manager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		
 
 		boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
 				.isConnectedOrConnecting();
@@ -156,13 +159,13 @@ public class StaticGlobalFunctions {
 		}
 	}
 
-	public static void setAutoOrientationEnabled(ContentResolver resolver, boolean enabled)
-	{
-	  Settings.System.putInt(resolver, Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
+	public static void setAutoOrientationEnabled(ContentResolver resolver,
+			boolean enabled) {
+		Settings.System.putInt(resolver,
+				Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
 	}
 
-	public static AlbumStorageDirFactory setmAlbumStorageDirFactory(
-			) {
+	public static AlbumStorageDirFactory setmAlbumStorageDirFactory() {
 		AlbumStorageDirFactory mAlbumStorageDirFactory;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -172,25 +175,30 @@ public class StaticGlobalFunctions {
 		return mAlbumStorageDirFactory;
 	}
 
-	public static Rect locateView(View v)
-	{
-	    int[] loc_int = new int[2];
-	    if (v == null) return null;
-	    try
-	    {
-	        v.getLocationOnScreen(loc_int);
-	    } catch (NullPointerException npe)
-	    {
-	        //Happens when the view doesn't exist on screen anymore.
-	        return null;
-	    }
-	    Rect location = new Rect();
-	    location.left = loc_int[0];
-	    location.top = loc_int[1];
-	    location.right = location.left + v.getWidth();
-	    location.bottom = location.top + v.getHeight();
-	    return location;
+	public static Rect locateView(View v) {
+		int[] loc_int = new int[2];
+		if (v == null)
+			return null;
+		try {
+			v.getLocationOnScreen(loc_int);
+		} catch (NullPointerException npe) {
+			// Happens when the view doesn't exist on screen anymore.
+			return null;
+		}
+		Rect location = new Rect();
+		location.left = loc_int[0];
+		location.top = loc_int[1];
+		location.right = location.left + v.getWidth();
+		location.bottom = location.top + v.getHeight();
+		return location;
 	}
-	
-	
+
+	public static String FormImageName() {
+		// TODO Auto-generated method stub
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		return JPEG_FILE_PREFIX + timeStamp + JPEG_FILE_SUFFIX;
+		// return null;
+	}
+
 }

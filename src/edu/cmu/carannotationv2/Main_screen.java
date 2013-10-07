@@ -82,17 +82,16 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
 
-	private static final String MAINSTRING="MainScreen";
-	
-	 public  String locationinfo_string;
-//	 private LocationManager locationMangaer=null;  
-//	 private LocationListener locationListener=null;
-	
-	
+	private static final String MAINSTRING = "MainScreen";
+
+	public String locationinfo_string;
+	// private LocationManager locationMangaer=null;
+	// private LocationListener locationListener=null;
+
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
-	private static final int LOAD_IMG_FROM_G=1666;
+	private static final int LOAD_IMG_FROM_G = 1666;
 	private static final String offline_filename = "offline";
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
@@ -105,15 +104,11 @@ public class Main_screen extends Activity implements
 	private String imageFileName = null;
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
-	
-	
+	private boolean take_valide_img = true;
 
-	
-	private boolean take_valide_img=true;
-	
 	// data encryption
 	private EncryptedData ed;
-	
+
 	private TextView welcomeText;
 	private TextView GuideText;
 	private Button btn_takeimg;
@@ -123,7 +118,6 @@ public class Main_screen extends Activity implements
 	private Button btn_upload;
 	private DrawImageView mImageView;
 	private TextView makemodelshowTextView;
-	
 
 	private ExpandableListView make_model_listView;
 	private Dialog make_model_Dialog;
@@ -150,21 +144,20 @@ public class Main_screen extends Activity implements
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
-    
-	
+
 	private LocationInfo locationInfo;
 	private PopupWindow mPopupWindow;
-	
+
 	private ScreenOrientationDetector soDetector;
-	
+
 	private GPSTracker gpsLocation;
-	
-	
-	//newly added on 20131006:
-	
-	private parseSendData pSendData=new parseSendData();
+
+	// newly added on 20131006:
+
+	private parseSendData pSendData = new parseSendData();
 	private AnnotationInfo singleAnnotationInfo;
-	
+	private ScaleRatio mScaleRatio;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -174,18 +167,15 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
-		
 		Log.d(MAINSTRING, "onCreateCalled");
-		 soDetector=new ScreenOrientationDetector(this);
-		isScreenRotationLocked=soDetector.isLocked();
+		soDetector = new ScreenOrientationDetector(this);
+		isScreenRotationLocked = soDetector.isLocked();
 		if (isScreenRotationLocked) {
 			soDetector.unLockScreen();
 		}
-		
 
-		gpsLocation=new GPSTracker(this);
+		gpsLocation = new GPSTracker(this);
 
-		
 		mAlbumStorageDirFactory = StaticGlobalFunctions
 				.setmAlbumStorageDirFactory();
 		wifi_connected = StaticGlobalFunctions
@@ -202,8 +192,7 @@ public class Main_screen extends Activity implements
 		usr_name = getUsrFromIntent();
 		// add user to parse data
 		pSendData.addUsr(usr_name);
-		
-		
+
 		setWelcomeword(usr_name, StaticGlobalFunctions.wifi_connection(this));
 		initialize_mm_textView();
 		initialize_btn_takeimg();
@@ -212,55 +201,55 @@ public class Main_screen extends Activity implements
 		initialize_btn_send();
 		initialize_btn_save();
 		initialize_drawImageView();
-//		initialize_progbar();
-        initialize_btn_upload();
-        showReminder();
+		// initialize_progbar();
+		initialize_btn_upload();
+		showReminder();
 	}
 
-	
-	
 	private void showReminder() {
 		String fileContent = FileOperation.read(getApplicationContext(),
 				offline_filename);
-		if (fileContent==null) {
-			
-		}else {
-			AlertDialog.Builder ad=new AlertDialog.Builder(this);
+		if (fileContent == null) {
+
+		} else {
+			AlertDialog.Builder ad = new AlertDialog.Builder(this);
 			ad.setTitle("Caution")
-		    .setMessage("There are unuploaded images on your phone, please upload them when wifi are available.")
-	        .setCancelable(false)
-	        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					//Do nothing;
-					
-				}
-			}).show();
+					.setMessage(
+							"There are unuploaded images on your phone, please upload them when wifi are available.")
+					.setCancelable(false)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// Do nothing;
+
+								}
+							}).show();
 		}
-		
+
 	}
-
-
 
 	private void initialize_btn_upload() {
-		btn_upload=(Button)findViewById(R.id.btn_upload);
+		btn_upload = (Button) findViewById(R.id.btn_upload);
 		btn_upload.setVisibility(View.INVISIBLE);
 		btn_upload.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				//Set image view to something like uploading
-				mImageView.setImageDrawable(getResources().getDrawable(R.drawable.uploading));
-				login_global_usr();
-				check_upload_localData();
+				// Set image view to something like uploading
+				mImageView.setImageDrawable(getResources().getDrawable(
+						R.drawable.uploading));
+			 if (loginGlobalUser()) {
+				 check_upload_localData();
+			}
 				
+
 			}
 		});
-		
+
 	}
-
-
 
 	@Override
 	protected void onStart() {
@@ -270,44 +259,39 @@ public class Main_screen extends Activity implements
 		SetBtnUploading();
 	}
 
-
-
 	private void SetBtnUploading() {
-		
+
 		String fileContent = FileOperation.read(getApplicationContext(),
 				offline_filename);
-		if (fileContent==null) {
-			
-		}else {
+		if (fileContent == null) {
+
+		} else {
 			if (StaticGlobalFunctions.wifi_connection(getApplicationContext())) {
 				btn_upload.setVisibility(View.VISIBLE);
-				//btn_upload.setEnabled(true);
-			}else {
+				// btn_upload.setEnabled(true);
+			} else {
 				btn_upload.setVisibility(View.VISIBLE);
 				btn_upload.setEnabled(false);
 			}
 		}
 	}
 
-
-
 	private void pre_initialize_mm_selection_dialog() {
 
 		try {
-			makeModelDataFile = FileOperation.transferRawtoFile(
-					this, R.raw.car_make_model_revised,
-					"makemodel", "car.csv");
+			makeModelDataFile = FileOperation.transferRawtoFile(this,
+					R.raw.car_make_model_revised, "makemodel", "car.csv");
 			FormDatabase();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		makeGroup = getLabels(database.SELECT_MAKE,true);
+		makeGroup = getLabels(database.SELECT_MAKE, true);
 		for (int i = 0; i < makeGroup.size(); i++) {
 			String temp_make = makeGroup.get(i);
 			List<String> individual_model = new ArrayList<String>();
 			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
-					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX,false);
+					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX, false);
 			removeMake(individual_model, temp_make);
 			makemodelGroup.add(individual_model);
 		}
@@ -322,8 +306,8 @@ public class Main_screen extends Activity implements
 
 			String[] splited_temp = temp_model.split("\\s+");
 
-			if (splited_temp.length > 2&&splited_temp[1].equalsIgnoreCase(temp_make)
-					) {
+			if (splited_temp.length > 2
+					&& splited_temp[1].equalsIgnoreCase(temp_make)) {
 				for (int j = 2; j < splited_temp.length; j++) {
 					new_model = new_model + splited_temp[j];
 				}
@@ -369,27 +353,25 @@ public class Main_screen extends Activity implements
 				// Log.v("LH", "ERROR@onCreate: " + e.toString());
 				// }
 				// return false;
-				
-				if (makeGroup.get(groupPosition).toString().equals(database.NONE_EXISTING)) {
-					
+
+				if (makeGroup.get(groupPosition).toString()
+						.equals(database.NONE_EXISTING)) {
+
 					selectedMake = "unknown";
 					selectedModel = "unknown";
 					make_model_Dialog.dismiss();
 					makemodelshowTextView.setText("I don't know the make"
-							+ " & "
-							+ "I don't know the model");
+							+ " & " + "I don't know the model");
 					return true;
-				}
-				else {
-					
-				
-				if (parent.isGroupExpanded(groupPosition)) {
-					parent.collapseGroup(groupPosition);
 				} else {
-					parent.expandGroup(groupPosition);
-				}
 
-				return true;
+					if (parent.isGroupExpanded(groupPosition)) {
+						parent.collapseGroup(groupPosition);
+					} else {
+						parent.expandGroup(groupPosition);
+					}
+
+					return true;
 				}
 			}
 		});
@@ -418,21 +400,18 @@ public class Main_screen extends Activity implements
 								.toString());
 
 				if (selectedMake.equals(database.NONE_EXISTING)) {
-					selectedMake="unknown";
+					selectedMake = "unknown";
 					makemodelshowTextView.setText("I don't know the make"
 							+ " & "
-							+ makemodelGroup.get(groupPosition).get(childPosition)
-									.toString());
+							+ makemodelGroup.get(groupPosition)
+									.get(childPosition).toString());
 				}
 				if (selectedModel.equals(database.NONE_EXISTING_MODEL)) {
-					selectedModel="unknown";
+					selectedModel = "unknown";
 					makemodelshowTextView.setText(makeGroup.get(groupPosition)
-							.toString()
-							+ " & "
-							+ "I don't know the model");
+							.toString() + " & " + "I don't know the model");
 				}
-				
-				
+
 				// Close the dialog
 				make_model_Dialog.dismiss();
 				return false;
@@ -478,23 +457,22 @@ public class Main_screen extends Activity implements
 		} else {
 			welcome_words_string += " (Offline)";
 		}
-  //Activity activity
-		welcomeText = (TextView)  findViewById(R.id.mainscreen_welcome_text);
+		// Activity activity
+		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
 		welcomeText.setText(welcome_words_string);
 
 	}
 
-//	private void initialize_progbar() {
-//		progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
-//	    progressBar.setVisibility(View.INVISIBLE);
-//		setProgressBarIndeterminate(true);
-//		setProgressBarVisibility(false);
-//		setProgress(3500);
-//	}
+	// private void initialize_progbar() {
+	// progressBar = (ProgressBar) findViewById(R.id.single_upload_progressbar);
+	// progressBar.setVisibility(View.INVISIBLE);
+	// setProgressBarIndeterminate(true);
+	// setProgressBarVisibility(false);
+	// setProgress(3500);
+	// }
 
 	private void initialize_drawImageView() {
-    
-		
+
 		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
 		mImageView.setVisibility(DrawImageView.VISIBLE);
 		mImageView.setImageDrawable(getResources().getDrawable(
@@ -506,7 +484,7 @@ public class Main_screen extends Activity implements
 			public boolean onTouch(View v, MotionEvent event) {
 
 				if (!global_prevent_reDraw) {
-                    makemodelshowTextView.setText(" ");
+					makemodelshowTextView.setText(" ");
 					DrawImageView drawView = (DrawImageView) v;
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -519,7 +497,7 @@ public class Main_screen extends Activity implements
 						drawView.setSliding_y(event.getY());
 						drawView.adjustCortex();
 						btn_selectmm.setEnabled(true);
-						 btn_save.setEnabled(true);
+						btn_save.setEnabled(true);
 						GuideText.setText("Press \" Make&Model\" to annotate");
 					}
 					drawView.invalidate();
@@ -536,20 +514,21 @@ public class Main_screen extends Activity implements
 		btn_save = (Button) findViewById(R.id.btn_confirm);
 		btn_save.setEnabled(false);
 		btn_save.setOnClickListener(new OnClickListener() {
-        
+
 			@Override
 			public void onClick(View v) {
-				singleAnnotationInfo=new AnnotationInfo();
+				singleAnnotationInfo = new AnnotationInfo();
 				mImageView.addRect();
-//				annotatorInput.update(mImageView.getLastRect(), selectedMake,
-//						selectedModel);
-				singleAnnotationInfo.setRect(mImageView.getLastRect());
+				// annotatorInput.update(mImageView.getLastRect(), selectedMake,
+				// selectedModel);
+				
+				singleAnnotationInfo.setRect(mImageView.getLastRect(),mScaleRatio);
+				//singleAnnotationInfo.setRectRatio(mImageView.getRectSize());
 				singleAnnotationInfo.setMake(selectedMake);
 				singleAnnotationInfo.setMake(selectedModel);
 				pSendData.addAnnoatation(singleAnnotationInfo);
-				
-				
-//				gRectCount = gRectCount + 1;
+
+				// gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
 
 				if (gRectCount == 5) {
@@ -570,9 +549,9 @@ public class Main_screen extends Activity implements
 							.setText("Press \"Done!\" if no other cars in the image");
 
 				}
-				//After each selection, make them null
-				selectedMake=null;
-				selectedModel=null;
+				// After each selection, make them null
+				selectedMake = null;
+				selectedModel = null;
 
 			}
 		});
@@ -585,22 +564,31 @@ public class Main_screen extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-
-				// setup a uploading dialog
-				//annotatorInput.setLocationinfo(locationinfo_string);
-				if (gpsLocation.canGetLocation()) {
-				locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
+				boolean isSent = false;
 				
-			}else {
-				gpsLocation.showSettingsAlert();
-				if (gpsLocation.canGetLocation()) {
-					locationinfo_string=gpsLocation.getLatitude()+" "+gpsLocation.getLongitude();
-				}else {
-					locationinfo_string="Not Available"+" "+"Not Available";
+				if (loginGlobalUser()) {
+						isSent = pSendData.sendOnLine();
 				}
-				Log.d("GPS LOCATION:", locationinfo_string);
-				
-			}
+				if (isSent == false) {
+					pSendData.saveOffLine();
+				}
+
+				if (gpsLocation.canGetLocation()) {
+					locationinfo_string = gpsLocation.getLatitude() + " "
+							+ gpsLocation.getLongitude();
+
+				} else {
+					gpsLocation.showSettingsAlert();
+					if (gpsLocation.canGetLocation()) {
+						locationinfo_string = gpsLocation.getLatitude() + " "
+								+ gpsLocation.getLongitude();
+					} else {
+						locationinfo_string = "Not Available" + " "
+								+ "Not Available";
+					}
+					Log.d("GPS LOCATION:", locationinfo_string);
+
+				}
 				annotatorInput.setLocationinfo(locationinfo_string);
 				annotatorInput.addPath(mCurrentPhotoPath);
 				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
@@ -608,19 +596,15 @@ public class Main_screen extends Activity implements
 						mCurrentPhotoPath));
 				wifi_connected = StaticGlobalFunctions
 						.wifi_connection(getApplicationContext());
-				if (wifi_connected) {
-					 login_global_usr();
-				}
-              
+//				if (wifi_connected) {
+//					login_global_usr();
+//				}
+
 				annotatorInput.addWifiStatus(wifi_connected);
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
 				if (wifi_connected && isLoggedin) {
-					
-					
-					
-					
-					
+
 					ParseObject pb_send = jsonData.formatParseObject(ed
 							.getCipherTextClassName());
 					pb_send.saveInBackground(new SaveCallback() {
@@ -631,10 +615,9 @@ public class Main_screen extends Activity implements
 								StaticGlobalFunctions.ShowToast_short(
 										getApplicationContext(), send_success,
 										R.drawable.success);
-								
+
 							} else {
-								
-								
+
 								String send_failuer = "Problem occured while sending, will save and try again next time";
 								StaticGlobalFunctions.ShowToast_short(
 										getApplicationContext(), send_failuer,
@@ -669,11 +652,10 @@ public class Main_screen extends Activity implements
 									e.printStackTrace();
 								}
 							}
-							mImageView.setImageDrawable(getResources().getDrawable(
-									R.drawable.buttonfinish));
+							mImageView.setImageDrawable(getResources()
+									.getDrawable(R.drawable.buttonfinish));
 						}
 					});
-					
 
 				} else {
 					try {
@@ -698,7 +680,7 @@ public class Main_screen extends Activity implements
 						StaticGlobalFunctions.ShowToast_short(
 								getApplicationContext(), showMessage,
 								R.drawable.success);
-						//showReminder();
+						// showReminder();
 					} catch (JSONException e) {
 
 						e.printStackTrace();
@@ -712,11 +694,11 @@ public class Main_screen extends Activity implements
 				if (!wifi_connected) {
 					mImageView.setImageDrawable(getResources().getDrawable(
 							R.drawable.buttonfinish));
-				}else {
+				} else {
 					mImageView.setImageDrawable(getResources().getDrawable(
 							R.drawable.processing));
 				}
-				
+
 				mImageView.clearRecords();
 				mImageView.clearrect();
 				mImageView.invalidate();
@@ -734,29 +716,37 @@ public class Main_screen extends Activity implements
 
 		btn_takeimg = (Button) findViewById(R.id.button_take_new);
 		btn_takeimg.setEnabled(true);
-		
+
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				View popupView=getLayoutInflater().inflate(R.layout.popup, null);
-				/*mPopupWindow=new PopupWindow(popupView, , 100, , true);*/
-				mPopupWindow=new PopupWindow(popupView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,true);
-				mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-				Rect btn_takeimg_location=StaticGlobalFunctions.locateView(btn_takeimg);
-				if (btn_takeimg_location==null) {
-					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM|Gravity.LEFT, 0, 0);
-				}else {
-					mPopupWindow.showAtLocation(popupView, Gravity.LEFT|Gravity.TOP, btn_takeimg_location.left	, btn_takeimg_location.bottom);
+				View popupView = getLayoutInflater().inflate(R.layout.popup,
+						null);
+				/* mPopupWindow=new PopupWindow(popupView, , 100, , true); */
+				mPopupWindow = new PopupWindow(popupView,
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
+				mPopupWindow
+						.setAnimationStyle(android.R.style.Animation_Dialog);
+				Rect btn_takeimg_location = StaticGlobalFunctions
+						.locateView(btn_takeimg);
+				if (btn_takeimg_location == null) {
+					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM
+							| Gravity.LEFT, 0, 0);
+				} else {
+					mPopupWindow.showAtLocation(popupView, Gravity.LEFT
+							| Gravity.TOP, btn_takeimg_location.left,
+							btn_takeimg_location.bottom);
 				}
-			
-				
-				Button btnfromCamera=(Button)popupView.findViewById(R.id.btntakefromcamera);
-				if (btnfromCamera==null) {
+
+				Button btnfromCamera = (Button) popupView
+						.findViewById(R.id.btntakefromcamera);
+				if (btnfromCamera == null) {
 					Log.d(MAINSTRING, "btn is null");
 				}
 				btnfromCamera.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						mImageView.clearrect();
@@ -771,64 +761,59 @@ public class Main_screen extends Activity implements
 							dispathTakePictureIntent();
 							mPopupWindow.dismiss();
 						}
-						
+
 					}
 				});
-				
-				Button btnfromGallery=(Button)popupView.findViewById(R.id.btntakefromgallery);
+
+				Button btnfromGallery = (Button) popupView
+						.findViewById(R.id.btntakefromgallery);
 				btnfromGallery.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						mImageView.clearrect();
 						mImageView.setImageDrawable(getResources().getDrawable(
 								R.drawable.processing));
 						mImageView.invalidate();
-						
+
 						dispatchSelectFromGalleryIntent();
 						mPopupWindow.dismiss();
-						
+
 					}
 
-					
 				});
-						
-						
-				
-				Button btnforcancel=(Button)popupView.findViewById(R.id.btncancellfrompopup);
+
+				Button btnforcancel = (Button) popupView
+						.findViewById(R.id.btncancellfrompopup);
 				btnforcancel.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						mPopupWindow.dismiss();
-						
+
 					}
 				});
-			
-				
-				
 
 			}
 		});
 
 	}
 
-	
-	
 	private void dispatchSelectFromGalleryIntent() {
-		Intent toGallery=new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent toGallery = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(toGallery, LOAD_IMG_FROM_G);
-		
+
 	}
-	
+
 	private void check_upload_localData() {
-		//if (isLoggedin) {
-			new UploadFileThread().start();
-		//}
+		// if (isLoggedin) {
+		new UploadFileThread().start();
+		// }
 
 	}
 
-	private List<String> getLabels(String select_query,boolean isMake) {
+	private List<String> getLabels(String select_query, boolean isMake) {
 		// TODO Auto-generated method stub
 		// String DataBaseQuery=
 		List<String> labelsList = new ArrayList<String>();
@@ -844,10 +829,10 @@ public class Main_screen extends Activity implements
 		cursor.close();
 		if (isMake) {
 			labelsList.add(new String(database.NONE_EXISTING));
-		}else {
+		} else {
 			labelsList.add(new String(database.NONE_EXISTING_MODEL));
 		}
-		
+
 		return labelsList;
 
 	}
@@ -968,8 +953,8 @@ public class Main_screen extends Activity implements
 	}
 
 	private File createImageFile() throws IOException {
-	
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",Locale.US)
+
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		imageFileName = JPEG_FILE_PREFIX + timeStamp;
 		File albumF = getAlbumDir();
@@ -1024,7 +1009,6 @@ public class Main_screen extends Activity implements
 
 		}
 
-		
 		mImageBitmap = Bitmap.createScaledBitmap(bitmap, mImageView.getWidth(),
 				mImageView.getHeight(), false);
 		mImageView.setImageBitmap(mImageBitmap);
@@ -1075,38 +1059,40 @@ public class Main_screen extends Activity implements
 			Log.d("OnActivityResult", "Called!");
 			if (mImageBitmap != null) {
 				mImageBitmap.recycle();
-				mImageBitmap=null;
+				mImageBitmap = null;
 				System.gc();
 			}
 			handleBigCameraPhoto();
-			
-			//20131007 add image data information to parseSendData
+
+			// 20131007 add image data information to parseSendData
 			pSendData.setImageData(mCurrentPhotoPath);
-			
-			GuideText
-					.setText("Swipe to draw image:");
+            mScaleRatio=new ScaleRatio(mImageView, mCurrentPhotoPath);
+			GuideText.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
-            take_valide_img=true;
+			take_valide_img = true;
 		}
-		if (resultCode==RESULT_CANCELED&&(requestCode==CAMERA_REQUEST||requestCode==LOAD_IMG_FROM_G)) {
-			mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
-			take_valide_img=false;
+		if (resultCode == RESULT_CANCELED
+				&& (requestCode == CAMERA_REQUEST || requestCode == LOAD_IMG_FROM_G)) {
+			mImageView.setImageDrawable(getResources().getDrawable(
+					R.drawable.ready));
+			take_valide_img = false;
 		}
-		if (resultCode==RESULT_OK&&requestCode==LOAD_IMG_FROM_G) {
+		if (resultCode == RESULT_OK && requestCode == LOAD_IMG_FROM_G) {
 			if (mImageBitmap != null) {
 				mImageBitmap.recycle();
-				mImageBitmap=null;
+				mImageBitmap = null;
 				System.gc();
 			}
-			Uri selectedImgUri=data.getData();
+			Uri selectedImgUri = data.getData();
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(selectedImgUri,filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            mCurrentPhotoPath= cursor.getString(columnIndex);
-            cursor.close();
+			Cursor cursor = getContentResolver().query(selectedImgUri,
+					filePathColumn, null, null, null);
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			mCurrentPhotoPath = cursor.getString(columnIndex);
+			cursor.close();
 			setPic();
-			take_valide_img=true;
+			take_valide_img = true;
 		}
 	}
 
@@ -1138,13 +1124,12 @@ public class Main_screen extends Activity implements
 		if (isFirstTimeLogin) {
 			global_prevent_reDraw = true;
 			isFirstTimeLogin = false;
-			
+
 		} else {
 			if (take_valide_img) {
 				global_prevent_reDraw = false;
-			}
-			else {
-				global_prevent_reDraw=true;
+			} else {
+				global_prevent_reDraw = true;
 			}
 		}
 
@@ -1158,11 +1143,11 @@ public class Main_screen extends Activity implements
 	@Override
 	protected void onPause() {
 		if (null != mImageView) {
-			mImageView.clearrect();// 
+			mImageView.clearrect();//
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
-		take_valide_img=false;
+		take_valide_img = false;
 		super.onPause();
 	}
 
@@ -1198,41 +1183,41 @@ public class Main_screen extends Activity implements
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-/*				int item_num = offline_JsonArray.length();
-
-				if (item_num > 0) {
-
-					JSONObject tem_item;
-					try {
-						tem_item = (JSONObject) offline_JsonArray.get(0);
-						ParseObject pobject = new JSONdata(tem_item)
-								.formatParseObject(ed.getCipherTextClassName());
-						pobject.saveInBackground(new SaveCallback() {
-
-							@Override
-							public void done(ParseException arg0) {
-                            if (arg0==null) {
-                            	offline_JsonArray = static_global_functions
-										.remove(0, offline_JsonArray);*/
-								recursive_upload();
-				/*			}
-                            else {
-								static_global_functions.ShowToast_short(getApplicationContext(), "Unable to connect to server, will try later", R.drawable.caution);
-							}
-							}
-
-						});*/
-					/*} catch (JSONException e) {
-						e.printStackTrace();
-					}*/
-
-				}
+				/*
+				 * int item_num = offline_JsonArray.length();
+				 * 
+				 * if (item_num > 0) {
+				 * 
+				 * JSONObject tem_item; try { tem_item = (JSONObject)
+				 * offline_JsonArray.get(0); ParseObject pobject = new
+				 * JSONdata(tem_item)
+				 * .formatParseObject(ed.getCipherTextClassName());
+				 * pobject.saveInBackground(new SaveCallback() {
+				 * 
+				 * @Override public void done(ParseException arg0) { if
+				 * (arg0==null) { offline_JsonArray = static_global_functions
+				 * .remove(0, offline_JsonArray);
+				 */
+				recursive_upload();
+				/*
+				 * } else {
+				 * static_global_functions.ShowToast_short(getApplicationContext
+				 * (), "Unable to connect to server, will try later",
+				 * R.drawable.caution); } }
+				 * 
+				 * });
+				 */
+				/*
+				 * } catch (JSONException e) { e.printStackTrace(); }
+				 */
 
 			}
 
 		}
 
-	//}
+	}
+
+	// }
 
 	private void recursive_upload() {
 		if (offline_JsonArray.length() > 0) {
@@ -1247,16 +1232,21 @@ public class Main_screen extends Activity implements
 
 					@Override
 					public void done(ParseException arg0) {
-                    if (arg0==null) {
-                    	offline_JsonArray = StaticGlobalFunctions.remove(0,
-								offline_JsonArray);
-						recursive_upload();
-					}else {
-						StaticGlobalFunctions.ShowToast_short(getApplicationContext(), "Error occured during uploading, please try later", R.drawable.caution);
-						mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
-						btn_upload.setText("Retry");
-					}
-						
+						if (arg0 == null) {
+							offline_JsonArray = StaticGlobalFunctions.remove(0,
+									offline_JsonArray);
+							recursive_upload();
+						} else {
+							StaticGlobalFunctions
+									.ShowToast_short(
+											getApplicationContext(),
+											"Error occured during uploading, please try later",
+											R.drawable.caution);
+							mImageView.setImageDrawable(getResources()
+									.getDrawable(R.drawable.ready));
+							btn_upload.setText("Retry");
+						}
+
 					}
 
 				});
@@ -1269,11 +1259,12 @@ public class Main_screen extends Activity implements
 			StaticGlobalFunctions.ShowToast_short(getApplicationContext(),
 					"Previous data uploaded!", R.drawable.success);
 			Log.d("All files", "Send successfully");
-			
+
 			FileOperation.delete(getApplicationContext(), offline_filename);
 			btn_upload.setVisibility(View.INVISIBLE);
-			mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ready));
-			
+			mImageView.setImageDrawable(getResources().getDrawable(
+					R.drawable.ready));
+
 		}
 	}
 
@@ -1316,23 +1307,34 @@ public class Main_screen extends Activity implements
 		}
 	}
 
-	private void login_global_usr() {
-		ParseUser.logInInBackground(ed.getCipherTextUserName(),
-				ed.getCipherTextUserPassword(), new LogInCallback() {
+	private boolean loginGlobalUser() {
+// Doubt if it is correct!
+		if (StaticGlobalFunctions.wifi_connection(this)) {
 
-					@Override
-					public void done(ParseUser usr, ParseException e) {
-						if (usr != null) {
-							//Log.d("Login_before", "Successfully");
-							isLoggedin = true;
-						} else {
-							//Log.d("error logging in ", e.toString());
-							isLoggedin = false;
-							StaticGlobalFunctions.ShowToast_short(getApplicationContext(), "Remote server not responding, save to local memory", R.drawable.caution);
+			ParseUser.logInInBackground(ed.getCipherTextUserName(),
+					ed.getCipherTextUserPassword(), new LogInCallback() {
+
+						@Override
+						public void done(ParseUser usr, ParseException e) {
+							if (usr != null) {
+								// Log.d("Login_before", "Successfully");
+								isLoggedin = true;
+							} else {
+								// Log.d("error logging in ", e.toString());
+								isLoggedin = false;
+								StaticGlobalFunctions
+										.ShowToast_short(
+												getApplicationContext(),
+												"Remote server not responding, save to local memory",
+												R.drawable.caution);
+							}
+
 						}
-
-					}
-				});
+					});
+			return isLoggedin;
+		} else {
+			return false;
+		}
 
 	}
 
@@ -1340,7 +1342,7 @@ public class Main_screen extends Activity implements
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		//this.finish();
+		// this.finish();
 	}
 
 }

@@ -37,6 +37,28 @@ public class parseSendData {
 public void addAnnoatation(AnnotationInfo ai){
 	pAnnotationInfoList.add(ai);
 }
+
+//add function --read from database
+
+public boolean sendOnLine() {
+	// 1 send usr
+	// 2. send image data
+	// 3. send annotation data
+	ParseObject usrParseObject=pUser.sendtoParse();
+	ParseObject imageParseObject=pImageData.sendtoParse(usrParseObject);
+	
+	
+	
+	return sendAnnotationInfoList(usrParseObject,imageParseObject);
+}
+
+private boolean sendAnnotationInfoList(ParseObject usrParseObject, ParseObject imageParseObject) {
+	
+    for (int i = 0 ,  length=pAnnotationInfoList.size(); i < length; i++) {
+		
+	}
+	return false;
+}
 	
 	
 }
