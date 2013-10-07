@@ -162,8 +162,8 @@ public class Main_screen extends Activity implements
 	
 	//newly added on 20131006:
 	
-	
-	
+	private parseSendData pSendData=new parseSendData();
+	private AnnotationInfo singleAnnotationInfo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -200,6 +200,10 @@ public class Main_screen extends Activity implements
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
+		// add user to parse data
+		pSendData.addUsr(usr_name);
+		
+		
 		setWelcomeword(usr_name, StaticGlobalFunctions.wifi_connection(this));
 		initialize_mm_textView();
 		initialize_btn_takeimg();
@@ -489,7 +493,8 @@ public class Main_screen extends Activity implements
 //	}
 
 	private void initialize_drawImageView() {
-
+    
+		
 		mImageView = (DrawImageView) findViewById(R.id.imageView1);/* DrawImageView */
 		mImageView.setVisibility(DrawImageView.VISIBLE);
 		mImageView.setImageDrawable(getResources().getDrawable(
@@ -531,12 +536,19 @@ public class Main_screen extends Activity implements
 		btn_save = (Button) findViewById(R.id.btn_confirm);
 		btn_save.setEnabled(false);
 		btn_save.setOnClickListener(new OnClickListener() {
-
+        
 			@Override
 			public void onClick(View v) {
+				singleAnnotationInfo=new AnnotationInfo();
 				mImageView.addRect();
 				annotatorInput.update(mImageView.getLastRect(), selectedMake,
 						selectedModel);
+				//singleAnnotationInfo.setRect(mImageView.getLastRect());
+				singleAnnotationInfo.setMake(selectedMake);
+				singleAnnotationInfo.setMake(selectedModel);
+				pSendData.addAnnoatation(singleAnnotationInfo);
+				
+				
 				gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
 
@@ -1068,6 +1080,9 @@ public class Main_screen extends Activity implements
 			}
 			handleBigCameraPhoto();
 			
+			//20131007 add image data information to parseSendData
+			pSendData.setImageData(mCurrentPhotoPath);
+			
 			GuideText
 					.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
@@ -1143,7 +1158,7 @@ public class Main_screen extends Activity implements
 	@Override
 	protected void onPause() {
 		if (null != mImageView) {
-			mImageView.clearrect();// ���������������rect
+			mImageView.clearrect();// 
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}

@@ -1,5 +1,7 @@
 package edu.cmu.carannotationv2;
 
+import android.graphics.Rect;
+
 public class AnnotationInfo {
 private static final String RECTLEFT_STRING="rectLeft";
 private static final String RECTRIGHT_STRING="rectRight";
@@ -22,6 +24,14 @@ public void setRect(double l,double t,double r,double b){
 	this.rectBottom=b;
 	
 }
+public void setRect(Rect r){
+	this.rectLeft=r.left;
+	this.rectTop=r.top;
+	this.rectRight=r.right;
+	this.rectBottom=r.bottom;
+	
+}
+
 public void setMake(String makeString){
 	//do some hash mapping! here!
 	
