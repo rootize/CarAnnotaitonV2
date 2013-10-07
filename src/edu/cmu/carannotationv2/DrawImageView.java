@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -214,9 +215,12 @@ public class DrawImageView extends ImageView {
 		rect_count = rect_count + 1;
 	}
 
-	public RectInfo getLastRect() {
-		//return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
-		return new RectInfo((int)rect_top,(int) rect_left,(int) rect_bottom,(int) rect_right);
+//	public RectInfo getLastRect() {
+//		//return  new RectInfo(rectArray[rect_count-1][0],rectArray[rect_count-1][1],rectArray[rect_count-1][2],rectArray[rect_count-1][3]);
+//		return new RectInfo((int)rect_top,(int) rect_left,(int) rect_bottom,(int) rect_right);
+//	}
+	public Rect getLastRect(){
+		return new Rect((int)rect_left, (int)rect_top, (int)rect_right, (int)rect_bottom);
 	}
 //to adjust the rectangle
 	public void adjustCortex() {

@@ -541,15 +541,15 @@ public class Main_screen extends Activity implements
 			public void onClick(View v) {
 				singleAnnotationInfo=new AnnotationInfo();
 				mImageView.addRect();
-				annotatorInput.update(mImageView.getLastRect(), selectedMake,
-						selectedModel);
-				//singleAnnotationInfo.setRect(mImageView.getLastRect());
+//				annotatorInput.update(mImageView.getLastRect(), selectedMake,
+//						selectedModel);
+				singleAnnotationInfo.setRect(mImageView.getLastRect());
 				singleAnnotationInfo.setMake(selectedMake);
 				singleAnnotationInfo.setMake(selectedModel);
 				pSendData.addAnnoatation(singleAnnotationInfo);
 				
 				
-				gRectCount = gRectCount + 1;
+//				gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
 
 				if (gRectCount == 5) {
