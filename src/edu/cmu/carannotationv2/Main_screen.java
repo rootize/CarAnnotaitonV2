@@ -5,19 +5,14 @@ package edu.cmu.carannotationv2;
 //������ ������nullpointer ���warning���imageview ��������������� ���������������onCreate���������������������������������������
 //���������������
 import java.io.BufferedReader;
-
 import java.io.File;
-
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
 import java.util.List;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,23 +21,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -52,9 +41,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -62,19 +48,14 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
-
 import com.parse.ParseException;
-
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,8 +66,6 @@ public class Main_screen extends Activity implements
 	private static final String MAINSTRING = "MainScreen";
 
 	public String locationinfo_string;
-	// private LocationManager locationMangaer=null;
-	// private LocationListener locationListener=null;
 
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
@@ -154,7 +133,7 @@ public class Main_screen extends Activity implements
 
 	// newly added on 20131006:
 
-	private parseSendData pSendData = new parseSendData();
+	private parseSendData pSendData;
 	private AnnotationInfo singleAnnotationInfo;
 	private ScaleRatio mScaleRatio;
 
@@ -167,6 +146,7 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
+		pSendData = new parseSendData(getApplicationContext());
 		Log.d(MAINSTRING, "onCreateCalled");
 		soDetector = new ScreenOrientationDetector(this);
 		isScreenRotationLocked = soDetector.isLocked();
@@ -241,10 +221,9 @@ public class Main_screen extends Activity implements
 				// Set image view to something like uploading
 				mImageView.setImageDrawable(getResources().getDrawable(
 						R.drawable.uploading));
-			 if (loginGlobalUser()) {
-				 check_upload_localData();
-			}
-				
+				if (loginGlobalUser()) {
+					check_upload_localData();
+				}
 
 			}
 		});
@@ -521,9 +500,10 @@ public class Main_screen extends Activity implements
 				mImageView.addRect();
 				// annotatorInput.update(mImageView.getLastRect(), selectedMake,
 				// selectedModel);
-				
-				singleAnnotationInfo.setRect(mImageView.getLastRect(),mScaleRatio);
-				//singleAnnotationInfo.setRectRatio(mImageView.getRectSize());
+
+				singleAnnotationInfo.setRect(mImageView.getLastRect(),
+						mScaleRatio);
+				// singleAnnotationInfo.setRectRatio(mImageView.getRectSize());
 				singleAnnotationInfo.setMake(selectedMake);
 				singleAnnotationInfo.setMake(selectedModel);
 				pSendData.addAnnoatation(singleAnnotationInfo);
@@ -565,9 +545,9 @@ public class Main_screen extends Activity implements
 			@Override
 			public void onClick(View v) {
 				boolean isSent = false;
-				
+
 				if (loginGlobalUser()) {
-						isSent = pSendData.sendOnLine();
+					isSent = pSendData.sendOnLine();
 				}
 				if (isSent == false) {
 					pSendData.saveOffLine();
@@ -596,9 +576,9 @@ public class Main_screen extends Activity implements
 						mCurrentPhotoPath));
 				wifi_connected = StaticGlobalFunctions
 						.wifi_connection(getApplicationContext());
-//				if (wifi_connected) {
-//					login_global_usr();
-//				}
+				// if (wifi_connected) {
+				// login_global_usr();
+				// }
 
 				annotatorInput.addWifiStatus(wifi_connected);
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
@@ -923,7 +903,7 @@ public class Main_screen extends Activity implements
 	/* moved from sample: Photo album for this application */
 	private String getAlbumName() {
 
-		// TODO ���������������������
+		// TODO
 		return getString(R.string.album_name);
 
 	}
@@ -1066,7 +1046,7 @@ public class Main_screen extends Activity implements
 
 			// 20131007 add image data information to parseSendData
 			pSendData.setImageData(mCurrentPhotoPath);
-            mScaleRatio=new ScaleRatio(mImageView, mCurrentPhotoPath);
+			mScaleRatio = new ScaleRatio(mImageView, mCurrentPhotoPath);
 			GuideText.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
 			take_valide_img = true;
@@ -1173,53 +1153,19 @@ public class Main_screen extends Activity implements
 		@Override
 		public void run() {
 
-			String offline_string = FileOperation.read(getApplicationContext(),
-					offline_filename);
-			if (offline_string == null) {
-				// do nothing
-			} else {
-				try {
-					offline_JsonArray = new JSONArray(offline_string);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				/*
-				 * int item_num = offline_JsonArray.length();
-				 * 
-				 * if (item_num > 0) {
-				 * 
-				 * JSONObject tem_item; try { tem_item = (JSONObject)
-				 * offline_JsonArray.get(0); ParseObject pobject = new
-				 * JSONdata(tem_item)
-				 * .formatParseObject(ed.getCipherTextClassName());
-				 * pobject.saveInBackground(new SaveCallback() {
-				 * 
-				 * @Override public void done(ParseException arg0) { if
-				 * (arg0==null) { offline_JsonArray = static_global_functions
-				 * .remove(0, offline_JsonArray);
-				 */
+			try {
 				recursive_upload();
-				/*
-				 * } else {
-				 * static_global_functions.ShowToast_short(getApplicationContext
-				 * (), "Unable to connect to server, will try later",
-				 * R.drawable.caution); } }
-				 * 
-				 * });
-				 */
-				/*
-				 * } catch (JSONException e) { e.printStackTrace(); }
-				 */
-
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
 
 		}
 
 	}
 
-	// }
-
-	private void recursive_upload() {
+	private void recursive_upload() throws Exception {
+		offline_JsonArray = new JSONArray(FileOperation.read(
+				getApplicationContext(), offline_filename));
 		if (offline_JsonArray.length() > 0) {
 
 			JSONObject tem_item;
@@ -1235,7 +1181,17 @@ public class Main_screen extends Activity implements
 						if (arg0 == null) {
 							offline_JsonArray = StaticGlobalFunctions.remove(0,
 									offline_JsonArray);
-							recursive_upload();
+							FileOperation.delete(getApplicationContext(),
+									offline_filename);
+							FileOperation.save(getApplicationContext(),
+									offline_filename,
+									offline_JsonArray.toString());
+							try {
+								recursive_upload();
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+
 						} else {
 							StaticGlobalFunctions
 									.ShowToast_short(
@@ -1308,7 +1264,7 @@ public class Main_screen extends Activity implements
 	}
 
 	private boolean loginGlobalUser() {
-// Doubt if it is correct!
+		// Doubt if it is correct!
 		if (StaticGlobalFunctions.wifi_connection(this)) {
 
 			ParseUser.logInInBackground(ed.getCipherTextUserName(),

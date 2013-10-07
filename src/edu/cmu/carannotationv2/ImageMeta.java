@@ -1,13 +1,20 @@
 package edu.cmu.carannotationv2;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 import android.R.integer;
+import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.media.ExifInterface;
 import android.util.Log;
@@ -30,6 +37,7 @@ public class ImageMeta {
 	
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
+	private static final String IMAGEFILENAME_STRING = "imageFileName";
 	
 	private int imagewidth;
 	private int imageheight;
@@ -45,11 +53,42 @@ public class ImageMeta {
 	private ExifInterface exif;
 	private String imageNameString;
 
+	private String mCurrentPathString;
+	
+	private ParseFile getImgFile() {
+		try {
+			
+			
+			FileInputStream isf=new FileInputStream(new File(mCurrentPathString));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] b=new byte[1024];
+			int bytesRead;
+			while (( bytesRead=isf.read(b))!=-1) {
+				baos.write(b,0,bytesRead);
+				
+			}
+			byte[] data = baos.toByteArray();
+			isf.close();
+			ParseFile imgFile;
+
+			imgFile = new ParseFile(
+					imageNameString, data);
+			
+			data=null;
+			System.gc();
+			return imgFile;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+	}
 	
 	private int sendState;
 	public ParseObject sendtoParse(ParseObject usrParseObject) {
 		ParseObject imgObject=new ParseObject(POBJECTNAME);
-		imgObject.add(IMAGEFILE_STRING, imageNameString);
+		imgObject.add(IMAGEFILENAME_STRING, imageNameString);
 		imgObject.add(IMAGEWIDTH_STRING, imagewidth);
 		imgObject.add(IMAGEHEIGHT_STRING, imageheight);
 		imgObject.add(EXPOSURETIME_STRING, exposuretime);
@@ -62,6 +101,7 @@ public class ImageMeta {
 		imgObject.add(LOCATIONLAT_STRING, lati);
 		imgObject.add(LOCATIONLONG_STRING, longti);
 		imgObject.put("createdBy", usrParseObject);
+		imgObject.put(IMAGEFILE_STRING, getImgFile());
 		imgObject.saveInBackground(new SaveCallback() {
 			
 			@Override
@@ -87,6 +127,7 @@ public class ImageMeta {
 	
 	public void setMetaData(String mcurrentSavingPath) {
 		try {
+			this.mCurrentPathString=mcurrentSavingPath;
 			exif = new ExifInterface(mcurrentSavingPath);
             imagewidth=exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
             imageheight=exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
@@ -123,6 +164,32 @@ public class ImageMeta {
 	public void setOfflineTag(){
 		this.lati=this.lati+"off";
 		this.longti=this.longti+"off";
+	}
+
+
+	public boolean transferToParseObjectandSend(JSONObject imgMetadJsonObject){
+		return false;
+	}
+	
+	
+	public JSONObject saveOffline() throws JSONException {
+		JSONObject imgObject=new JSONObject();
+		imgObject.put(IMAGEFILENAME_STRING, imageNameString);
+		imgObject.put(IMAGEWIDTH_STRING, imagewidth);
+		imgObject.put(IMAGEHEIGHT_STRING, imageheight);
+		imgObject.put(EXPOSURETIME_STRING, exposuretime);
+		imgObject.put(FLASH_STRING, flash);
+		imgObject.put(FOCALLENGTH_STRING, focallength);
+		imgObject.put(WHITEBALA_STRING, whitebalance);
+		imgObject.put(CAMERAMAKE_STRING, cameraMake);
+		imgObject.put(CAMERAMODEL_STRING, cameraModel);
+		imgObject.put(TIME_STRING, imageDate);
+		imgObject.put(LOCATIONLAT_STRING, lati);
+		imgObject.put(LOCATIONLONG_STRING, longti);
+		
+		return imgObject;
+		
+		
 	}
 
 	

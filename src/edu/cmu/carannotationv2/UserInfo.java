@@ -1,5 +1,8 @@
 package edu.cmu.carannotationv2;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -24,6 +27,7 @@ public ParseObject sendtoParse() {
 	// TODO Auto-generated method stub
 	ParseObject pObject=new ParseObject(POBJECTNAME);
 	pObject.put(PEmail, userEmailString);
+	
 	pObject.saveInBackground(new SaveCallback() {
 		
 		@Override
@@ -51,6 +55,12 @@ public ParseObject sendtoParse() {
 	default:
 	     return null;
 	}
+}
+public JSONObject saveOffline() throws JSONException {
+	// TODO Auto-generated method stub
+	JSONObject tempUserJsonObject=new JSONObject();
+	tempUserJsonObject.put(PEmail, userEmailString);
+	return tempUserJsonObject;
 }
 
 

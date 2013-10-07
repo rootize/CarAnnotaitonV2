@@ -1,5 +1,8 @@
 package edu.cmu.carannotationv2;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -23,6 +26,7 @@ private double rectTop;
 private double rectBottom;
 
 private boolean isSent;
+
 public void setRect(double l,double t,double r,double b){
 	this.rectLeft=l;
 	this.rectTop=t;
@@ -83,5 +87,16 @@ annoObject.add(RECTTOP_STRING	, rectTop);
 	});
 	
 	return isSent;
+}
+public Object saveOffline() throws JSONException {
+	// TODO Auto-generated method stub
+	JSONObject annoObject=new JSONObject(POBJECTNAME_STRING);
+	annoObject.put(MAKEID_STRING, makeid);
+	annoObject.put(MODELID_STRING, modelid);
+	annoObject.put(RECTBOTTOM_STRING, rectBottom);
+	annoObject.put(RECTLEFT_STRING	, rectLeft);
+	annoObject.put(RECTRIGHT_STRING		, rectRight);
+	annoObject.put(RECTTOP_STRING	, rectTop);
+	return annoObject;
 }
 }

@@ -68,10 +68,10 @@ public class JSONdata {
 	public JSONdata(AnnotatorInput annotatorInput, Context context) {
 		jsonObject = new JSONObject();
 		locSP = context.getSharedPreferences(SP_STRING, Context.MODE_PRIVATE);
-		// calculateScaleRatio(mImageView,annotatorInput.getImgPath());
+		
 		mCurrentPhotoPath = annotatorInput.getImgPath();
 		lati_longti=annotatorInput.getLocationinfo();
-		//setScaleFactor(mCurrentPhotoPath);
+		
 		getInfoFromAnnotatorInput(annotatorInput);
 		
 		
