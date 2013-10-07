@@ -278,66 +278,66 @@ public class Main_screen extends Activity {
 							- popupView.getWidth(), btn_takeimg_location.bottom);
 				}
 
-				Button btnfromCamera = (Button) popupView
-						.findViewById(R.id.btntakefromcamera);
-				if (btnfromCamera == null) {
-					Log.d(MAINSTRING, "btn is null");
-				}
-				btnfromCamera.setOnClickListener(new OnClickListener() {
+				initialize_btn_from_camera_popupwindow(popupView);
+				initialize_btn_from_gallery_popupwindow(popupView);
+			
 
-					@Override
-					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
+			   mPopupWindow.setFocusable(true);// dismiss the popup window when touch outside the window
 
-						if (gRectCount != 0) {
-							String showMessage = "Abondon all the rectangles and start a new one?";
-							showDialog(showMessage);
-						} else {
-							dispathTakePictureIntent();
-							mPopupWindow.dismiss();
-						}
 
-					}
-				});
-
-				Button btnfromGallery = (Button) popupView
-						.findViewById(R.id.btntakefromgallery);
-				btnfromGallery.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
-
-						dispatchSelectFromGalleryIntent();
-						mPopupWindow.dismiss();
-
-					}
-
-				});
-
-				Button btnforcancel = (Button) popupView
-						.findViewById(R.id.btncancellfrompopup);
-				btnforcancel.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mPopupWindow.dismiss();
-
-					}
-				});
 
 			}
 		});
 
 	}
 
-	private void showReminder() {
+	private void initialize_btn_from_camera_popupwindow(View popupView){
+		Button btnfromCamera = (Button) popupView
+				.findViewById(R.id.btntakefromcamera);
+		btnfromCamera.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mImageView.clearrect();
+				mImageView.setImageDrawable(getResources().getDrawable(
+						R.drawable.processing));
+				mImageView.invalidate();
+
+				if (gRectCount != 0) {
+					String showMessage = "Abondon all the rectangles and start a new one?";
+					showDialog(showMessage);
+				} else {
+					dispathTakePictureIntent();
+					mPopupWindow.dismiss();
+				}
+
+			}
+		});
+		
+	}
+	 private void initialize_btn_from_gallery_popupwindow(View popupView){
+		 Button btnfromGallery = (Button) popupView
+					.findViewById(R.id.btntakefromgallery);
+			btnfromGallery.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					mImageView.clearrect();
+					mImageView.setImageDrawable(getResources().getDrawable(
+							R.drawable.processing));
+					mImageView.invalidate();
+
+					dispatchSelectFromGalleryIntent();
+					mPopupWindow.dismiss();
+
+				}
+
+			});
+	}
+	
+	
+	
+/*	private void showReminder() {
 		String fileContent = FileOperation.read(getApplicationContext(),
 				offline_filename);
 		if (fileContent == null) {
@@ -360,9 +360,9 @@ public class Main_screen extends Activity {
 							}).show();
 		}
 
-	}
+	}*/
 
-	private void initialize_btn_upload() {
+	/*private void initialize_btn_upload() {
 		btn_upload = (Button) findViewById(R.id.btn_upload);
 		btn_upload.setVisibility(View.INVISIBLE);
 		btn_upload.setOnClickListener(new OnClickListener() {
@@ -379,17 +379,17 @@ public class Main_screen extends Activity {
 			}
 		});
 
-	}
+	}*/
 
-	@Override
+/*	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
 		Log.d(MAINSTRING, "onStartCalled");
 		SetBtnUploading();
 	}
-
-	private void SetBtnUploading() {
+*/
+/*	private void SetBtnUploading() {
 
 		String fileContent = FileOperation.read(getApplicationContext(),
 				offline_filename);
@@ -405,7 +405,7 @@ public class Main_screen extends Activity {
 			}
 		}
 	}
-
+*/
 	private void removeMake(List<String> individual_model, String temp_make) {
 		String temp_model;
 		String new_model = "";

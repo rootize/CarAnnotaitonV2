@@ -18,10 +18,10 @@
         android:text="From Gallery" >
     </Button>
 
-    <Button
+   <!--  <Button
         android:id="@+id/btncancellfrompopup"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Cancel" />
-
+ -->
 </LinearLayout>
