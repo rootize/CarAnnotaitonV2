@@ -106,6 +106,9 @@ public class Main_screen extends Activity implements
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
 	
+	
+
+	
 	private boolean take_valide_img=true;
 	
 	// data encryption
@@ -155,6 +158,10 @@ public class Main_screen extends Activity implements
 	private ScreenOrientationDetector soDetector;
 	
 	private GPSTracker gpsLocation;
+	
+	
+	//newly added on 20131006:
+	
 	
 	
 	
@@ -597,6 +604,10 @@ public class Main_screen extends Activity implements
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
 				if (wifi_connected && isLoggedin) {
+					
+					
+					
+					
 					
 					ParseObject pb_send = jsonData.formatParseObject(ed
 							.getCipherTextClassName());
