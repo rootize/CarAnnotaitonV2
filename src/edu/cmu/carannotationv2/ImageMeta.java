@@ -3,19 +3,12 @@ package edu.cmu.carannotationv2;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Date;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
-
-import android.R.integer;
-import android.graphics.BitmapFactory;
-import android.graphics.Path;
 import android.media.ExifInterface;
 import android.util.Log;
 
@@ -35,7 +28,7 @@ public class ImageMeta {
 	private static final String LOCATIONLONG_STRING = "locationLong";// string
 
 	
-	private static final String JPEG_FILE_PREFIX = "IMG_";
+	//private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private static final String IMAGEFILENAME_STRING = "imageFileName";
 	

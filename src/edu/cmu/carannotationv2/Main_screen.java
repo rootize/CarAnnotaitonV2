@@ -60,8 +60,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Main_screen extends Activity implements
-		tk_img_frag.OnTkImgListener {
+public class Main_screen extends Activity {
 
 	private static final String MAINSTRING = "MainScreen";
 
@@ -89,7 +88,7 @@ public class Main_screen extends Activity implements
 	private EncryptedData ed;
 
 	private TextView welcomeText;
-	private TextView GuideText;
+	private TextView guideText;
 	private Button btn_takeimg;
 	private Button btn_selectmm;
 	private Button btn_send;
@@ -146,44 +145,196 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
-		pSendData = new parseSendData(getApplicationContext());
 		Log.d(MAINSTRING, "onCreateCalled");
+
+		// detect the original screen rotation settings, record that in variable
+		// isScreenRotationLocked
 		soDetector = new ScreenOrientationDetector(this);
 		isScreenRotationLocked = soDetector.isLocked();
 		if (isScreenRotationLocked) {
 			soDetector.unLockScreen();
 		}
 
-		gpsLocation = new GPSTracker(this);
-
+		// build up the directory saving images different versions of android
+		// machines may have different way creating folders
 		mAlbumStorageDirFactory = StaticGlobalFunctions
 				.setmAlbumStorageDirFactory();
-		wifi_connected = StaticGlobalFunctions
-				.wifi_connection(getApplicationContext());
 
+		// ed provides data encrypting the data class name and parse class name
 		ed = new EncryptedData(getApplicationContext(), R.raw.key,
 				R.raw.plaintext);
 		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
-
-		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		pre_initialize_mm_selection_dialog();
+		// get user name from login activity
 		usr_name = getUsrFromIntent();
-		// add user to parse data
+
+		// initialize pSendData with user_name
+		pSendData = new parseSendData(getApplicationContext());
 		pSendData.addUsr(usr_name);
 
-		setWelcomeword(usr_name, StaticGlobalFunctions.wifi_connection(this));
+		// form make_model selection dialog, read from files
+		pre_initialize_mm_selection_dialog();
+		// guidance text showing on top of imageview
+		initialize_guidance_text();
+		// welcome text showing on top of button
+		initialize_welcome_text();
+		// make_model showing region as textview
 		initialize_mm_textView();
+		// button _ take image
 		initialize_btn_takeimg();
+		// make_model dialog
 		initialize_mm_selection_dialog();
+		// button to pop up make_model
 		initialize_btn_selectmm();
+		// button : send
 		initialize_btn_send();
+		// button : save
 		initialize_btn_save();
+		// initialize drawimageview
 		initialize_drawImageView();
-		// initialize_progbar();
+		// button : upload images
 		initialize_btn_upload();
 		showReminder();
+	}
+
+	private void pre_initialize_mm_selection_dialog() {
+
+		try {
+			makeModelDataFile = FileOperation.transferRawtoFile(this,
+					R.raw.car_make_model_revised, "makemodel", "car.csv");
+			FormDatabase();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		makeGroup = getLabels(database.SELECT_MAKE, true);
+		for (int i = 0; i < makeGroup.size(); i++) {
+			String temp_make = makeGroup.get(i);
+			List<String> individual_model = new ArrayList<String>();
+			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
+					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX, false);
+			removeMake(individual_model, temp_make);
+			makemodelGroup.add(individual_model);
+		}
+
+	}
+
+	private void initialize_guidance_text() {
+		guideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
+	}
+
+	private void initialize_welcome_text() {
+
+		setWelcomeword(usr_name);
+	}
+
+	private void setWelcomeword(String usrname) {
+		String welcome_words_string;
+		if (StaticGlobalFunctions.isEmailValid(usr_name)) {
+			welcome_words_string = usr_name;
+		} else {
+			welcome_words_string = "Dear guest";
+		}
+		if (StaticGlobalFunctions.wifi_connection(this)) {
+			welcome_words_string += " (Online)";
+		} else {
+			welcome_words_string += " (Offline)";
+		}
+		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
+		welcomeText.setText(welcome_words_string);
+
+	}
+
+	private void initialize_mm_textView() {
+		makemodelshowTextView = (TextView) findViewById(R.id.mainscreen_makemodel_tv);
+	}
+
+	private void initialize_btn_takeimg() {
+
+		btn_takeimg = (Button) findViewById(R.id.button_take_new);
+		btn_takeimg.setVisibility(View.VISIBLE);
+		btn_takeimg.setEnabled(true);
+
+		btn_takeimg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				View popupView = getLayoutInflater().inflate(R.layout.popup,
+						null);
+				mPopupWindow = new PopupWindow(popupView,
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
+				mPopupWindow
+						.setAnimationStyle(android.R.style.Animation_Dialog);
+				Rect btn_takeimg_location = StaticGlobalFunctions
+						.locateView(btn_takeimg);
+				if (btn_takeimg_location == null) {
+					mPopupWindow
+							.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+				} else {
+					mPopupWindow.showAtLocation(popupView, Gravity.LEFT
+							| Gravity.TOP, btn_takeimg_location.left
+							- popupView.getWidth(), btn_takeimg_location.bottom);
+				}
+
+				Button btnfromCamera = (Button) popupView
+						.findViewById(R.id.btntakefromcamera);
+				if (btnfromCamera == null) {
+					Log.d(MAINSTRING, "btn is null");
+				}
+				btnfromCamera.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mImageView.clearrect();
+						mImageView.setImageDrawable(getResources().getDrawable(
+								R.drawable.processing));
+						mImageView.invalidate();
+
+						if (gRectCount != 0) {
+							String showMessage = "Abondon all the rectangles and start a new one?";
+							showDialog(showMessage);
+						} else {
+							dispathTakePictureIntent();
+							mPopupWindow.dismiss();
+						}
+
+					}
+				});
+
+				Button btnfromGallery = (Button) popupView
+						.findViewById(R.id.btntakefromgallery);
+				btnfromGallery.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mImageView.clearrect();
+						mImageView.setImageDrawable(getResources().getDrawable(
+								R.drawable.processing));
+						mImageView.invalidate();
+
+						dispatchSelectFromGalleryIntent();
+						mPopupWindow.dismiss();
+
+					}
+
+				});
+
+				Button btnforcancel = (Button) popupView
+						.findViewById(R.id.btncancellfrompopup);
+				btnforcancel.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						mPopupWindow.dismiss();
+
+					}
+				});
+
+			}
+		});
+
 	}
 
 	private void showReminder() {
@@ -253,28 +404,6 @@ public class Main_screen extends Activity implements
 				btn_upload.setEnabled(false);
 			}
 		}
-	}
-
-	private void pre_initialize_mm_selection_dialog() {
-
-		try {
-			makeModelDataFile = FileOperation.transferRawtoFile(this,
-					R.raw.car_make_model_revised, "makemodel", "car.csv");
-			FormDatabase();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		makeGroup = getLabels(database.SELECT_MAKE, true);
-		for (int i = 0; i < makeGroup.size(); i++) {
-			String temp_make = makeGroup.get(i);
-			List<String> individual_model = new ArrayList<String>();
-			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
-					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX, false);
-			removeMake(individual_model, temp_make);
-			makemodelGroup.add(individual_model);
-		}
-
 	}
 
 	private void removeMake(List<String> individual_model, String temp_make) {
@@ -399,10 +528,6 @@ public class Main_screen extends Activity implements
 
 	}
 
-	private void initialize_mm_textView() {
-		makemodelshowTextView = (TextView) findViewById(R.id.mainscreen_makemodel_tv);
-	}
-
 	private void initialize_btn_selectmm() {
 		// TODO Auto-generated method stub
 		btn_selectmm = (Button) findViewById(R.id.btn_select_mm);
@@ -422,24 +547,6 @@ public class Main_screen extends Activity implements
 
 	private String getUsrFromIntent() {
 		return getIntent().getStringExtra(Login.USR_TOMAIN_INTENT);
-	}
-
-	private void setWelcomeword(String usrname, boolean isWifi) {
-		String welcome_words_string;
-		if (StaticGlobalFunctions.isEmailValid(usr_name)) {
-			welcome_words_string = usr_name;
-		} else {
-			welcome_words_string = "Dear guest";
-		}
-		if (isWifi) {
-			welcome_words_string += " (Online)";
-		} else {
-			welcome_words_string += " (Offline)";
-		}
-		// Activity activity
-		welcomeText = (TextView) findViewById(R.id.mainscreen_welcome_text);
-		welcomeText.setText(welcome_words_string);
-
 	}
 
 	// private void initialize_progbar() {
@@ -477,7 +584,7 @@ public class Main_screen extends Activity implements
 						drawView.adjustCortex();
 						btn_selectmm.setEnabled(true);
 						btn_save.setEnabled(true);
-						GuideText.setText("Press \" Make&Model\" to annotate");
+						guideText.setText("Press \" Make&Model\" to annotate");
 					}
 					drawView.invalidate();
 
@@ -523,9 +630,9 @@ public class Main_screen extends Activity implements
 				btn_send.setEnabled(true);
 				mImageView.invalidate();
 				if (global_prevent_reDraw == true) {
-					GuideText.setText("Press \"Done!\" to finish");
+					guideText.setText("Press \"Done!\" to finish");
 				} else {
-					GuideText
+					guideText
 							.setText("Press \"Done!\" if no other cars in the image");
 
 				}
@@ -684,99 +791,12 @@ public class Main_screen extends Activity implements
 				mImageView.invalidate();
 				global_prevent_reDraw = true;
 
-				GuideText
+				guideText
 						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 
 			}
 
 		});
-	}
-
-	private void initialize_btn_takeimg() {
-
-		btn_takeimg = (Button) findViewById(R.id.button_take_new);
-		btn_takeimg.setEnabled(true);
-
-		btn_takeimg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				View popupView = getLayoutInflater().inflate(R.layout.popup,
-						null);
-				/* mPopupWindow=new PopupWindow(popupView, , 100, , true); */
-				mPopupWindow = new PopupWindow(popupView,
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-						true);
-				mPopupWindow
-						.setAnimationStyle(android.R.style.Animation_Dialog);
-				Rect btn_takeimg_location = StaticGlobalFunctions
-						.locateView(btn_takeimg);
-				if (btn_takeimg_location == null) {
-					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM
-							| Gravity.LEFT, 0, 0);
-				} else {
-					mPopupWindow.showAtLocation(popupView, Gravity.LEFT
-							| Gravity.TOP, btn_takeimg_location.left,
-							btn_takeimg_location.bottom);
-				}
-
-				Button btnfromCamera = (Button) popupView
-						.findViewById(R.id.btntakefromcamera);
-				if (btnfromCamera == null) {
-					Log.d(MAINSTRING, "btn is null");
-				}
-				btnfromCamera.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
-
-						if (gRectCount != 0) {
-							String showMessage = "Abondon all the rectangles and start a new one?";
-							showDialog(showMessage);
-						} else {
-							dispathTakePictureIntent();
-							mPopupWindow.dismiss();
-						}
-
-					}
-				});
-
-				Button btnfromGallery = (Button) popupView
-						.findViewById(R.id.btntakefromgallery);
-				btnfromGallery.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
-
-						dispatchSelectFromGalleryIntent();
-						mPopupWindow.dismiss();
-
-					}
-
-				});
-
-				Button btnforcancel = (Button) popupView
-						.findViewById(R.id.btncancellfrompopup);
-				btnforcancel.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						mPopupWindow.dismiss();
-
-					}
-				});
-
-			}
-		});
-
 	}
 
 	private void dispatchSelectFromGalleryIntent() {
@@ -1047,7 +1067,7 @@ public class Main_screen extends Activity implements
 			// 20131007 add image data information to parseSendData
 			pSendData.setImageData(mCurrentPhotoPath);
 			mScaleRatio = new ScaleRatio(mImageView, mCurrentPhotoPath);
-			GuideText.setText("Swipe to draw image:");
+			guideText.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
 			take_valide_img = true;
 		}
@@ -1253,14 +1273,6 @@ public class Main_screen extends Activity implements
 		AlertDialog warningDialog = alertBuilder.create();
 		warningDialog.show();
 
-	}
-
-	@Override
-	public void onTkImg(Boolean s) {
-
-		if (s) {
-			dispathTakePictureIntent();
-		}
 	}
 
 	private boolean loginGlobalUser() {

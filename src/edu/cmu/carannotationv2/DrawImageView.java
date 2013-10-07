@@ -1,6 +1,6 @@
 package edu.cmu.carannotationv2;
 
-import android.R.integer;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
