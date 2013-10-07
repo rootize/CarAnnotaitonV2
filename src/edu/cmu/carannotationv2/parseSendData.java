@@ -49,15 +49,24 @@ public boolean sendOnLine() {
 	
 	
 	
-	return sendAnnotationInfoList(usrParseObject,imageParseObject);
+	int brokenAt= sendAnnotationInfoList(usrParseObject,imageParseObject);
+	if (brokenAt<pAnnotationInfoList.size()) {
+		return false;
+	}else
+	{
+		return true;
+	}
 }
 
-private boolean sendAnnotationInfoList(ParseObject usrParseObject, ParseObject imageParseObject) {
+private int sendAnnotationInfoList(ParseObject usrParseObject, ParseObject imageParseObject) {
 	
     for (int i = 0 ,  length=pAnnotationInfoList.size(); i < length; i++) {
-		
+    	
+		if ( !pAnnotationInfoList.get(i).sendtoParse(usrParseObject,imageParseObject) ) {
+			return i;
+		}
 	}
-	return false;
+	return pAnnotationInfoList.size();
 }
 	
 	
