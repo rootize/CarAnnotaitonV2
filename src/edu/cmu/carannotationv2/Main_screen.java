@@ -194,8 +194,8 @@ public class Main_screen extends Activity {
 		// initialize drawimageview
 		initialize_drawImageView();
 		// button : upload images
-		initialize_btn_upload();
-		showReminder();
+		//initialize_btn_upload();
+		//showReminder();
 	}
 
 	private void pre_initialize_mm_selection_dialog() {

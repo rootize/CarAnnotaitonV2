@@ -30,6 +30,35 @@ public class parseSendData {
 		pAnnotationInfoList = new ArrayList<AnnotationInfo>();
 	}
 
+	public parseSendData(Context context, String fileNameString) {
+		this.context = context;
+
+	}
+
+	public parseSendData(Context context, JSONObject singleJsonObject) {
+		this.context = context;
+		pUser = new UserInfo();
+		pImageData = new ImageMeta();
+		pAnnotationInfoList = new ArrayList<AnnotationInfo>();
+		try {
+			pUser.setUserEmail(singleJsonObject.getJSONObject(USER).getString(
+					"emailId"));
+			pImageData.setMetaData(singleJsonObject.getJSONObject(IMAGE_INFO)
+					.getString("imageFileName"));
+
+			for (int i = 0, length = singleJsonObject.getJSONArray(
+					ANNOTATION_INFO).length(); i < length; i++) {
+				pAnnotationInfoList.add(new AnnotationInfo(
+						(JSONObject) singleJsonObject.getJSONArray(
+								ANNOTATION_INFO).get(i)));
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
 	public void addUsr(String emailString) {
 		pUser.setUserEmail(emailString);
 	}
@@ -87,9 +116,9 @@ public class parseSendData {
 						.saveOffline());
 			}
 			JSONObject fullInfoJsonObject = new JSONObject();
-			fullInfoJsonObject.putOpt("usr", userJsonObject);
-			fullInfoJsonObject.putOpt("imagemeta", imgJsonObject);
-			fullInfoJsonObject.put("anno", annotationJsonArray);
+			fullInfoJsonObject.putOpt(USER, userJsonObject);
+			fullInfoJsonObject.putOpt(IMAGE_INFO, imgJsonObject);
+			fullInfoJsonObject.put(ANNOTATION_INFO, annotationJsonArray);
 
 			saveNewJsonObject(fullInfoJsonObject);
 		} catch (Exception e) {
