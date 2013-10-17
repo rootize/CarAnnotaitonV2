@@ -4,6 +4,10 @@ package edu.cmu.carannotationv2;
 //注释1：
 //原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
 //不知道原因
+//TODO list:
+// Making that to be services
+// change minor problems
+//
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -385,7 +389,7 @@ public class Main_screen extends Activity implements
 					selectedModel = "unknown";
 					make_model_Dialog.dismiss();
 					makemodelshowTextView.setText("I don't know the make"
-							+ " & " + "I don't know the model");
+							+ "  " + "I don't know the model");
 					return true;
 				} else {
 
@@ -419,21 +423,21 @@ public class Main_screen extends Activity implements
 						.get(childPosition).toString();
 				makemodelshowTextView.setText(makeGroup.get(groupPosition)
 						.toString()
-						+ " & "
+						+ "  "
 						+ makemodelGroup.get(groupPosition).get(childPosition)
 								.toString());
 
 				if (selectedMake.equals(database.NONE_EXISTING)) {
 					selectedMake = "unknown";
 					makemodelshowTextView.setText("I don't know the make"
-							+ " & "
+							+ "  "
 							+ makemodelGroup.get(groupPosition)
 									.get(childPosition).toString());
 				}
 				if (selectedModel.equals(database.NONE_EXISTING_MODEL)) {
 					selectedModel = "unknown";
 					makemodelshowTextView.setText(makeGroup.get(groupPosition)
-							.toString() + " & " + "I don't know the model");
+							.toString() + "  " + "I don't know the model");
 				}
 
 				// Close the dialog
