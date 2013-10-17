@@ -49,6 +49,8 @@ public class FileUploadThread extends Thread {
 		super.run();
 	}
 
+	
+	
 	private void recursive_upload() throws JSONException {
 		// TODO Auto-generated method stub
 		String offline_string = FileOperation.read(context, offline_filename);
@@ -61,6 +63,13 @@ public class FileUploadThread extends Thread {
 					Log.d("recursive_upload", "something in offline JsonArray");
 					JSONObject itemJsonObject=(JSONObject)offline_JsonArray.get(0);
 					ParseObject pObject=new JSONdata(itemJsonObject).formatParseObject(ed.getCipherTextClassName());
+					//UploadingDependentItems udi=new UploadingDependentItems();
+					//udi.sendingMultipleobjects(itemJsonObject);
+					
+					/*ParseObject userObject=new JSONdata(itemJsonObject).split2user();
+					ParseObject imageObject=new JSONdata(itemJsonObject).split2img();
+					ParseObject annotationObject=new JSONdata(itemJsonObject).split2anno();*/
+					
 					
 					
 					pObject.saveInBackground(new SaveCallback() {

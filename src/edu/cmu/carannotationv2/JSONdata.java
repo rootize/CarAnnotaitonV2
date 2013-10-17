@@ -21,6 +21,10 @@ public class JSONdata {
 	private double w_sr=1;
 	private double h_sr=1;
 	
+	private static final String USEROBJECT_STRING="User";
+	private static final String PEmail="emailId";
+	private static final String IMAGEOBJECT_STRING = "ImageInfo";
+	private static final String ANNOTATIONOBJECT_STRING="Annotaiton";
 	private static final int SAVED_WIDTH=1920;
 	private static final int SAVED_HEIGHT=1440;
 	public static final String SP_STRING = "loc_info";
@@ -321,6 +325,25 @@ public class JSONdata {
 			e.printStackTrace();
 		}
 
+	}
+
+
+//	public ParseObject split2user() {
+//		ParseObject pObject=new ParseObject(POBJECTNAME);
+//        pObject.put(PEmail, userEmailString);
+//		
+//	}
+
+
+	public ParseObject split2img() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public ParseObject split2anno() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -5,9 +5,8 @@ package edu.cmu.carannotationv2;
 //原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
 //不知道原因
 //TODO list:
-// Making that to be services
-// change minor problems
-//
+// Making uploading things  to be services
+
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -107,6 +106,7 @@ public class Main_screen extends Activity implements
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	private static final String IMG_PATH_KEY = "imgpath";
+	private static final String infoDir="InfoDir";
 	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
 	private File imgFile;
@@ -220,7 +220,15 @@ public class Main_screen extends Activity implements
 		initialize_drawImageView();
 		initialize_progbar();
 		initialize_btn_upload();
-
+		//later set move them to file operation system
+		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
+		if(!mydir.exists())
+		{
+		     mydir.mkdirs();
+		}
+		
+		
+		
 	}
 
 	public boolean fileExistance(String fname) {
@@ -517,7 +525,6 @@ public class Main_screen extends Activity implements
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
 						drawView.setFix_x(event.getX());
-
 						drawView.setFix_y(event.getY());
 
 					} else {
