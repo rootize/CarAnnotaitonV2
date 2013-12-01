@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import java.util.List;
 
+import android.R.integer;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,6 +30,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 
 import android.database.Cursor;
 import android.database.SQLException;
@@ -43,6 +46,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.StaticLayout;
@@ -107,6 +111,8 @@ public class Main_screen extends Activity implements
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	private static final String IMG_PATH_KEY = "imgpath";
 	private static final String infoDir="InfoDir";
+	private int file_NO;
+	private Editor file_no_recoderEditor;
 	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
 	private File imgFile;
@@ -162,7 +168,7 @@ public class Main_screen extends Activity implements
 
 	private PopupWindow mPopupWindow;
 
-	private static final String offline_filename_bk = "offline_bk";
+//	private static final String offline_filename_bk = "offline_bk";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -173,12 +179,14 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
-		if (fileExistance(offline_filename_bk)) {
+	/*	if (fileExistance(offline_filename_bk)) {
 			File oldFile = this.getFileStreamPath(offline_filename_bk);
 			File newFile = this.getFileStreamPath(offline_filename);
 			oldFile.renameTo(newFile);
-		}
+		}*/
 
+		
+		
 		Log.d(MAINSTRING, "onCreateCalled");
 		// Change Screen Rotation to Enabled
 		if (android.provider.Settings.System.getInt(getContentResolver(),
@@ -224,13 +232,29 @@ public class Main_screen extends Activity implements
 		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
 		if(!mydir.exists())
 		{
+			file_NO=0;
+			/*file_no_recoderEditor=PreferenceManager.getDefaultSharedPreferences(this).edit();
+			file_no_recoderEditor.putInt("file_number", file_NO);
+			file_no_recoderEditor.commit();*/
 		     mydir.mkdirs();
+		}else {
+			file_NO = mydir.listFiles().length;
+//		file_NO=PreferenceManager.getDefaultSharedPreferences(this).getInt("file_number", 0);
 		}
 		
 		
 		
 	}
 
+	private int getFilecounts(){
+		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
+		if (mydir.exists()) {
+			return mydir.listFiles().length;
+		}else {
+			return -1;
+		}
+	}
+	
 	public boolean fileExistance(String fname) {
 		File file = getBaseContext().getFileStreamPath(fname);
 		if (file.exists()) {
@@ -241,8 +265,10 @@ public class Main_screen extends Activity implements
 	}
 
 	private void showReminder() {
-
-		if (fileExistance(offline_filename) && wifi_connected ) {
+          
+		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
+		
+		if (mydir.listFiles().length>0&& wifi_connected ) {
 			login_global_usr();
 			Log.d("Main", "satisfies");
 			AlertDialog.Builder ad = new AlertDialog.Builder(this);
@@ -658,33 +684,21 @@ public class Main_screen extends Activity implements
 					});
 
 				} else {
-					try {
-						JSONArray old_offlineJsonArray;
-						String temp = FileOperation.read(
-								getApplicationContext(), offline_filename);
-						if (temp == null) {
-							old_offlineJsonArray = new JSONArray();
-						} else {
-
-							old_offlineJsonArray = new JSONArray(temp);
-
-						}
-
-						JSONObject toSend_item = jsonData.getJsonObject();
-						old_offlineJsonArray.put(toSend_item);
-						// Using Thread?
-						FileOperation.save(getApplicationContext(),
-								offline_filename,
-								old_offlineJsonArray.toString());
-						String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-						static_global_functions.ShowToast_short(
-								getApplicationContext(), showMessage,
-								R.drawable.success);
-						// showReminder();
-					} catch (JSONException e) {
-
-						e.printStackTrace();
-					}
+					///*SimpleDateFormat sdf=new SimpleDateFormat("ddMMyy-hhmmss");
+				//	Random rdmRandom=new Random();
+					//String tempFileNameString=String.format("%s-%s", sdf.format(new Date()),String.forma*/t("%4d",  rdmRandom.nextInt(9999)));
+					JSONObject toSend_item = jsonData.getJsonObject();
+					
+					String tempFile=String.format("%05d", getFilecounts());
+					File fileDir=new File(getFilesDir(),infoDir);
+					FileOperation.saveCostomizedDir(getApplicationContext(),
+							tempFile,fileDir,
+							toSend_item.toString());
+					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+					static_global_functions.ShowToast_short(
+							getApplicationContext(), showMessage,
+							R.drawable.success);
+					// showReminder();
 
 				}
 				gRectCount = 0;

@@ -1,4 +1,5 @@
 package edu.cmu.carannotationv2;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import android.content.Context;
 
@@ -103,6 +105,30 @@ public class FileOperation  {
 			e.printStackTrace();
 		}  
 		return false;
+	}
+	
+	
+	public static boolean saveCostomizedDir(Context context,String fileName,File dirPath, String content){  
+//		FileOutputStream fos;
+		try {
+			File saveFile=new File(dirPath,fileName);
+//			fos = context.openFileOutput(saveFile, Context.MODE_PRIVATE);
+			OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(saveFile.getPath(),true));
+			outputStream.flush();
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}  
+		return true;
+//		try {
+//			fos.write(content.getBytes());
+//			fos.close();  
+//			return true;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}  
+//		return false;
 	}
 	
 	public FileOperation() {
