@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -88,7 +89,9 @@ import org.json.JSONObject;
 
 public class Main_screen extends Activity implements
 		tk_img_frag.OnTkImgListener {
-
+/********************added 20131201*************/
+ private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
+/* ********************************************/
 	public String locationinfo_string;
 	private LocationManager locationMangaer = null;
 	private LocationListener locationListener = null;
@@ -99,6 +102,8 @@ public class Main_screen extends Activity implements
 	private static final String SAVELOGGININ_STRING = "loggedin";
 	private static final String SAVEWIFI_STRING = "wifi";
 
+	
+	
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
@@ -246,8 +251,8 @@ public class Main_screen extends Activity implements
 		
 	}
 
-	private int getFilecounts(){
-		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
+	private int getFilecounts(File mydir){
+//		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
 		if (mydir.exists()) {
 			return mydir.listFiles().length;
 		}else {
@@ -687,12 +692,31 @@ public class Main_screen extends Activity implements
 					///*SimpleDateFormat sdf=new SimpleDateFormat("ddMMyy-hhmmss");
 				//	Random rdmRandom=new Random();
 					//String tempFileNameString=String.format("%s-%s", sdf.format(new Date()),String.forma*/t("%4d",  rdmRandom.nextInt(9999)));
+					
+					
+					
+					
 					JSONObject toSend_item = jsonData.getJsonObject();
 					
-					String tempFile=String.format("%05d", getFilecounts());
-					File fileDir=new File(getFilesDir(),infoDir);
+					File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
+					if (!saveFolder.exists()) {
+						if (!saveFolder.mkdirs()) {
+							Log.e("MainScreen", "Cannot create folder saving sent files");
+				
+						}else {
+							Log.d("MainScreen", saveFolder.toString());
+						}
+					}
+					
+					String tempFile=util.setFileNamebyDate();
+					Log.d("Filename", tempFile);
+//					
+//					String tempFile=String.format("%05d", getFilecounts(saveFolder));
+//					tempFile=tempFile+calendar.get(Calendar.DAY_OF_MONTH)+calendar.get(Calendar.HOUR_OF_DAY)+calendar.get(Calendar.MINUTE)+calendar.get(Calendar.SECOND);
+//					File fileDir=new File(getFilesDir(),infoDir);
+					
 					FileOperation.saveCostomizedDir(getApplicationContext(),
-							tempFile,fileDir,
+							tempFile,saveFolder,
 							toSend_item.toString());
 					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
 					static_global_functions.ShowToast_short(
