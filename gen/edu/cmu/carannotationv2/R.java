@@ -112,7 +112,9 @@ public final class R {
     public static final class raw {
         public static final int car_make_model_revised=0x7f040000;
         public static final int key=0x7f040001;
-        public static final int plaintext=0x7f040002;
+        public static final int makejson=0x7f040002;
+        public static final int modeljson=0x7f040003;
+        public static final int plaintext=0x7f040004;
     }
     public static final class string {
         public static final int Email=0x7f070003;

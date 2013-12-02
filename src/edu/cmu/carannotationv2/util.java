@@ -1,6 +1,10 @@
 package edu.cmu.carannotationv2;
 
+import java.io.File;
 import java.util.Calendar;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
 
  public class util {
 public static String setFileNamebyDate(){
@@ -15,5 +19,26 @@ public static String setFileNamebyDate(){
 public static String set2Digits(int x){
 	
 	return String.format("%02d", x);
+}
+
+public static boolean isWifi(Context context){
+	ConnectivityManager manager = (ConnectivityManager) context
+			.getSystemService(Context.CONNECTIVITY_SERVICE);
+	
+	boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+			.isConnectedOrConnecting();
+	if (isWifi) {
+		return true;
+
+	} else {
+		return false;
+	}
+}
+public static boolean fileExistanceInternal(Context context, String fname,String folder){
+	
+	File make_model_file_dir = context.getDir(folder, Context.MODE_PRIVATE);
+	File privateFile = new File(make_model_file_dir, fname);
+//    File file = getBaseContext().getFileStreamPath(fname);
+    return privateFile.exists();
 }
 }

@@ -13,6 +13,7 @@ import java.io.File;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,10 +89,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Main_screen extends Activity implements
-		tk_img_frag.OnTkImgListener {
-/********************added 20131201*************/
- private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
-/* ********************************************/
+tk_img_frag.OnTkImgListener {
+	/********************added 20131201*************/
+	private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
+	// files
+	private File makeJsonFile;
+	private File modelJsonFile;
+	private MMdata mMdata;
+	/* ********************************************/
 	public String locationinfo_string;
 	private LocationManager locationMangaer = null;
 	private LocationListener locationListener = null;
@@ -102,8 +107,8 @@ public class Main_screen extends Activity implements
 	private static final String SAVELOGGININ_STRING = "loggedin";
 	private static final String SAVEWIFI_STRING = "wifi";
 
-	
-	
+
+
 	private int scaleFactor = 0;
 	private Boolean isScreenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
@@ -173,7 +178,7 @@ public class Main_screen extends Activity implements
 
 	private PopupWindow mPopupWindow;
 
-//	private static final String offline_filename_bk = "offline_bk";
+	//	private static final String offline_filename_bk = "offline_bk";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -184,14 +189,14 @@ public class Main_screen extends Activity implements
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
-	/*	if (fileExistance(offline_filename_bk)) {
+		/*	if (fileExistance(offline_filename_bk)) {
 			File oldFile = this.getFileStreamPath(offline_filename_bk);
 			File newFile = this.getFileStreamPath(offline_filename);
 			oldFile.renameTo(newFile);
 		}*/
 
-		
-		
+
+
 		Log.d(MAINSTRING, "onCreateCalled");
 		// Change Screen Rotation to Enabled
 		if (android.provider.Settings.System.getInt(getContentResolver(),
@@ -241,25 +246,25 @@ public class Main_screen extends Activity implements
 			/*file_no_recoderEditor=PreferenceManager.getDefaultSharedPreferences(this).edit();
 			file_no_recoderEditor.putInt("file_number", file_NO);
 			file_no_recoderEditor.commit();*/
-		     mydir.mkdirs();
+			mydir.mkdirs();
 		}else {
 			file_NO = mydir.listFiles().length;
-//		file_NO=PreferenceManager.getDefaultSharedPreferences(this).getInt("file_number", 0);
+			//		file_NO=PreferenceManager.getDefaultSharedPreferences(this).getInt("file_number", 0);
 		}
-		
-		
-		
+
+
+
 	}
 
 	private int getFilecounts(File mydir){
-//		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
+		//		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
 		if (mydir.exists()) {
 			return mydir.listFiles().length;
 		}else {
 			return -1;
 		}
 	}
-	
+
 	public boolean fileExistance(String fname) {
 		File file = getBaseContext().getFileStreamPath(fname);
 		if (file.exists()) {
@@ -270,39 +275,39 @@ public class Main_screen extends Activity implements
 	}
 
 	private void showReminder() {
-          
+
 		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
-		
+
 		if (mydir.listFiles().length>0&& wifi_connected ) {
 			login_global_usr();
 			Log.d("Main", "satisfies");
 			AlertDialog.Builder ad = new AlertDialog.Builder(this);
 			ad.setTitle("Caution")
-					.setMessage(
-							"There are unuploaded images on your phone, please upload them when wifi are available.")
+			.setMessage(
+					"There are unuploaded images on your phone, please upload them when wifi are available.")
 					.setCancelable(false)
 					.setPositiveButton("OK",
 							new DialogInterface.OnClickListener() {
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									new FileUploadThread(
-											getApplicationContext(), ed).run();
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							new FileUploadThread(
+									getApplicationContext(), ed).run();
 
-								}
-							}).setNegativeButton("Not now", new DialogInterface.OnClickListener() {
-								
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									
-									
-								}
-							}).show();
+						}
+					}).setNegativeButton("Not now", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+
+						}
+					}).show();
 		}
 
 	}
-//	total_number = mydir.listFiles().length;
+
 	private void initialize_btn_upload() {
 		btn_upload = (Button) findViewById(R.id.btn_upload);
 		File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
@@ -311,7 +316,7 @@ public class Main_screen extends Activity implements
 		}else {
 			btn_upload.setVisibility(View.INVISIBLE);
 		}
-		
+
 
 		btn_upload.setOnClickListener(new OnClickListener() {
 
@@ -331,7 +336,7 @@ public class Main_screen extends Activity implements
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
+		
 		super.onStart();
 		Log.d(MAINSTRING, "onStartCalled");
 		showReminder();
@@ -348,13 +353,34 @@ public class Main_screen extends Activity implements
 		}
 	}
 
+
+	//	public boolean fileExistanceInternal(Context context, String fname,String folder){
+	//		
+	//		File make_model_file_dir = context.getDir(folder, Context.MODE_PRIVATE);
+	//		File privateFile = new File(make_model_file_dir, fname);
+	////	    File file = getBaseContext().getFileStreamPath(fname);
+	//	    return privateFile.exists();
+	//	}
 	private void pre_initialize_mm_selection_dialog() {
 
+		//using context from this works
+//		if (util.isWifi(this)) {
+//
+//		}else {
+//			//put into offline files
+//		}
+
 		try {
+
+			mMdata=new MMdata(getApplicationContext(), R.raw.makejson, R.raw.modeljson);
+			
 			makeModelDataFile = FileOperation.transferRawtoFile(
 					getApplicationContext(), R.raw.car_make_model_revised,
 					"makemodel", "car.csv");
+        
+			
 			FormDatabase();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -403,7 +429,7 @@ public class Main_screen extends Activity implements
 		make_model_listView = (ExpandableListView) viewlist
 				.findViewById(R.id.elvForDialog);
 		make_model_listView
-				.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
+		.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
 
 		make_model_listView.setFastScrollEnabled(true);
 		MyExpandableListAdapter mAdapter = new MyExpandableListAdapter(this,
@@ -454,7 +480,7 @@ public class Main_screen extends Activity implements
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id)
-					throws RuntimeException {
+							throws RuntimeException {
 				if (lastGroupPosition != -1
 						&& lastGroupPosition != groupPosition) {
 					// make_model_listView.collapseGroup(lastGroupPosition) ;
@@ -470,14 +496,14 @@ public class Main_screen extends Activity implements
 						.toString()
 						+ "  "
 						+ makemodelGroup.get(groupPosition).get(childPosition)
-								.toString());
+						.toString());
 
 				if (selectedMake.equals(database.NONE_EXISTING)) {
 					selectedMake = "unknown";
 					makemodelshowTextView.setText("I don't know the make"
 							+ "  "
 							+ makemodelGroup.get(groupPosition)
-									.get(childPosition).toString());
+							.get(childPosition).toString());
 				}
 				if (selectedModel.equals(database.NONE_EXISTING_MODEL)) {
 					selectedModel = "unknown";
@@ -610,7 +636,7 @@ public class Main_screen extends Activity implements
 					GuideText.setText("Press \"Done!\" to finish");
 				} else {
 					GuideText
-							.setText("Press \"Done!\" if no other cars in the image");
+					.setText("Press \"Done!\" if no other cars in the image");
 
 				}
 				// After each selection, make them null
@@ -695,34 +721,34 @@ public class Main_screen extends Activity implements
 					});
 
 				} else {
-			
-					
-					
-					
+
+
+
+
 					JSONObject toSend_item = jsonData.getJsonObject();
-					
+
 					File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
 					if (!saveFolder.exists()) {
 						if (!saveFolder.mkdirs()) {
 							Log.e("MainScreen", "Cannot create folder saving sent files");
-				
+
 						}else {
 							Log.d("MainScreen", saveFolder.toString());
-                          sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile(saveFolder)));
+							sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile(saveFolder)));
 						}
 					}
-					
+
 					String tempFile=util.setFileNamebyDate();
 					Log.d("Filename", tempFile);
-//					
-//					String tempFile=String.format("%05d", getFilecounts(saveFolder));
-//					tempFile=tempFile+calendar.get(Calendar.DAY_OF_MONTH)+calendar.get(Calendar.HOUR_OF_DAY)+calendar.get(Calendar.MINUTE)+calendar.get(Calendar.SECOND);
-//					File fileDir=new File(getFilesDir(),infoDir);
-					
+					//					
+					//					String tempFile=String.format("%05d", getFilecounts(saveFolder));
+					//					tempFile=tempFile+calendar.get(Calendar.DAY_OF_MONTH)+calendar.get(Calendar.HOUR_OF_DAY)+calendar.get(Calendar.MINUTE)+calendar.get(Calendar.SECOND);
+					//					File fileDir=new File(getFilesDir(),infoDir);
+
 					FileOperation.saveCostomizedDir(getApplicationContext(),
 							tempFile,saveFolder,
 							toSend_item.toString());
-					 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse(saveFolder.toString()+tempFile)));
+					sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse(saveFolder.toString()+tempFile)));
 					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
 					static_global_functions.ShowToast_short(
 							getApplicationContext(), showMessage,
@@ -748,7 +774,7 @@ public class Main_screen extends Activity implements
 				global_prevent_reDraw = true;
 
 				GuideText
-						.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
+				.setText("Thanks, please press \"Take a Photo\" to take a new photo ");
 
 			}
 
@@ -771,7 +797,7 @@ public class Main_screen extends Activity implements
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
 						true);
 				mPopupWindow
-						.setAnimationStyle(android.R.style.Animation_Dialog);
+				.setAnimationStyle(android.R.style.Animation_Dialog);
 				Rect btn_takeimg_location = static_global_functions
 						.locateView(btn_takeimg);
 				if (btn_takeimg_location == null) {
@@ -940,8 +966,8 @@ public class Main_screen extends Activity implements
 		super.onRestoreInstanceState(savedInstanceState);
 
 		mImageView
-				.setVisibility(savedInstanceState
-						.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
+		.setVisibility(savedInstanceState
+				.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
 						: ImageView.INVISIBLE);
 		mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
 
@@ -992,7 +1018,7 @@ public class Main_screen extends Activity implements
 
 	private File createImageFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
+		.format(new Date());
 		imageFileName = JPEG_FILE_PREFIX + timeStamp;
 		File albumF = getAlbumDir();
 		File imageF = File.createTempFile(imageFileName + "_",
@@ -1218,21 +1244,21 @@ public class Main_screen extends Activity implements
 		alertBuilder.setPositiveButton("YES",
 				new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-						dispathTakePictureIntent();
+				dispathTakePictureIntent();
 
-					}
-				});
+			}
+		});
 
 		alertBuilder.setNegativeButton("No",
 				new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
 		alertBuilder.setCancelable(true);
 		AlertDialog warningDialog = alertBuilder.create();
 		warningDialog.show();
@@ -1251,23 +1277,23 @@ public class Main_screen extends Activity implements
 		ParseUser.logInInBackground(ed.getCipherTextUserName(),
 				ed.getCipherTextUserPassword(), new LogInCallback() {
 
-					@Override
-					public void done(ParseUser usr, ParseException e) {
-						if (usr != null) {
-							Log.d("Login_before", "Successfully");
-							isLoggedin = true;
-						} else {
-							Log.d("error logging in ", e.toString());
-							isLoggedin = false;
-							static_global_functions
-									.ShowToast_short(
-											getApplicationContext(),
-											"Remote server not responding, save to local memory",
-											R.drawable.caution);
-						}
+			@Override
+			public void done(ParseUser usr, ParseException e) {
+				if (usr != null) {
+					Log.d("Login_before", "Successfully");
+					isLoggedin = true;
+				} else {
+					Log.d("error logging in ", e.toString());
+					isLoggedin = false;
+					static_global_functions
+					.ShowToast_short(
+							getApplicationContext(),
+							"Remote server not responding, save to local memory",
+							R.drawable.caution);
+				}
 
-					}
-				});
+			}
+		});
 
 	}
 
@@ -1275,7 +1301,7 @@ public class Main_screen extends Activity implements
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		
+
 	}
 
 }
