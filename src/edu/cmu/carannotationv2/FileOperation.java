@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import android.content.Context;
 
@@ -53,7 +55,8 @@ public class FileOperation  {
 	public static String read(Context context,String fileName){  
 		FileInputStream fis;
 		try {
-			fis = context.openFileInput(fileName);
+//			fis = context.openFileInput(fileName);
+			fis=new FileInputStream(new File(fileName));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
@@ -106,29 +109,62 @@ public class FileOperation  {
 		}  
 		return false;
 	}
-	
+	/** 
+	 * 读取外部文件内容 
+	 *  
+	 * @param fileName 文件名 
+	 * @return 文件内容 
+	 */  
+	public static String readfromExternal(File file){  
+		FileInputStream fis;
+		try {
+//			fis = context.openFileInput(fileName);
+			fis=new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}  
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+
+		byte[] buf = new byte[1024];  
+		int len = 0;  
+
+		//将读取后的数据放置在内存中---ByteArrayOutputStream  
+		try {
+			while ((len = fis.read(buf)) != -1) {  
+				baos.write(buf, 0, len);  
+			}
+			
+			fis.close();  
+			baos.close();  
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}  
+
+		//返回内存中存储的数据  
+		return baos.toString();  
+
+	}  
 	
 	public static boolean saveCostomizedDir(Context context,String fileName,File dirPath, String content){  
-//		FileOutputStream fos;
+
 		try {
 			File saveFile=new File(dirPath,fileName);
-//			fos = context.openFileOutput(saveFile, Context.MODE_PRIVATE);
-			OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(saveFile.getPath(),true));
+
+			FileWriter outFileWriter=new FileWriter(saveFile);
+			outFileWriter.write(content);
+			outFileWriter.close();
+//			OutputStreamWriter outputStreamWriter=new OutputStreamWriter(openfile)
+			/*OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(saveFile.getAbsolutePath(),true));
 			outputStream.flush();
-			outputStream.close();
+			outputStream.close();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}  
 		return true;
-//		try {
-//			fos.write(content.getBytes());
-//			fos.close();  
-//			return true;
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}  
-//		return false;
+
 	}
 	
 	public FileOperation() {

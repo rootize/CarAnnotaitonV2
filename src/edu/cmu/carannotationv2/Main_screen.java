@@ -302,10 +302,16 @@ public class Main_screen extends Activity implements
 		}
 
 	}
-
+//	total_number = mydir.listFiles().length;
 	private void initialize_btn_upload() {
 		btn_upload = (Button) findViewById(R.id.btn_upload);
-		btn_upload.setVisibility(View.INVISIBLE);
+		File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
+		if (saveFolder.exists() &&  saveFolder.listFiles().length>0 ) {
+			btn_upload.setVisibility(View.VISIBLE);
+		}else {
+			btn_upload.setVisibility(View.INVISIBLE);
+		}
+		
 
 		btn_upload.setOnClickListener(new OnClickListener() {
 
@@ -689,10 +695,7 @@ public class Main_screen extends Activity implements
 					});
 
 				} else {
-					///*SimpleDateFormat sdf=new SimpleDateFormat("ddMMyy-hhmmss");
-				//	Random rdmRandom=new Random();
-					//String tempFileNameString=String.format("%s-%s", sdf.format(new Date()),String.forma*/t("%4d",  rdmRandom.nextInt(9999)));
-					
+			
 					
 					
 					
@@ -705,6 +708,7 @@ public class Main_screen extends Activity implements
 				
 						}else {
 							Log.d("MainScreen", saveFolder.toString());
+                          sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile(saveFolder)));
 						}
 					}
 					
@@ -718,6 +722,7 @@ public class Main_screen extends Activity implements
 					FileOperation.saveCostomizedDir(getApplicationContext(),
 							tempFile,saveFolder,
 							toSend_item.toString());
+					 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse(saveFolder.toString()+tempFile)));
 					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
 					static_global_functions.ShowToast_short(
 							getApplicationContext(), showMessage,

@@ -10,20 +10,25 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
+import android.R.integer;
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
 public class FileUploadThread extends Thread {
+	private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
 	private static final String offline_filename = "offline";
 	private static final String offline_filename_bk = "offline_bk";
 	private static final String infoDir = "InfoDir";
 	private JSONArray offline_JsonArray;
 	private EncryptedData ed;
 	private int total;
-	private int counter = 0;;
+	public  static  int counter = 0;
+	public static int total_number=0;
+	public static int total_change=0;
 	Context context;
-	private File[] singleFiles;
+	public static  File[] singleFiles;
 	public FileUploadThread(Context context, EncryptedData ed) {
 		this.context = context;
 		this.ed = ed;
@@ -49,133 +54,120 @@ public class FileUploadThread extends Thread {
 		super.run();
 	}
 
-	private synchronized  void uploadDistributedFiles() {
-		File mydir = context.getDir(infoDir, Context.MODE_PRIVATE);
-		total = mydir.listFiles().length;
-		if (total > 0) {
+	private   void uploadDistributedFiles() throws JSONException {
+		File mydir =new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
+		total_number = mydir.listFiles().length;
+		total_change=total_number;
+		counter=0;
+		if (total_number > 0) {
+			singleFiles = mydir.listFiles();
 
-			 singleFiles = mydir.listFiles();
-			 
-			for (int i = 0; i < mydir.listFiles().length; i++) {
-				uploadSingleFile(singleFiles[i],i);
-			}
+		       recursive_upload();
 		}
-		if(mydir.listFiles().length==0)
+		else if(total_number==0)
 		{
 			mydir.delete();
 		}
+
+
+	}
+
+//	private synchronized void uploadSingleFile(File file,int num) {
+//		String single_item_String = FileOperation.readfromExternal(file);
+//		if (single_item_String != null) {
+//			try {
+//
+//				JSONObject jObject = new JSONObject(single_item_String);
+//				ParseObject pObject = new JSONdata(jObject)
+//				.formatParseObject(ed.getCipherTextClassName());
+//
+//				pObject.saveInBackground(new SaveCallback() {
+//
+//					@Override
+//					public void done(ParseException arg0) {
+//						if (arg0 == null) {
+//							/*file.delete();*/
+//							//							singleFiles[0].delete();
+//							static_global_functions.ShowToast_short(
+//									context,
+//									String.format(
+//											"%d out of %d have been sent successfully!",
+//											counter, total), R.drawable.success);
+//							//							FileOperation.delete(context, singleFiles[counter].getAbsolutePath());
+//							counter = counter + 1;
+//						}else {
+//							Log.d("Failed", "save in background");
+//						}
+//
+//					}
+//				});
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}else {
+//			file.delete();
+//		}
+//
+//	}
+
+	private void recursive_upload() throws JSONException {
 		
-
-	}
-
-	private synchronized void uploadSingleFile(File file,int num) {
-		String single_item_String = FileOperation.read(context,
-				file.getAbsolutePath());
-		if (single_item_String != null) {
-			try {
-				JSONObject jObject = new JSONObject(single_item_String);
-				ParseObject pObject = new JSONdata(jObject)
-						.formatParseObject(ed.getCipherTextClassName());
-				pObject.saveInBackground(new SaveCallback() {
-
-					@Override
-					public void done(ParseException arg0) {
-						if (arg0 == null) {
-							
-							static_global_functions.ShowToast_short(
-									context,
-									String.format(
-											"%d out of %d have been sent successfully!",
-											counter, total), R.drawable.success);
-							FileOperation.delete(context, singleFiles[counter].getAbsolutePath());
-							counter = counter + 1;
-						}
-
-					}
-				});
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-/*	private void recursive_upload() throws JSONException {
-		// TODO Auto-generated method stub
-		String offline_string = FileOperation.read(context, offline_filename);
 		Log.d("FileUploadThread", "recursive_upload");
-		if (offline_string != null) {
 
-			offline_JsonArray = new JSONArray(offline_string);
-			if (offline_JsonArray.length() > 0) {
-				Log.d("recursive_upload", "something in offline JsonArray");
-				JSONObject itemJsonObject = (JSONObject) offline_JsonArray
-						.get(0);
-				ParseObject pObject = new JSONdata(itemJsonObject)
-						.formatParseObject(ed.getCipherTextClassName());
-				// UploadingDependentItems udi=new UploadingDependentItems();
-				// udi.sendingMultipleobjects(itemJsonObject);
+		if (total_change >0) {
 
-				
-				 * ParseObject userObject=new
-				 * JSONdata(itemJsonObject).split2user(); ParseObject
-				 * imageObject=new JSONdata(itemJsonObject).split2img();
-				 * ParseObject annotationObject=new
-				 * JSONdata(itemJsonObject).split2anno();
-				 
+			String single_item_String = FileOperation.readfromExternal(singleFiles[total_change-1]);
+			JSONObject jObject = new JSONObject(single_item_String);
+			ParseObject pObject = new JSONdata(jObject)
+			.formatParseObject(ed.getCipherTextClassName());
 
-				pObject.saveInBackground(new SaveCallback() {
+			pObject.saveInBackground(new SaveCallback() {
 
-					@Override
-					public void done(ParseException arg0) {
-
+				@Override
+				public void done(ParseException arg0) {
+					synchronized (this) {
 						if (arg0 == null) {
-							offline_JsonArray = static_global_functions.remove(
-									0, offline_JsonArray);
-							FileOperation.delete(context, offline_filename);
 
-							counter = counter + 1;
-							Log.d("counter", "" + counter);
+							singleFiles[total_change-1].delete();
+							counter=counter+1;
+							Log.d("counter", "successful:" + counter);
 							static_global_functions.ShowToast_short(context,
 									String.format(
 											"%d out of %d have been sent",
-											counter, total), R.drawable.success);
-							Log.d("All files", "Send successfully");
+											counter, total_number), R.drawable.success);
 
-							File oldFile = context
-									.getFileStreamPath(offline_filename);
-							File bkupFile = context
-									.getFileStreamPath(offline_filename_bk);
-							oldFile.renameTo(bkupFile);
-							FileOperation.save(context, offline_filename,
-									offline_JsonArray.toString());
-							FileOperation.delete(context, offline_filename_bk);
-							try {
-								recursive_upload();
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-
+							
 						} else {
-
+							counter=counter+1;
+							Log.d("counter", "faile:" + counter);
+							static_global_functions.ShowToast_short(context,
+									String.format(
+											"%d out of %d failed",
+											counter, total_number), R.drawable.caution);
+						}
+						total_change=total_change-1;
+						try {
+							recursive_upload();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
-				});
+				}
+			});
 
-			} else {
-				FileOperation.delete(context, offline_filename);
-				static_global_functions.ShowToast_short(context, "success!",
-						R.drawable.success);
-			}
+		
 
 		} else {
 			static_global_functions.ShowToast_short(context,
-					"Previous data uploaded!", R.drawable.success);
-			Log.d("All files", "Send successfully");
+					String.format(
+							"%d out of %d have been sent to server, the failed will be sent next time if possible",
+							counter, total_number), R.drawable.success);
+			
 
-			FileOperation.delete(context, offline_filename);
-
+			
 		}
-	}*/
+
+	}
 }

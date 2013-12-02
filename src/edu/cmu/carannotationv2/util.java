@@ -10,7 +10,7 @@ public static String setFileNamebyDate(){
 	+ set2Digits( c.get(Calendar.MONTH))
 	+ set2Digits(c.get(Calendar.DAY_OF_MONTH))
 	+ set2Digits( c.get(Calendar.HOUR_OF_DAY))
-	+ set2Digits( c.get(Calendar.MINUTE));
+	+ set2Digits( c.get(Calendar.MINUTE))+set2Digits(c.get(Calendar.SECOND))+set2Digits(c.get(Calendar.MILLISECOND));
 }
 public static String set2Digits(int x){
 	
