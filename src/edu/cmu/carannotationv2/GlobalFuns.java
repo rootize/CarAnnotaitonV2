@@ -28,7 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class static_global_functions {
+public class GlobalFuns {
 
 	public static void ShowToast_short(Context context, String showString,
 			int icon) {

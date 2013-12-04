@@ -132,7 +132,7 @@ public class FileUploadThread extends Thread {
 							singleFiles[total_change-1].delete();
 							counter=counter+1;
 							Log.d("counter", "successful:" + counter);
-							static_global_functions.ShowToast_short(context,
+							GlobalFuns.ShowToast_short(context,
 									String.format(
 											"%d out of %d have been sent",
 											counter, total_number), R.drawable.success);
@@ -141,7 +141,7 @@ public class FileUploadThread extends Thread {
 						} else {
 							counter=counter+1;
 							Log.d("counter", "faile:" + counter);
-							static_global_functions.ShowToast_short(context,
+							GlobalFuns.ShowToast_short(context,
 									String.format(
 											"%d out of %d failed",
 											counter, total_number), R.drawable.caution);
@@ -160,7 +160,7 @@ public class FileUploadThread extends Thread {
 		
 
 		} else {
-			static_global_functions.ShowToast_short(context,
+			GlobalFuns.ShowToast_short(context,
 					String.format(
 							"%d out of %d have been sent to server, the failed will be sent next time if possible",
 							counter, total_number), R.drawable.success);

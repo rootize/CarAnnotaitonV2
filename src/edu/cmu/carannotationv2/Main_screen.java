@@ -13,18 +13,14 @@ import java.io.File;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 
 import java.util.List;
 
-import android.R.integer;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,19 +36,16 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.text.StaticLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -62,9 +55,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -72,7 +62,6 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parse.LogInCallback;
@@ -94,29 +83,25 @@ tk_img_frag.OnTkImgListener {
 	/********************added 20131201*************/
 	private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
 	// files
-	private File makeJsonFile;
-	private File modelJsonFile;
+
 	private MMdata mMdata;
 	
 	private HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
 	private HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
 	private HashMap<String, List<String>>modelDisplayHashMap;
-	private static final String UNKNOWN_STRING=" I don't know";
+
 	/* ********************************************/
 	public String locationinfo_string;
-	private LocationManager locationMangaer = null;
-	private LocationListener locationListener = null;
-	private final static String INFOFOLDER_STRING = "data_info";
+	
 	// Used for Debugging
 	private static final String MAINSTRING = "MainScreen";
-
 	private static final String SAVELOGGININ_STRING = "loggedin";
 	private static final String SAVEWIFI_STRING = "wifi";
 
 
 
 	private int scaleFactor = 0;
-	private Boolean isScreenRotationLocked;
+	private Boolean screenRotationLocked;
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int LOAD_IMG_FROM_G = 1666;
 
@@ -127,8 +112,7 @@ tk_img_frag.OnTkImgListener {
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	private static final String IMG_PATH_KEY = "imgpath";
 	private static final String infoDir="InfoDir";
-	private int file_NO;
-	private Editor file_no_recoderEditor;
+	
 	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
 	private File imgFile;
@@ -164,16 +148,14 @@ tk_img_frag.OnTkImgListener {
 	private String selectedMake;
 	private String selectedModel;
 	private ProgressBar progressBar;
-	private ProgressDialog pd_uploadingDialog;
 	private int gRectCount = 0;
 	// **************************************************************//
 	private File makeModelDataFile;
 	private SQLiteDatabase carDatabase;
 
 	private String usr_name;
-	private JSONArray offline_JsonArray;
-	private boolean wifi_connected;
-	private boolean isLoggedin = false;
+	private boolean flag_isWifiConnected;
+	private static boolean flag_isLoggedin = false;
 	private AnnotatorInput annotatorInput;
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
@@ -181,7 +163,6 @@ tk_img_frag.OnTkImgListener {
 	private LocationInfo locationInfo;
 
 	// Popupwindow
-
 	private PopupWindow mPopupWindow;
 
 	//	private static final String offline_filename_bk = "offline_bk";
@@ -195,29 +176,17 @@ tk_img_frag.OnTkImgListener {
 		requestWindowFeature(Window.FEATURE_PROGRESS);
 		setContentView(R.layout.main_screen);
 
-		/*	if (fileExistance(offline_filename_bk)) {
-			File oldFile = this.getFileStreamPath(offline_filename_bk);
-			File newFile = this.getFileStreamPath(offline_filename);
-			oldFile.renameTo(newFile);
-		}*/
 
 
-
-		Log.d(MAINSTRING, "onCreateCalled");
+		
 		// Change Screen Rotation to Enabled
-		if (android.provider.Settings.System.getInt(getContentResolver(),
-				Settings.System.ACCELEROMETER_ROTATION, 0) == 1) {
-			isScreenRotationLocked = false;
-		} else {
-			static_global_functions.setAutoOrientationEnabled(
-					getContentResolver(), true);
-			isScreenRotationLocked = true;
-		}
-
+		screenRotationLocked=Utils.isScreenLocked(getApplicationContext());
+		
+        // Location information 		
 		locationInfo = new LocationInfo(getApplicationContext());
 		locationinfo_string = locationInfo.getLoation();
 
-		mAlbumStorageDirFactory = static_global_functions
+		mAlbumStorageDirFactory = GlobalFuns
 				.setmAlbumStorageDirFactory();
 
 		ed = new EncryptedData(getApplicationContext(), R.raw.key,
@@ -227,14 +196,16 @@ tk_img_frag.OnTkImgListener {
 		ParseAnalytics.trackAppOpened(getIntent());
 
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
-		wifi_connected = static_global_functions
-				.wifi_connection(getApplicationContext());
-		if (wifi_connected) {
+		flag_isWifiConnected = Utils.isWifi(getApplicationContext());
+		
+		if (flag_isWifiConnected) {
 			login_global_usr();
 		}
-		pre_initialize_mm_selection_dialog();
 		usr_name = getUsrFromIntent();
-		setWelcomeword(usr_name, wifi_connected);
+		
+		//setting up core interfaces
+		pre_initialize_mm_selection_dialog();
+		setWelcomeword(usr_name, flag_isWifiConnected);
 		initialize_mm_textView();
 		initialize_btn_takeimg();
 		initialize_mm_selection_dialog();
@@ -244,44 +215,16 @@ tk_img_frag.OnTkImgListener {
 		initialize_drawImageView();
 		initialize_progbar();
 		initialize_btn_upload();
-		//later set move them to file operation system
-		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
-		if(!mydir.exists())
-		{
-			file_NO=0;
-			mydir.mkdirs();
-		}else {
-			file_NO = mydir.listFiles().length;
-			//		file_NO=PreferenceManager.getDefaultSharedPreferences(this).getInt("file_number", 0);
-		}
-
 
 
 	}
 
-	private int getFilecounts(File mydir){
-		//		File mydir=this.getDir(infoDir, Context.MODE_PRIVATE);
-		if (mydir.exists()) {
-			return mydir.listFiles().length;
-		}else {
-			return -1;
-		}
-	}
-
-	public boolean fileExistance(String fname) {
-		File file = getBaseContext().getFileStreamPath(fname);
-		if (file.exists()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+	
 	private void showReminder() {
 
 		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
 
-		if (mydir.listFiles().length>0&& wifi_connected ) {
+		if (mydir.listFiles().length>0&& flag_isWifiConnected ) {
 			login_global_usr();
 			Log.d("Main", "satisfies");
 			AlertDialog.Builder ad = new AlertDialog.Builder(this);
@@ -310,16 +253,23 @@ tk_img_frag.OnTkImgListener {
 		}
 
 	}
+	
+	
+	
 
 	private void initialize_btn_upload() {
+		boolean flag_uploadPre=false;
 		btn_upload = (Button) findViewById(R.id.btn_upload);
 		File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
-		if (saveFolder.exists() &&  saveFolder.listFiles().length>0 ) {
+		if (flag_isLoggedin && flag_isWifiConnected) {
+			flag_uploadPre=true;
+		}
+		
+		if (saveFolder.exists() &&  saveFolder.listFiles().length>0 && flag_uploadPre) {
 			btn_upload.setVisibility(View.VISIBLE);
 		}else {
 			btn_upload.setVisibility(View.INVISIBLE);
 		}
-
 
 		btn_upload.setOnClickListener(new OnClickListener() {
 
@@ -329,8 +279,8 @@ tk_img_frag.OnTkImgListener {
 				mImageView.setImageDrawable(getResources().getDrawable(
 						R.drawable.uploading));
 				btn_upload.setEnabled(false);
-
 				check_upload_localData();
+				
 
 			}
 		});
@@ -345,16 +295,16 @@ tk_img_frag.OnTkImgListener {
 		showReminder();
 	}
 
-	private void SetBtnUploading() {
-
-		if (fileExistance(offline_filename) && wifi_connected) {
-			login_global_usr();
-			btn_upload.setVisibility(View.VISIBLE);
-			btn_upload.setEnabled(true);
-		} else {
-			btn_upload.setVisibility(View.INVISIBLE);
-		}
-	}
+//	private void SetBtnUploading() {
+//
+//		if (fileExistance(offline_filename) && wifi_connected) {
+//			login_global_usr();
+//			btn_upload.setVisibility(View.VISIBLE);
+//			btn_upload.setEnabled(true);
+//		} else {
+//			btn_upload.setVisibility(View.INVISIBLE);
+//		}
+//	}
 
 
 	//	public boolean fileExistanceInternal(Context context, String fname,String folder){
@@ -366,23 +316,15 @@ tk_img_frag.OnTkImgListener {
 	//	}
 	private void pre_initialize_mm_selection_dialog() {
 
-		//using context from this works
-//		if (util.isWifi(this)) {
-//
-//		}else {
-//			//put into offline files
-//		}
 
 		try {
 
 			mMdata=new MMdata(getApplicationContext(), R.raw.makejson, R.raw.modeljson);
-			
-
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-       
-		
+      
 		makeHashMap=mMdata.getMakeHashMap();
 		modelHashMap=mMdata.getModelHashMap();
 		modelDisplayHashMap=mMdata.getModelDisplayHashmap();
@@ -391,11 +333,9 @@ tk_img_frag.OnTkImgListener {
 			String temp_make = makeGroup.get(i);
 			List<String> individual_model = new ArrayList<String>();
 			individual_model=modelDisplayHashMap.get(makeHashMap.get(temp_make) );
-//			individual_model.add(UNKNOWN_STRING);
-
 			makemodelGroup.add(individual_model);
 		}
-//         makeGroup.add(UNKNOWN_STRING);
+
 	}
 
 //	private void removeMake(List<String> individual_model, String temp_make) {
@@ -536,7 +476,7 @@ tk_img_frag.OnTkImgListener {
 
 	private void setWelcomeword(String usrname, boolean isWifi) {
 		String welcome_words_string;
-		if (static_global_functions.isEmailValid(usr_name)) {
+		if (GlobalFuns.isEmailValid(usr_name)) {
 			welcome_words_string = usr_name;
 		} else {
 			welcome_words_string = "Dear guest";
@@ -616,7 +556,7 @@ tk_img_frag.OnTkImgListener {
 				if (gRectCount == 5) {
 					global_prevent_reDraw = true;
 					String showMessage = "You have annotated 5 cars,click Done! ";
-					static_global_functions.ShowToast_short(
+					GlobalFuns.ShowToast_short(
 							getApplicationContext(), showMessage,
 							R.drawable.caution);
 				}
@@ -652,13 +592,13 @@ tk_img_frag.OnTkImgListener {
 				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
 				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
 						mCurrentPhotoPath));
-				wifi_connected = static_global_functions
+				flag_isWifiConnected = GlobalFuns
 						.wifi_connection(getApplicationContext());
 
-				annotatorInput.addWifiStatus(wifi_connected);
+				annotatorInput.addWifiStatus(flag_isWifiConnected);
 				jsonData = new JSONdata(annotatorInput, getApplicationContext());
 
-				if (wifi_connected && isLoggedin) {
+				if (flag_isWifiConnected && flag_isLoggedin) {
 					Log.d("Main Activity", "Come to this step");
 					ParseObject pb_send = jsonData.formatParseObject(ed
 							.getCipherTextClassName());
@@ -667,14 +607,14 @@ tk_img_frag.OnTkImgListener {
 						public void done(ParseException arg0) {
 							if (arg0 == null) {
 								String send_success = "Send to server successfully!";
-								static_global_functions.ShowToast_short(
+								GlobalFuns.ShowToast_short(
 										getApplicationContext(), send_success,
 										R.drawable.success);
 
 							} else {
 
 								String send_failuer = "Problem occured while sending, will save and try again next time";
-								static_global_functions.ShowToast_short(
+								GlobalFuns.ShowToast_short(
 										getApplicationContext(), send_failuer,
 										R.drawable.error);
 								try {
@@ -699,7 +639,7 @@ tk_img_frag.OnTkImgListener {
 											offline_filename,
 											old_offlineJsonArray.toString());
 									String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-									static_global_functions.ShowToast_short(
+									GlobalFuns.ShowToast_short(
 											getApplicationContext(),
 											showMessage, R.drawable.success);
 								} catch (JSONException e) {
@@ -730,7 +670,7 @@ tk_img_frag.OnTkImgListener {
 						}
 					}
 
-					String tempFile=util.setFileNamebyDate();
+					String tempFile=Utils.setFileNamebyDate();
 					Log.d("Filename", tempFile);
 					//					
 					//					String tempFile=String.format("%05d", getFilecounts(saveFolder));
@@ -742,7 +682,7 @@ tk_img_frag.OnTkImgListener {
 							toSend_item.toString());
 					sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse(saveFolder.toString()+tempFile)));
 					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-					static_global_functions.ShowToast_short(
+					GlobalFuns.ShowToast_short(
 							getApplicationContext(), showMessage,
 							R.drawable.success);
 					// showReminder();
@@ -752,7 +692,7 @@ tk_img_frag.OnTkImgListener {
 				btn_send.setEnabled(false);
 				btn_save.setEnabled(false);
 				btn_selectmm.setEnabled(false);
-				if (!wifi_connected) {
+				if (!flag_isWifiConnected) {
 					mImageView.setImageDrawable(getResources().getDrawable(
 							R.drawable.buttonfinish));
 				} else {
@@ -790,7 +730,7 @@ tk_img_frag.OnTkImgListener {
 						true);
 				mPopupWindow
 				.setAnimationStyle(android.R.style.Animation_Dialog);
-				Rect btn_takeimg_location = static_global_functions
+				Rect btn_takeimg_location = GlobalFuns
 						.locateView(btn_takeimg);
 				if (btn_takeimg_location == null) {
 					mPopupWindow.showAtLocation(popupView, Gravity.BOTTOM
@@ -953,7 +893,7 @@ tk_img_frag.OnTkImgListener {
 				(mImageBitmap != null));
 		outState.putParcelable(BITMAP_STORAGE_KEY, mImageBitmap);
 		outState.putString(IMG_PATH_KEY, mCurrentPhotoPath);
-		outState.putBoolean(SAVELOGGININ_STRING, isLoggedin);
+		outState.putBoolean(SAVELOGGININ_STRING, flag_isLoggedin);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -968,8 +908,8 @@ tk_img_frag.OnTkImgListener {
 		mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
 
 		mImageView.setImageBitmap(mImageBitmap);
-		isLoggedin = savedInstanceState.getBoolean(SAVELOGGININ_STRING);
-		wifi_connected = savedInstanceState.getBoolean(SAVEWIFI_STRING);
+		flag_isLoggedin = savedInstanceState.getBoolean(SAVELOGGININ_STRING);
+		flag_isWifiConnected = savedInstanceState.getBoolean(SAVEWIFI_STRING);
 		mCurrentPhotoPath = savedInstanceState.getString(BITMAP_STORAGE_KEY);
 
 	}
@@ -1156,8 +1096,8 @@ tk_img_frag.OnTkImgListener {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		carDatabase.close();
-		if (isScreenRotationLocked == false) {
-			static_global_functions.setAutoOrientationEnabled(
+		if (screenRotationLocked == false) {
+			GlobalFuns.setAutoOrientationEnabled(
 					getContentResolver(), false);
 		}
 		super.onDestroy();
@@ -1172,7 +1112,7 @@ tk_img_frag.OnTkImgListener {
 
 	@Override
 	protected void onResume() {
-		if (static_global_functions.wifi_connection(getApplicationContext())) {
+		if (GlobalFuns.wifi_connection(getApplicationContext())) {
 			login_global_usr();
 			Log.d("MainScreen", "connect and login");
 		}
@@ -1272,16 +1212,16 @@ tk_img_frag.OnTkImgListener {
 	private void login_global_usr() {
 		ParseUser.logInInBackground(ed.getCipherTextUserName(),
 				ed.getCipherTextUserPassword(), new LogInCallback() {
-
+            
 			@Override
 			public void done(ParseUser usr, ParseException e) {
 				if (usr != null) {
 					Log.d("Login_before", "Successfully");
-					isLoggedin = true;
+					flag_isLoggedin = true;
 				} else {
 					Log.d("error logging in ", e.toString());
-					isLoggedin = false;
-					static_global_functions
+					flag_isLoggedin = false;
+					GlobalFuns
 					.ShowToast_short(
 							getApplicationContext(),
 							"Remote server not responding, save to local memory",
