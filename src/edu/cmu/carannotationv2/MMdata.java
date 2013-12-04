@@ -18,9 +18,10 @@ public class MMdata {
 	private Context context;
 private JSONArray makeJsonArray;
 private JSONArray modelJsonArray;
-private HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
-private HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
-private HashMap<String, List<String>>modelDisplayHashMap;
+public List<String> makenameGroup;
+public HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
+public HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
+public HashMap<String, List<String>>modelDisplayHashMap;
 //private HashMap<String, HashMap<String, String>> modelHashMap;//<makeobjectid,<modelname,modelobjectid>>
  public MMdata(Context context,int makefileid,int modelfileid) { 
 	 this.context=context;
@@ -34,7 +35,7 @@ private HashMap<String, List<String>>modelDisplayHashMap;
 }
  
  public HashMap<String, List<String>> getModelDisplayHashmap() {
-	 
+	 modelDisplayHashMap=new HashMap<String, List<String>>();
 	 if (modelJsonArray!=null) {
 		 for (int i = 0; i < modelJsonArray.length(); i++) {
 			 try {
@@ -43,11 +44,11 @@ private HashMap<String, List<String>>modelDisplayHashMap;
 				List<String> modelNameList=new ArrayList<String>();
 				if (modelDisplayHashMap.get(keyString)==null) {
 					
-					modelNameList.add(singgleObject.getString("objectId"));
+					modelNameList.add(singgleObject.getString("name"));
 					modelDisplayHashMap.put(keyString, modelNameList);
 				}else {
 					modelNameList=modelDisplayHashMap.get(keyString);
-					modelNameList.add(singgleObject.getString(keyString));
+					modelNameList.add(singgleObject.getString("name"));
 					modelDisplayHashMap.remove(keyString);
 					modelDisplayHashMap.put(keyString, modelNameList);
 				}
@@ -64,14 +65,22 @@ private HashMap<String, List<String>>modelDisplayHashMap;
 	}
 	
 }
+ public List<String> getMakeGroup(){
+	 if (makenameGroup==null) {
+		getMakeHashMap();
+		
+	}
+	 return makenameGroup;
+ }
  public HashMap<String, String> getMakeHashMap(){
-	 
+	 makenameGroup=new ArrayList<String>();
+	 makeHashMap=new HashMap<String, String>();
 	 if (makeJsonArray!=null) {
 		for (int i = 0; i < makeJsonArray.length(); i++) {
 			try {
 				JSONObject singleObject=makeJsonArray.getJSONObject(i);
 				makeHashMap.put(singleObject.getString("name"), singleObject.getString("objectId"));
-				
+				makenameGroup.add(singleObject.getString("name"));
 			} catch (Exception e) {
 				// TODO: handle exception
 			}	
@@ -83,6 +92,7 @@ private HashMap<String, List<String>>modelDisplayHashMap;
  }
  
  public HashMap<String,  String> getModelHashMap() {
+	 modelHashMap=new HashMap<String, String>();
 	 if (modelJsonArray!=null) {
 		 for (int j = 0; j < modelJsonArray.length(); j++) {
 			 try {

@@ -1,9 +1,9 @@
 package edu.cmu.carannotationv2;
 
 // also you can define alubmn yourself
-//注释1：
-//原先 出现nullpointer 的warning让imageview 无法实现， 调换了一下onCreate中的各个函数的顺序，就好了
-//不知道原因
+//������1���
+//������ ������nullpointer ���warning���imageview ��������������� ���������������onCreate���������������������������������������
+//���������������
 //TODO list:
 // Making uploading things  to be services
 
@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 import java.util.List;
@@ -96,6 +97,11 @@ tk_img_frag.OnTkImgListener {
 	private File makeJsonFile;
 	private File modelJsonFile;
 	private MMdata mMdata;
+	
+	private HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
+	private HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
+	private HashMap<String, List<String>>modelDisplayHashMap;
+	private static final String UNKNOWN_STRING=" I don't know";
 	/* ********************************************/
 	public String locationinfo_string;
 	private LocationManager locationMangaer = null;
@@ -144,7 +150,7 @@ tk_img_frag.OnTkImgListener {
 	private Button btn_upload;
 	private DrawImageView mImageView;
 	private TextView makemodelshowTextView;
-	// 为了弹出的make model
+	
 
 	private ExpandableListView make_model_listView;
 	private Dialog make_model_Dialog;
@@ -243,9 +249,6 @@ tk_img_frag.OnTkImgListener {
 		if(!mydir.exists())
 		{
 			file_NO=0;
-			/*file_no_recoderEditor=PreferenceManager.getDefaultSharedPreferences(this).edit();
-			file_no_recoderEditor.putInt("file_number", file_NO);
-			file_no_recoderEditor.commit();*/
 			mydir.mkdirs();
 		}else {
 			file_NO = mydir.listFiles().length;
@@ -374,51 +377,49 @@ tk_img_frag.OnTkImgListener {
 
 			mMdata=new MMdata(getApplicationContext(), R.raw.makejson, R.raw.modeljson);
 			
-			makeModelDataFile = FileOperation.transferRawtoFile(
-					getApplicationContext(), R.raw.car_make_model_revised,
-					"makemodel", "car.csv");
-        
-			
-			FormDatabase();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		makeGroup = getLabels(database.SELECT_MAKE, true);
+       
+		
+		makeHashMap=mMdata.getMakeHashMap();
+		modelHashMap=mMdata.getModelHashMap();
+		modelDisplayHashMap=mMdata.getModelDisplayHashmap();
+		makeGroup = mMdata.getMakeGroup();
 		for (int i = 0; i < makeGroup.size(); i++) {
 			String temp_make = makeGroup.get(i);
 			List<String> individual_model = new ArrayList<String>();
-			individual_model = getLabels(database.SELECT_ONE_MODEL_PREFIX
-					+ temp_make + database.SELECT_ONE_MODEL_SUFFIX, false);
-			removeMake(individual_model, temp_make);
+			individual_model=modelDisplayHashMap.get(makeHashMap.get(temp_make) );
+//			individual_model.add(UNKNOWN_STRING);
+
 			makemodelGroup.add(individual_model);
 		}
-
+//         makeGroup.add(UNKNOWN_STRING);
 	}
 
-	private void removeMake(List<String> individual_model, String temp_make) {
-		String temp_model;
-		String new_model = "";
-		for (int i = 0; i < individual_model.size(); i++) {
-			temp_model = individual_model.get(i);
-
-			String[] splited_temp = temp_model.split("\\s+");
-
-			if (splited_temp.length > 2
-					&& splited_temp[1].equalsIgnoreCase(temp_make)) {
-				for (int j = 2; j < splited_temp.length; j++) {
-					new_model = new_model + splited_temp[j];
-				}
-
-			} else {
-				new_model = temp_model;
-			}
-			individual_model.set(i, new_model);
-			new_model = "";
-		}
-
-	}
+//	private void removeMake(List<String> individual_model, String temp_make) {
+//		String temp_model;
+//		String new_model = "";
+//		for (int i = 0; i < individual_model.size(); i++) {
+//			temp_model = individual_model.get(i);
+//
+//			String[] splited_temp = temp_model.split("\\s+");
+//
+//			if (splited_temp.length > 2
+//					&& splited_temp[1].equalsIgnoreCase(temp_make)) {
+//				for (int j = 2; j < splited_temp.length; j++) {
+//					new_model = new_model + splited_temp[j];
+//				}
+//
+//			} else {
+//				new_model = temp_model;
+//			}
+//			individual_model.set(i, new_model);
+//			new_model = "";
+//		}
+//
+//	}
 
 	private void initialize_mm_selection_dialog() {
 		viewlist = this.getLayoutInflater().inflate(R.layout.expandablelist,
@@ -441,26 +442,15 @@ tk_img_frag.OnTkImgListener {
 			public boolean onGroupClick(ExpandableListView parent, View v,
 					int groupPosition, long id) throws RuntimeException {
 
-				// try {
-				// /*if (lastGroupPosition!=-1 &&
-				// lastGroupPosition!=groupPosition) {
-				// make_model_listView.collapseGroup(lastGroupPosition);
-				// }
-				//
-				// lastGroupPosition=groupPosition;*/
-				// } catch (Exception e) {
-				// Log.v("LH", "ERROR@onCreate: " + e.toString());
-				// }
-				// return false;
-
+               String tempText=makeGroup.get(groupPosition).toString();
 				if (makeGroup.get(groupPosition).toString()
-						.equals(database.NONE_EXISTING)) {
+						.equals("Unknown")) {
 
-					selectedMake = "unknown";
-					selectedModel = "unknown";
+					selectedMake = makeHashMap.get("Unknown");
+					selectedModel = modelHashMap.get(selectedMake+"Unknown");
 					make_model_Dialog.dismiss();
-					makemodelshowTextView.setText("I don't know the make"
-							+ "  " + "I don't know the model");
+					makemodelshowTextView.setText("Unknown make"
+							+ "  " + "Unknown model");
 					return true;
 				} else {
 
@@ -489,9 +479,9 @@ tk_img_frag.OnTkImgListener {
 
 				lastGroupPosition = groupPosition;
 
-				selectedMake = makeGroup.get(groupPosition).toString();
-				selectedModel = makemodelGroup.get(groupPosition)
-						.get(childPosition).toString();
+				selectedMake = makeHashMap.get(makeGroup.get(groupPosition).toString()) ;
+				selectedModel = modelHashMap.get(selectedMake+makemodelGroup.get(groupPosition)
+						.get(childPosition).toString()); 
 				makemodelshowTextView.setText(makeGroup.get(groupPosition)
 						.toString()
 						+ "  "
@@ -618,6 +608,8 @@ tk_img_frag.OnTkImgListener {
 				mImageView.addRect();
 				annotatorInput.update(mImageView.getLastRect(), selectedMake,
 						selectedModel);
+				Log.d("selecMake", selectedMake);
+				Log.d("model", selectedModel);
 				gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
 
@@ -907,7 +899,11 @@ tk_img_frag.OnTkImgListener {
 
 	private void FormDatabase() throws SQLException, IOException {
 		// FIXME Auto-generated method stub
-
+// get the 
+		
+		
+		
+		
 		// 2.3.2.1 Create database
 		carDatabase = openOrCreateDatabase(database.DATABASE_NAME,
 				Context.MODE_PRIVATE, null);
@@ -987,7 +983,7 @@ tk_img_frag.OnTkImgListener {
 	/* moved from sample: Photo album for this application */
 	private String getAlbumName() {
 
-		// TODO 稍后再改动名称
+		// TODO ���������������������
 		return getString(R.string.album_name);
 
 	}
@@ -1211,7 +1207,7 @@ tk_img_frag.OnTkImgListener {
 	@Override
 	protected void onPause() {
 		if (null != mImageView) {
-			mImageView.clearrect();// 去除留下的rect
+			mImageView.clearrect();// ���������������rect
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
