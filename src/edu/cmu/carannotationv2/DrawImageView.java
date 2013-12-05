@@ -185,6 +185,11 @@ public class DrawImageView extends ImageView {
 		super.setImageBitmap(bm);
 	}
 
+	public void prepareCamera(){
+		clearrect();
+		setImageDrawable(getResources().getDrawable(R.drawable.processing));
+		invalidate();
+	}
 	public void clearrect() {
 		rect_left = 0;
 		rect_right = 0;

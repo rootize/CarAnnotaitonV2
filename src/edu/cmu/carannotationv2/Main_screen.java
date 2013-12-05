@@ -7,20 +7,12 @@ package edu.cmu.carannotationv2;
 //TODO list:
 // Making uploading things  to be services
 
-import java.io.BufferedReader;
+
 
 import java.io.File;
-
-import java.io.FileReader;
 import java.io.IOException;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
 import java.util.List;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -81,18 +73,14 @@ import org.json.JSONObject;
 public class Main_screen extends Activity implements
 tk_img_frag.OnTkImgListener {
 	/********************added 20131201*************/
-	private static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
+
 	// files
-
+	public static final String SENTFILEDIR_STRING="/CarAnnotationSentFiles";
 	private MMdata mMdata;
-	
-	private HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
-	private HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
-	private HashMap<String, List<String>>modelDisplayHashMap;
-
+	ParseCommunication pCommunication;
 	/* ********************************************/
-	public String locationinfo_string;
-	
+
+
 	// Used for Debugging
 	private static final String MAINSTRING = "MainScreen";
 	private static final String SAVELOGGININ_STRING = "loggedin";
@@ -105,14 +93,12 @@ tk_img_frag.OnTkImgListener {
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int LOAD_IMG_FROM_G = 1666;
 
-	private static final String offline_filename = "offline";
-	private static final String JPEG_FILE_PREFIX = "IMG_";
-	private static final String JPEG_FILE_SUFFIX = ".jpg";
+
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	private static final String IMG_PATH_KEY = "imgpath";
 	private static final String infoDir="InfoDir";
-	
+
 	private Bitmap mImageBitmap;
 	private String mCurrentPhotoPath;
 	private File imgFile;
@@ -134,7 +120,7 @@ tk_img_frag.OnTkImgListener {
 	private Button btn_upload;
 	private DrawImageView mImageView;
 	private TextView makemodelshowTextView;
-	
+
 
 	private ExpandableListView make_model_listView;
 	private Dialog make_model_Dialog;
@@ -157,6 +143,7 @@ tk_img_frag.OnTkImgListener {
 	private boolean flag_isWifiConnected;
 	private static boolean flag_isLoggedin = false;
 	private AnnotatorInput annotatorInput;
+
 	private JSONdata jsonData;
 	private boolean isFirstTimeLogin = true;
 
@@ -178,31 +165,30 @@ tk_img_frag.OnTkImgListener {
 
 
 
-		
+
 		// Change Screen Rotation to Enabled
 		screenRotationLocked=Utils.isScreenLocked(getApplicationContext());
-		
-        // Location information 		
+		// Location information 		
 		locationInfo = new LocationInfo(getApplicationContext());
-		locationinfo_string = locationInfo.getLoation();
+
 
 		mAlbumStorageDirFactory = GlobalFuns
 				.setmAlbumStorageDirFactory();
 
 		ed = new EncryptedData(getApplicationContext(), R.raw.key,
 				R.raw.plaintext);
+
 		Parse.initialize(this, ed.getCipherTextApplicationId(),
 				ed.getCipherTextClientKey());
 		ParseAnalytics.trackAppOpened(getIntent());
-
+		pCommunication=new ParseCommunication(getApplicationContext(), ed);
 		GuideText = (TextView) findViewById(R.id.mainscreen_textview_textguidance);
 		flag_isWifiConnected = Utils.isWifi(getApplicationContext());
-		
 		if (flag_isWifiConnected) {
-			login_global_usr();
+			pCommunication.loggingIn();
 		}
 		usr_name = getUsrFromIntent();
-		
+
 		//setting up core interfaces
 		pre_initialize_mm_selection_dialog();
 		setWelcomeword(usr_name, flag_isWifiConnected);
@@ -219,14 +205,13 @@ tk_img_frag.OnTkImgListener {
 
 	}
 
-	
+	// Leave it alone
 	private void showReminder() {
 
 		File mydir = this.getDir(infoDir, Context.MODE_PRIVATE); //Creating an internal dir;
 
-		if (mydir.listFiles().length>0&& flag_isWifiConnected ) {
-			login_global_usr();
-			Log.d("Main", "satisfies");
+		if (mydir.listFiles().length>0&& flag_isWifiConnected && pCommunication.isLoggedin() ) {
+
 			AlertDialog.Builder ad = new AlertDialog.Builder(this);
 			ad.setTitle("Caution")
 			.setMessage(
@@ -253,9 +238,9 @@ tk_img_frag.OnTkImgListener {
 		}
 
 	}
-	
-	
-	
+
+
+
 
 	private void initialize_btn_upload() {
 		boolean flag_uploadPre=false;
@@ -264,7 +249,7 @@ tk_img_frag.OnTkImgListener {
 		if (flag_isLoggedin && flag_isWifiConnected) {
 			flag_uploadPre=true;
 		}
-		
+
 		if (saveFolder.exists() &&  saveFolder.listFiles().length>0 && flag_uploadPre) {
 			btn_upload.setVisibility(View.VISIBLE);
 		}else {
@@ -280,7 +265,7 @@ tk_img_frag.OnTkImgListener {
 						R.drawable.uploading));
 				btn_upload.setEnabled(false);
 				check_upload_localData();
-				
+
 
 			}
 		});
@@ -289,77 +274,37 @@ tk_img_frag.OnTkImgListener {
 
 	@Override
 	protected void onStart() {
-		
+
 		super.onStart();
 		Log.d(MAINSTRING, "onStartCalled");
 		showReminder();
 	}
 
-//	private void SetBtnUploading() {
-//
-//		if (fileExistance(offline_filename) && wifi_connected) {
-//			login_global_usr();
-//			btn_upload.setVisibility(View.VISIBLE);
-//			btn_upload.setEnabled(true);
-//		} else {
-//			btn_upload.setVisibility(View.INVISIBLE);
-//		}
-//	}
 
 
-	//	public boolean fileExistanceInternal(Context context, String fname,String folder){
-	//		
-	//		File make_model_file_dir = context.getDir(folder, Context.MODE_PRIVATE);
-	//		File privateFile = new File(make_model_file_dir, fname);
-	////	    File file = getBaseContext().getFileStreamPath(fname);
-	//	    return privateFile.exists();
-	//	}
+
 	private void pre_initialize_mm_selection_dialog() {
-
-
 		try {
-
 			mMdata=new MMdata(getApplicationContext(), R.raw.makejson, R.raw.modeljson);
-	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-      
-		makeHashMap=mMdata.getMakeHashMap();
-		modelHashMap=mMdata.getModelHashMap();
-		modelDisplayHashMap=mMdata.getModelDisplayHashmap();
+
+		//		makeHashMap=mMdata.getMakeHashMap();
+		//		modelHashMap=mMdata.getModelHashMap();
+		//		modelDisplayHashMap=mMdata.getModelDisplayHashmap();
 		makeGroup = mMdata.getMakeGroup();
+		List<String> individual_model = new ArrayList<String>();
 		for (int i = 0; i < makeGroup.size(); i++) {
 			String temp_make = makeGroup.get(i);
-			List<String> individual_model = new ArrayList<String>();
-			individual_model=modelDisplayHashMap.get(makeHashMap.get(temp_make) );
+			individual_model=mMdata.getSingleChildList(temp_make);
 			makemodelGroup.add(individual_model);
+			individual_model.clear();
 		}
 
 	}
 
-//	private void removeMake(List<String> individual_model, String temp_make) {
-//		String temp_model;
-//		String new_model = "";
-//		for (int i = 0; i < individual_model.size(); i++) {
-//			temp_model = individual_model.get(i);
-//
-//			String[] splited_temp = temp_model.split("\\s+");
-//
-//			if (splited_temp.length > 2
-//					&& splited_temp[1].equalsIgnoreCase(temp_make)) {
-//				for (int j = 2; j < splited_temp.length; j++) {
-//					new_model = new_model + splited_temp[j];
-//				}
-//
-//			} else {
-//				new_model = temp_model;
-//			}
-//			individual_model.set(i, new_model);
-//			new_model = "";
-//		}
-//
-//	}
+
 
 	private void initialize_mm_selection_dialog() {
 		viewlist = this.getLayoutInflater().inflate(R.layout.expandablelist,
@@ -382,12 +327,12 @@ tk_img_frag.OnTkImgListener {
 			public boolean onGroupClick(ExpandableListView parent, View v,
 					int groupPosition, long id) throws RuntimeException {
 
-               String tempText=makeGroup.get(groupPosition).toString();
+
 				if (makeGroup.get(groupPosition).toString()
 						.equals("Unknown")) {
 
-					selectedMake = makeHashMap.get("Unknown");
-					selectedModel = modelHashMap.get(selectedMake+"Unknown");
+					selectedMake = mMdata.getMakeId("Unknown");
+					selectedModel = mMdata.getModelId(selectedMake+"Unknown");
 					make_model_Dialog.dismiss();
 					makemodelshowTextView.setText("Unknown make"
 							+ "  " + "Unknown model");
@@ -419,8 +364,8 @@ tk_img_frag.OnTkImgListener {
 
 				lastGroupPosition = groupPosition;
 
-				selectedMake = makeHashMap.get(makeGroup.get(groupPosition).toString()) ;
-				selectedModel = modelHashMap.get(selectedMake+makemodelGroup.get(groupPosition)
+				selectedMake = mMdata.getMakeId(makeGroup.get(groupPosition).toString()) ;
+				selectedModel = mMdata.getModelId(selectedMake+makemodelGroup.get(groupPosition)
 						.get(childPosition).toString()); 
 				makemodelshowTextView.setText(makeGroup.get(groupPosition)
 						.toString()
@@ -546,20 +491,10 @@ tk_img_frag.OnTkImgListener {
 			@Override
 			public void onClick(View v) {
 				mImageView.addRect();
-				annotatorInput.update(mImageView.getLastRect(), selectedMake,
+				annotatorInput.updateAnnotation(mImageView.getLastRect(), selectedMake,
 						selectedModel);
-				Log.d("selecMake", selectedMake);
-				Log.d("model", selectedModel);
-				gRectCount = gRectCount + 1;
+				//				gRectCount = gRectCount + 1;
 				global_prevent_reDraw = false;
-
-				if (gRectCount == 5) {
-					global_prevent_reDraw = true;
-					String showMessage = "You have annotated 5 cars,click Done! ";
-					GlobalFuns.ShowToast_short(
-							getApplicationContext(), showMessage,
-							R.drawable.caution);
-				}
 
 				btn_save.setEnabled(false);
 				btn_send.setEnabled(true);
@@ -587,21 +522,9 @@ tk_img_frag.OnTkImgListener {
 			@Override
 			public void onClick(View v) {
 
-				// setup a uploading dialog
-				annotatorInput.addPath(mCurrentPhotoPath);
-				annotatorInput.addImgName(imageFileName + JPEG_FILE_SUFFIX);
-				annotatorInput.addScaleRatio(new ScaleRatio(mImageView,
-						mCurrentPhotoPath));
-				flag_isWifiConnected = GlobalFuns
-						.wifi_connection(getApplicationContext());
-
-				annotatorInput.addWifiStatus(flag_isWifiConnected);
-				jsonData = new JSONdata(annotatorInput, getApplicationContext());
-
 				if (flag_isWifiConnected && flag_isLoggedin) {
 					Log.d("Main Activity", "Come to this step");
-					ParseObject pb_send = jsonData.formatParseObject(ed
-							.getCipherTextClassName());
+					ParseObject pb_send=annotatorInput.export2ParseObject(ed.getCipherTextClassName());
 					pb_send.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException arg0) {
@@ -617,74 +540,24 @@ tk_img_frag.OnTkImgListener {
 								GlobalFuns.ShowToast_short(
 										getApplicationContext(), send_failuer,
 										R.drawable.error);
-								try {
-									JSONArray old_offlineJsonArray;
-									String temp = FileOperation.read(
-											getApplicationContext(),
-											offline_filename);
-									if (temp == null) {
-										old_offlineJsonArray = new JSONArray();
-									} else {
-
-										old_offlineJsonArray = new JSONArray(
-												temp);
-
-									}
-
-									JSONObject toSend_item = jsonData
-											.getJsonObject();
-									old_offlineJsonArray.put(toSend_item);
-									// Using Thread?
-									FileOperation.save(getApplicationContext(),
-											offline_filename,
-											old_offlineJsonArray.toString());
-									String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-									GlobalFuns.ShowToast_short(
-											getApplicationContext(),
-											showMessage, R.drawable.success);
-								} catch (JSONException e) {
-
-									e.printStackTrace();
-								}
+								annotatorInput.savetoOfflineFile(getApplicationContext());
+								String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
+								GlobalFuns.ShowToast_short(
+										getApplicationContext(), showMessage,
+										R.drawable.success);
+								mImageView.setImageDrawable(getResources()
+										.getDrawable(R.drawable.buttonfinish));
 							}
-							mImageView.setImageDrawable(getResources()
-									.getDrawable(R.drawable.buttonfinish));
 						}
-					});
+					}
+							);
 
 				} else {
 
+					annotatorInput.savetoOfflineFile(getApplicationContext());
 
 
 
-					JSONObject toSend_item = jsonData.getJsonObject();
-
-					File saveFolder=new File(Environment.getExternalStorageDirectory().toString(), SENTFILEDIR_STRING);
-					if (!saveFolder.exists()) {
-						if (!saveFolder.mkdirs()) {
-							Log.e("MainScreen", "Cannot create folder saving sent files");
-
-						}else {
-							Log.d("MainScreen", saveFolder.toString());
-							sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile(saveFolder)));
-						}
-					}
-
-					String tempFile=Utils.setFileNamebyDate();
-					Log.d("Filename", tempFile);
-					//					
-					//					String tempFile=String.format("%05d", getFilecounts(saveFolder));
-					//					tempFile=tempFile+calendar.get(Calendar.DAY_OF_MONTH)+calendar.get(Calendar.HOUR_OF_DAY)+calendar.get(Calendar.MINUTE)+calendar.get(Calendar.SECOND);
-					//					File fileDir=new File(getFilesDir(),infoDir);
-
-					FileOperation.saveCostomizedDir(getApplicationContext(),
-							tempFile,saveFolder,
-							toSend_item.toString());
-					sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.parse(saveFolder.toString()+tempFile)));
-					String showMessage = "Saved in Local machine, image will be uploaded when wifi available";
-					GlobalFuns.ShowToast_short(
-							getApplicationContext(), showMessage,
-							R.drawable.success);
 					// showReminder();
 
 				}
@@ -716,15 +589,16 @@ tk_img_frag.OnTkImgListener {
 	private void initialize_btn_takeimg() {
 
 		btn_takeimg = (Button) findViewById(R.id.button_take_new);
+		btn_takeimg.setVisibility(View.VISIBLE);
 		btn_takeimg.setEnabled(true);
-
+		
 		btn_takeimg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 				View popupView = getLayoutInflater().inflate(R.layout.popup,
 						null);
-				/* mPopupWindow=new PopupWindow(popupView, , 100, , true); */
+				
 				mPopupWindow = new PopupWindow(popupView,
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
 						true);
@@ -740,50 +614,35 @@ tk_img_frag.OnTkImgListener {
 							| Gravity.TOP, btn_takeimg_location.left,
 							btn_takeimg_location.bottom);
 				}
-
+// Get image form camera:
 				Button btnfromCamera = (Button) popupView
 						.findViewById(R.id.btntakefromcamera);
-				if (btnfromCamera == null) {
-					Log.d(MAINSTRING, "btn is null");
-				}
 				btnfromCamera.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
-
-						if (gRectCount != 0) {
-							String showMessage = "Abondon all the rectangles and start a new one?";
-							showDialog(showMessage);
-						} else {
-							dispathTakePictureIntent();
-							mPopupWindow.dismiss();
-						}
+						mImageView.prepareCamera();
+						mPopupWindow.dismiss();
+						dispathTakePictureIntent();
 
 					}
 				});
-
+// Get image from Gallery
 				Button btnfromGallery = (Button) popupView
 						.findViewById(R.id.btntakefromgallery);
 				btnfromGallery.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						mImageView.clearrect();
-						mImageView.setImageDrawable(getResources().getDrawable(
-								R.drawable.processing));
-						mImageView.invalidate();
-
-						dispatchSelectFromGalleryIntent();
+						mImageView.prepareCamera();
 						mPopupWindow.dismiss();
+						dispatchSelectFromGalleryIntent();
+						
 
 					}
 
 				});
-
+// Cancel
 				Button btnforcancel = (Button) popupView
 						.findViewById(R.id.btncancellfrompopup);
 				btnforcancel.setOnClickListener(new OnClickListener() {
@@ -807,84 +666,27 @@ tk_img_frag.OnTkImgListener {
 
 	}
 
+	private void dispathTakePictureIntent() {
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		try {
+			ImageStorage imageStorage=new ImageStorage(getApplicationContext());
+			mCurrentPhotoPath=imageStorage.getImagePath();
+			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+					Uri.fromFile(imageStorage.getImageFile()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+		startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+	}
+	
 	private void check_upload_localData() {
 		Log.d("upload data", "called");
 		new FileUploadThread(getApplicationContext(), ed).run();
 
 	}
 
-	private List<String> getLabels(String select_query, boolean isMake) {
-		// TODO Auto-generated method stub
-		// String DataBaseQuery=
-		List<String> labelsList = new ArrayList<String>();
-		Cursor cursor = carDatabase.rawQuery(select_query, null);
-		if (cursor.moveToFirst()) {
-			labelsList.add(cursor.getString(0));
 
-			while (cursor.moveToNext()) {
-
-				labelsList.add(cursor.getString(0));
-			}
-		}
-		cursor.close();
-		if (isMake) {
-			labelsList.add(new String(database.NONE_EXISTING));
-		} else {
-			labelsList.add(new String(database.NONE_EXISTING_MODEL));
-		}
-
-		return labelsList;
-
-	}
-
-	private void FormDatabase() throws SQLException, IOException {
-		// FIXME Auto-generated method stub
-// get the 
-		
-		
-		
-		
-		// 2.3.2.1 Create database
-		carDatabase = openOrCreateDatabase(database.DATABASE_NAME,
-				Context.MODE_PRIVATE, null);
-		carDatabase.execSQL(database.CREATE_TABLE1);
-		carDatabase.execSQL(database.CREATE_TABLE2);
-		// 2.3.2.2 insert data
-		FileReader databaseFileReader = new FileReader(
-				makeModelDataFile.getAbsolutePath());
-		BufferedReader databaseBufferedReader = new BufferedReader(
-				databaseFileReader);
-		String line = "";
-
-		carDatabase.beginTransaction();
-
-		while ((line = databaseBufferedReader.readLine()) != null) {
-			String[] all_elements = line.split(",");
-
-			String[] make_model_String = new String[2];
-			for (int i = 0; i < all_elements.length; i++) {
-				StringBuilder sb_insert = new StringBuilder(
-						database.INSERT_ITEM_PREFIX);
-				make_model_String = all_elements[i].split(":");
-				if (2 == make_model_String.length) {
-					// Log.d(""+i, "  "+make_model_String.length);
-					sb_insert.append("'" + make_model_String[0] + "',");
-					sb_insert.append(" '" + make_model_String[1] + "'");
-					sb_insert.append(database.INSERT_ITEM_SUFFIX);
-					carDatabase.execSQL(sb_insert.toString());
-				} else {
-					Log.d("" + i, "" + make_model_String[0]);
-				}
-
-			}
-
-		}
-		databaseBufferedReader.close();
-		carDatabase.setTransactionSuccessful();
-		carDatabase.endTransaction();
-
-		Log.d("Done DATABASE ", "Initialization");
-	}
 
 	// Some lifecycle callbacks so that the image can survive orientation change
 	@Override
@@ -921,52 +723,10 @@ tk_img_frag.OnTkImgListener {
 	}
 
 	/* moved from sample: Photo album for this application */
-	private String getAlbumName() {
-
-		// TODO ���������������������
-		return getString(R.string.album_name);
-
-	}
 
 	/* moved from sample */
-	private File getAlbumDir() {
-		File storageDir = null;
-		Log.d("GetAlbumdir", "Called!");
-		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
-			storageDir = mAlbumStorageDirFactory
-					.getAlbumStorageDir(getAlbumName());
-			if (storageDir != null) {
-				if (!storageDir.mkdirs()) {
-					if (!storageDir.exists()) {
-						Log.d("StorageProblem", "Failed to create Dir");
-						return null;
-					}
-				}
-			}
-		} else {
-			Log.v(getString(R.string.app_name),
-					"External storage is not mounted READ/WRITE");
-			Log.d("Mount", "Problem");
-		}
-		return storageDir;
-	}
-
-	private File createImageFile() throws IOException {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-		.format(new Date());
-		imageFileName = JPEG_FILE_PREFIX + timeStamp;
-		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName + "_",
-				JPEG_FILE_SUFFIX, albumF);
-		return imageF;
-	}
-
-	private File setUpPhotoFile() throws IOException {
-		File f = createImageFile();
-		mCurrentPhotoPath = f.getAbsolutePath();
-		return f;
-	}
+	
+	
 
 	private int setScaleFactor(DrawImageView mImageView2,
 			String mCurrentPhotoPath2) {
@@ -1025,22 +785,7 @@ tk_img_frag.OnTkImgListener {
 		this.sendBroadcast(mediaScanIntent);
 	}
 
-	private void dispathTakePictureIntent() {
-		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		imgFile = null;
-		mCurrentPhotoPath = null;
-		try {
-			imgFile = setUpPhotoFile();
-			mCurrentPhotoPath = imgFile.getAbsolutePath();
-			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-					Uri.fromFile(imgFile));
-		} catch (Exception e) {
-			e.printStackTrace();
-			imgFile = null;
-			mCurrentPhotoPath = null;
-		}
-		startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-	}
+
 
 	private void handleBigCameraPhoto() {
 		if (mCurrentPhotoPath != null) {
@@ -1054,8 +799,8 @@ tk_img_frag.OnTkImgListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d("OnActivityResult", "2");
+		boolean loadLocationInfo=false;
 		if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
-			Log.d("OnActivityResult", "Called!");
 			if (mImageBitmap != null) {
 				mImageBitmap.recycle();
 				mImageBitmap = null;
@@ -1066,6 +811,7 @@ tk_img_frag.OnTkImgListener {
 			GuideText.setText("Swipe to draw image:");
 			makemodelshowTextView.setText("");
 			take_valide_img = true;
+			loadLocationInfo=true;
 		}
 		if (resultCode == RESULT_CANCELED
 				&& (requestCode == CAMERA_REQUEST || requestCode == LOAD_IMG_FROM_G)) {
@@ -1089,6 +835,15 @@ tk_img_frag.OnTkImgListener {
 			cursor.close();
 			setPic();
 			take_valide_img = true;
+			loadLocationInfo=true;
+		}
+
+		if (loadLocationInfo) {
+			annotatorInput.updateLocationInfo(getApplicationContext());
+			annotatorInput.setImageInfo(mCurrentPhotoPath);
+			if (!annotatorInput.scaleRatioDefined()) {
+				annotatorInput.addScaleRatio(new ScaleRatio(mImageView, mCurrentPhotoPath));
+			}
 		}
 	}
 
@@ -1112,12 +867,7 @@ tk_img_frag.OnTkImgListener {
 
 	@Override
 	protected void onResume() {
-		if (GlobalFuns.wifi_connection(getApplicationContext())) {
-			login_global_usr();
-			Log.d("MainScreen", "connect and login");
-		}
-
-		gRectCount = 0;
+	
 		btn_selectmm.setEnabled(false);
 		btn_save.setEnabled(false);
 		btn_send.setEnabled(false);
@@ -1134,20 +884,18 @@ tk_img_frag.OnTkImgListener {
 			}
 		}
 
-		annotatorInput = new AnnotatorInput();
-		annotatorInput.addUsr(usr_name);
-		annotatorInput.setLocationinfo(locationinfo_string);
+		annotatorInput = new AnnotatorInput(usr_name);	
+		annotatorInput.setWifiStatus(flag_isWifiConnected);
+
 		super.onResume();
-		// if (isLoggedin&&) {
-		// btn_upload.setEnabled(true);
-		// }
+
 		Log.d("OnResume", "1");
 	}
 
 	@Override
 	protected void onPause() {
 		if (null != mImageView) {
-			mImageView.clearrect();// ���������������rect
+			mImageView.clearrect();// 
 			mImageView.clearRecords();
 			mImageView.setImageResource(0);
 		}
@@ -1209,29 +957,7 @@ tk_img_frag.OnTkImgListener {
 		}
 	}
 
-	private void login_global_usr() {
-		ParseUser.logInInBackground(ed.getCipherTextUserName(),
-				ed.getCipherTextUserPassword(), new LogInCallback() {
-            
-			@Override
-			public void done(ParseUser usr, ParseException e) {
-				if (usr != null) {
-					Log.d("Login_before", "Successfully");
-					flag_isLoggedin = true;
-				} else {
-					Log.d("error logging in ", e.toString());
-					flag_isLoggedin = false;
-					GlobalFuns
-					.ShowToast_short(
-							getApplicationContext(),
-							"Remote server not responding, save to local memory",
-							R.drawable.caution);
-				}
 
-			}
-		});
-
-	}
 
 	@Override
 	public void onBackPressed() {

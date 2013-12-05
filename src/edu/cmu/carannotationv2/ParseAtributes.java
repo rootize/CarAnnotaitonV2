@@ -1,6 +1,7 @@
 package edu.cmu.carannotationv2;
 
 public class ParseAtributes {
+	public static final String WIFI_STATUS="wifiStatus";
     public static final String GPS_OFFLINE="--off";
 	//public static final String PARSE_CLASS_NAME = "carannotationinfolongenough";
 	public static final String USR = "user";
@@ -25,4 +26,5 @@ public class ParseAtributes {
 	public static final String IMAGE_WIDTH="imageWidth";
     public static final String IMAGE_HEIGHT="imageHeight";
 	public static final String NULL_STRING="NA";
+	public static final String CREATEDATE_STRING="capturedAt";
 }

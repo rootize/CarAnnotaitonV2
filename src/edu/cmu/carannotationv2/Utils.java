@@ -8,6 +8,8 @@ import android.net.ConnectivityManager;
 import android.provider.Settings;
 
 public class Utils {
+	private static  final String ImageNamePrefix="IMG_";
+	private static  final String ImageNameSuffix=".jpg"; 
 	public static String setFileNamebyDate(){
 		Calendar c=Calendar.getInstance();
 
@@ -53,5 +55,21 @@ public class Utils {
 		File privateFile = new File(make_model_file_dir, fname);
 		//    File file = getBaseContext().getFileStreamPath(fname);
 		return privateFile.exists();
+	}
+
+	public static String createImageName(){
+		String timeStamp=setFileNamebyDate();
+		return ImageNamePrefix+timeStamp+ImageNameSuffix;
+	}
+	
+	public static boolean  turn1toture(String x) {
+
+		int num = Integer.parseInt(x);
+		if (1 == num) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 }

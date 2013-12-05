@@ -18,7 +18,7 @@ import android.content.Context;
 
 
 /**
- *  本地文件读写服务，默认会采用MODE_PRIVATE的方式写入文件
+ *  ������������������������������������������MODE_PRIVATE���������������������
  * @author chuckzhang
  *
  */
@@ -31,10 +31,10 @@ public class FileOperation  {
 	}
 
 	/**
-	 * 检查文件是否存在
+	 * ������������������������
 	 * 
-	 * @param fileName 文件名
-	 * @return 是否存在
+	 * @param fileName ���������
+	 * @return ������������
 	 */
 	public static boolean exist( Context context,String fileName){
 
@@ -48,6 +48,12 @@ public class FileOperation  {
 		}  
 	}  
 
+	public static boolean existInternalFile(Context context,String fileName){
+		
+		File file=context.getFileStreamPath(fileName);
+		return file.exists();
+		
+	}
 	
 	public static String convertStreamToString(InputStream is) {
 
@@ -72,10 +78,10 @@ public class FileOperation  {
 	}
 	
 	/** 
-	 * 读取文件内容 
+	 * ������������������ 
 	 *  
-	 * @param fileName 文件名 
-	 * @return 文件内容 
+	 * @param fileName ��������� 
+	 * @return ������������ 
 	 */  
 	public static String read(Context context,String fileName){  
 		FileInputStream fis;
@@ -91,7 +97,7 @@ public class FileOperation  {
 		byte[] buf = new byte[1024];  
 		int len = 0;  
 
-		//将读取后的数据放置在内存中---ByteArrayOutputStream  
+		//���������������������������������������---ByteArrayOutputStream  
 		try {
 			while ((len = fis.read(buf)) != -1) {  
 				baos.write(buf, 0, len);  
@@ -104,17 +110,17 @@ public class FileOperation  {
 			return null;
 		}  
 
-		//返回内存中存储的数据  
+		//������������������������������  
 		return baos.toString();  
 
 	}  
 
 	/** 
-	 * 保存文件 
+	 * ������������ 
 	 *  
-	 * @param fileName 文件名 
-	 * @param content  文件内容 
-	 * @return 是否成功写入文件
+	 * @param fileName ��������� 
+	 * @param content  ������������ 
+	 * @return ������������������������
 	 */  
 	public static boolean save(Context context,String fileName, String content){  
 		FileOutputStream fos;
@@ -135,10 +141,10 @@ public class FileOperation  {
 		return false;
 	}
 	/** 
-	 * 读取外部文件内容 
+	 * ������������������������ 
 	 *  
-	 * @param fileName 文件名 
-	 * @return 文件内容 
+	 * @param fileName ��������� 
+	 * @return ������������ 
 	 */  
 	public static String readfromExternal(File file){  
 		FileInputStream fis;
@@ -154,7 +160,7 @@ public class FileOperation  {
 		byte[] buf = new byte[1024];  
 		int len = 0;  
 
-		//将读取后的数据放置在内存中---ByteArrayOutputStream  
+		//���������������������������������������---ByteArrayOutputStream  
 		try {
 			while ((len = fis.read(buf)) != -1) {  
 				baos.write(buf, 0, len);  
@@ -167,7 +173,7 @@ public class FileOperation  {
 			return null;
 		}  
 
-		//返回内存中存储的数据  
+		//������������������������������  
 		return baos.toString();  
 
 	}  

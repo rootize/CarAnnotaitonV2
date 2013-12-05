@@ -22,12 +22,23 @@ public List<String> makenameGroup;
 public HashMap<String, String> makeHashMap; //<Makename, MakeObjectid >
 public HashMap<String,  String>modelHashMap;// <MakeObjectId+ModelName,modelObjectID>
 public HashMap<String, List<String>>modelDisplayHashMap;
-//private HashMap<String, HashMap<String, String>> modelHashMap;//<makeobjectid,<modelname,modelobjectid>>
+private static final String loc_makefile="locmake";
+private static final String loc_modelfile="locmodel";
+
  public MMdata(Context context,int makefileid,int modelfileid) { 
 	 this.context=context;
 	 try {
-		 makeJsonArray=getJsonArrayfromRaw(makefileid);
-		 modelJsonArray=getJsonArrayfromRaw(modelfileid);   
+		 if (FileOperation.existInternalFile(context, loc_makefile) && FileOperation.existInternalFile(context, loc_modelfile)) {
+			 makeJsonArray=getJsonArrayfromFile(loc_makefile);
+			 modelJsonArray=getJsonArrayfromFile(loc_modelfile); 
+			 
+		}else{
+			 makeJsonArray=getJsonArrayfromRaw(makefileid,loc_makefile);
+			 modelJsonArray=getJsonArrayfromRaw(modelfileid,loc_modelfile);  
+			 
+		}
+			 
+		 
 	} catch (Exception e) {
 		// TODO: handle exception
 	}
@@ -112,15 +123,21 @@ public HashMap<String, List<String>>modelDisplayHashMap;
  
  
  
- private JSONArray getJsonArrayfromRaw(int id) throws Exception{
+ private JSONArray getJsonArrayfromRaw(int id,String locFileName) throws Exception{
 	 InputStream stream = context.getResources().openRawResource(id);
 	 String readString=FileOperation.convertStreamToString(stream);
+	 FileOperation.save(context, locFileName, readString);
 	 stream.close();
 	 JSONObject tempObject=new JSONObject(readString);
 	
 	 return turnObject2Array(tempObject);
  }
- 
+ private JSONArray getJsonArrayfromFile(String Filename)throws Exception{
+	 String readString=FileOperation.read(context, Filename);
+	 JSONObject tempObject=new JSONObject(readString);
+	 return turnObject2Array(tempObject);
+	 
+ }
  private JSONArray turnObject2Array(JSONObject input) throws Exception{
 	 String temp=input.getString("results");
 	 return new JSONArray(temp);
@@ -130,28 +147,20 @@ public HashMap<String, List<String>>modelDisplayHashMap;
 	 
 	 //Do nothing
  }
+ public List<String> getSingleChildList(String makeName){
+	 String makeId=makeHashMap.get(makeName);
+	 return modelDisplayHashMap.get(makeId);
+	 
+ }
  
-// public boolean readMakeJsonFile() throws Exception{
-//	 String makeJsonString=FileOperation.read(context, makeJsonFile.getAbsolutePath());
-//	 if (makeJsonString!=null) {
-//		 JSONObject tempObject=new JSONObject(makeJsonString);
-//		 String arrayString=tempObject.getString("results");
-//		 makeJsonArray=new JSONArray(arrayString);
-//		return true;
-//	}else {
-//		return false;
-//	}
-// }
-//	
-// public boolean readModelJsonFile() throws Exception {
-//	 String modelJsonString=FileOperation.read(context, modelJsonFile.getAbsolutePath());
-//	 if (modelJsonString!=null) {
-//		 JSONObject tempObject=new JSONObject(modelJsonString);
-//		 String arrayString=tempObject.getString("results");
-//		 modelJsonArray=new JSONArray(arrayString);
-//		return true;
-//	}else {
-//		return false;
-//	}
-//}
+ public String getMakeId(String makeName){
+	 return makeHashMap.get(makeName);
+	 
+ }
+ public String getModelId(String modelHashKey){
+	 
+	 return modelHashMap.get(modelHashKey);
+ }
+ 
+
 }

@@ -72,44 +72,7 @@ public class FileUploadThread extends Thread {
 
 	}
 
-//	private synchronized void uploadSingleFile(File file,int num) {
-//		String single_item_String = FileOperation.readfromExternal(file);
-//		if (single_item_String != null) {
-//			try {
-//
-//				JSONObject jObject = new JSONObject(single_item_String);
-//				ParseObject pObject = new JSONdata(jObject)
-//				.formatParseObject(ed.getCipherTextClassName());
-//
-//				pObject.saveInBackground(new SaveCallback() {
-//
-//					@Override
-//					public void done(ParseException arg0) {
-//						if (arg0 == null) {
-//							/*file.delete();*/
-//							//							singleFiles[0].delete();
-//							static_global_functions.ShowToast_short(
-//									context,
-//									String.format(
-//											"%d out of %d have been sent successfully!",
-//											counter, total), R.drawable.success);
-//							//							FileOperation.delete(context, singleFiles[counter].getAbsolutePath());
-//							counter = counter + 1;
-//						}else {
-//							Log.d("Failed", "save in background");
-//						}
-//
-//					}
-//				});
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}else {
-//			file.delete();
-//		}
-//
-//	}
+
 
 	private void recursive_upload() throws JSONException {
 		
@@ -117,11 +80,10 @@ public class FileUploadThread extends Thread {
 
 		if (total_change >0) {
 
-			String single_item_String = FileOperation.readfromExternal(singleFiles[total_change-1]);
-			JSONObject jObject = new JSONObject(single_item_String);
-			ParseObject pObject = new JSONdata(jObject)
-			.formatParseObject(ed.getCipherTextClassName());
 
+
+			AnnotatorInput annotatorInput=new AnnotatorInput(singleFiles[total_change-1]);
+		ParseObject	 pObject=annotatorInput.export2ParseObject(ed.getCipherTextClassName());
 			pObject.saveInBackground(new SaveCallback() {
 
 				@Override

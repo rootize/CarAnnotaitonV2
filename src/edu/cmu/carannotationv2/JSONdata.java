@@ -165,6 +165,7 @@ public class JSONdata {
 
 	private void getNonLocInfoFromExif() {
 		try {
+			
 			jsonObject.put(ParseAtributes.FOCAL_LENGTH,
 				(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)));
 			jsonObject.put(ParseAtributes.FLASH,
