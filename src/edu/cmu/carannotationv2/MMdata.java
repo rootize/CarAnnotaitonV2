@@ -15,6 +15,7 @@ import android.content.Context;
 //import org.apache.commons.collections.map.MultiValueMap;
 
 public class MMdata {
+	
 	private Context context;
 private JSONArray makeJsonArray;
 private JSONArray modelJsonArray;
